@@ -10,12 +10,6 @@
         <title>비밀번호 변경 - 관리자 시스템</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-        <style>
-            /* 옅은 회색 색 */
-            body {
-                background: #dddfdf; !important;
-            }
-        </style>
     </head>
     <body>
         <div id="layoutAuthentication">
@@ -36,8 +30,8 @@
                                                 <label for="inputEmail">이메일</label>
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <a class="small" href="login.jsp">로그인 화면</a>
-                                                <a class="btn btn-primary" href="two_login.jsp">초기화</a>
+                                                <a class="small" href="two_login_ver4.jsp">로그인 화면</a>
+                                                <a class="btn btn-primary" href="two_login_ver4.jsp">초기화</a>
                                             </div>
                                         </form>
                                     </div>

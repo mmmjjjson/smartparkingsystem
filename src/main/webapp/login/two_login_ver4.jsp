@@ -64,6 +64,8 @@
                                     <div id="step1Circle" class="step-item active">1</div>
                                     <div class="step-line"></div>
                                     <div id="step2Circle" class="step-item">2</div>
+                                    <div class="step-line"></div>
+                                    <div id="step3Circle" class="step-item">3</div>
                                 </div>
                             </div>
 
@@ -72,7 +74,6 @@
 
                                 <!-- STEP 1 -->
                                 <div id="step1">
-                                    <!-- ✅ form 태그로 감싸고 onsubmit 추가 -->
                                     <form id="loginForm" onsubmit="submitStep1(event); return false;">
                                         <div class="form-floating mb-3">
                                             <input class="form-control"
@@ -103,7 +104,6 @@
 
                                         <div class="d-flex justify-content-between align-items-center">
                                             <a class="small" href="password.jsp">비밀번호 찾기</a>
-                                            <!-- ✅ type="submit"으로 변경 -->
                                             <button type="submit" class="btn btn-primary px-4">
                                                 다음
                                             </button>
@@ -111,7 +111,28 @@
                                     </form>
                                 </div>
 
-                                <!-- STEP 3 -->
+                                <!-- STEP 2 (이메일 입력) -->
+                                <div id="step2" class="d-none">
+                                    <form onsubmit="submitEmailStep(event); return false;">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="email" type="email"
+                                                   placeholder="name@example.com" required>
+                                            <label for="email">이메일</label>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="button"
+                                                    class="btn btn-secondary flex-fill"
+                                                    onclick="goBackToStep1()">
+                                                이전
+                                            </button>
+                                            <button type="submit" class="btn btn-primary flex-fill">
+                                                다음
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- STEP 3 (OTP 인증) -->
                                 <div id="step3" class="d-none">
                                     <div class="text-center mb-3">
                                         <i class="fas fa-envelope fa-3x text-primary mb-2"></i>
@@ -120,7 +141,7 @@
                                         </p>
                                     </div>
 
-                                    <form id="otpForm" onsubmit="submitStep2(event); return false;">
+                                    <form id="otpForm" onsubmit="submitStep3(event); return false;">
                                         <div class="form-floating mb-3">
                                             <input class="form-control"
                                                    type="text"
@@ -135,7 +156,7 @@
                                         <div class="d-flex gap-2">
                                             <button type="button"
                                                     class="btn btn-secondary flex-fill"
-                                                    onclick="goBackToStep1()">
+                                                    onclick="goBackToStep2()">
                                                 이전
                                             </button>
                                             <button type="submit" class="btn btn-success flex-fill">
@@ -169,6 +190,16 @@
         document.getElementById("step2").classList.remove("d-none");
         document.getElementById("step1Circle").classList.remove("active");
         document.getElementById("step2Circle").classList.add("active");
+        document.getElementById("email").focus();
+    }
+
+    // Step 3로 이동
+    function goStep3() {
+        console.log("✅ Step 3로 이동");
+        document.getElementById("step2").classList.add("d-none");
+        document.getElementById("step3").classList.remove("d-none");
+        document.getElementById("step2Circle").classList.remove("active");
+        document.getElementById("step3Circle").classList.add("active");
         document.getElementById("otpCode").focus();
     }
 
@@ -179,18 +210,35 @@
         document.getElementById("step1").classList.remove("d-none");
         document.getElementById("step2Circle").classList.remove("active");
         document.getElementById("step1Circle").classList.add("active");
+        document.getElementById("email").value = '';
+    }
+
+    // Step 2로 돌아가기
+    function goBackToStep2() {
+        console.log("⬅️ Step 2로 돌아가기");
+        document.getElementById("step3").classList.add("d-none");
+        document.getElementById("step2").classList.remove("d-none");
+        document.getElementById("step3Circle").classList.remove("active");
+        document.getElementById("step2Circle").classList.add("active");
         document.getElementById("otpCode").value = '';
     }
 
-    // Step 1 제출 (아이디/비밀번호)
+    // 테스트용 계정 정보
+    const TEST_ACCOUNT = {
+        username: 'admin',
+        password: 'admin1234',
+        email: 'admin@example.com',
+        otp: '123456'
+    };
+
+    // Step 1 제출 (아이디/비밀번호) - 테스트용
     function submitStep1(event) {
-        // ✅ 반드시 preventDefault 호출!
         event.preventDefault();
 
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        console.log("========== 로그인 요청 시작 ==========");
+        console.log("========== 로그인 요청 시작 (테스트 모드) ==========");
         console.log("Username:", username);
         console.log("Password:", password);
 
@@ -199,58 +247,51 @@
             return;
         }
 
-        // ✅ URLSearchParams 사용
-        const params = new URLSearchParams();
-        params.append('username', username);
-        params.append('password', password);
+        // 테스트용: 하드코딩된 값과 비교
+        if (username === TEST_ACCOUNT.username && password === TEST_ACCOUNT.password) {
+            console.log("✅ 인증 성공! Step 2로 이동");
+            goStep2();
+        } else {
+            alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+            console.log("❌ 인증 실패!");
+        }
 
-        console.log("Params:", params.toString());
-
-        const url = '${pageContext.request.contextPath}/login-step1';
-        console.log("Request URL:", url);
-
-        fetch(url, {
-            method: 'POST',  // ✅ POST 명시
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
-            body: params.toString()
-        })
-            .then(response => {
-                console.log("Response Status:", response.status);
-                console.log("Response OK:", response.ok);
-
-                if (response.ok) {
-                    console.log("✅ 인증 성공!");
-                    return response.json();
-                } else {
-                    console.log("❌ 인증 실패!");
-                    throw new Error('Authentication failed');
-                }
-            })
-            .then(data => {
-                console.log("Response Data:", data);
-                if (data.success) {
-                    console.log("OTP:", data.otp);
-                    goStep2();
-                } else {
-                    alert(data.message || "인증에 실패했습니다.");
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("서버 통신 중 오류가 발생했습니다.");
-            });
-
-        console.log("========== 요청 전송 완료 ==========");
+        console.log("========== 요청 처리 완료 ==========");
     }
 
-    // Step 2 제출 (OTP 인증)
-    function submitStep2(event) {
+    // Step 2 제출 (이메일 확인) - 테스트용
+    function submitEmailStep(event) {
+        event.preventDefault();
+
+        const email = document.getElementById('email').value;
+
+        console.log("========== 이메일 확인 요청 (테스트 모드) ==========");
+        console.log("Email:", email);
+
+        if (!email) {
+            alert("이메일을 입력해주세요.");
+            return;
+        }
+
+        // 테스트용: 하드코딩된 이메일과 비교
+        if (email === TEST_ACCOUNT.email) {
+            console.log("✅ 이메일 확인 완료");
+            console.log("📧 OTP 전송됨 (테스트용):", TEST_ACCOUNT.otp);
+            alert(`인증번호가 ${email}로 전송되었습니다.\n(테스트용 OTP: ${TEST_ACCOUNT.otp})`);
+            goStep3();
+        } else {
+            alert("등록되지 않은 이메일입니다.");
+            console.log("❌ 이메일 불일치");
+        }
+    }
+
+    // Step 3 제출 (OTP 인증) - 테스트용
+    function submitStep3(event) {
         event.preventDefault();
 
         const otpCode = document.getElementById('otpCode').value;
 
+        console.log("========== OTP 인증 요청 (테스트 모드) ==========");
         console.log("OTP 입력:", otpCode);
 
         if (otpCode.length !== 6) {
@@ -258,9 +299,15 @@
             return;
         }
 
-        // TODO: 서버에 OTP 검증 요청
-        alert("로그인 성공! (OTP 검증은 추후 구현)");
-        window.location.href = '${pageContext.request.contextPath}/index.jsp';
+        // 테스트용: 하드코딩된 OTP와 비교
+        if (otpCode === TEST_ACCOUNT.otp) {
+            console.log("✅ OTP 인증 성공!");
+            alert("로그인 성공!");
+            window.location.href = '${pageContext.request.contextPath}/index.jsp';
+        } else {
+            alert("인증번호가 일치하지 않습니다.");
+            console.log("❌ OTP 불일치");
+        }
     }
 
     // 숫자만 입력
