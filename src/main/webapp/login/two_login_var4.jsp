@@ -111,8 +111,8 @@
                                     </form>
                                 </div>
 
-                                <!-- STEP 2 -->
-                                <div id="step2" class="d-none">
+                                <!-- STEP 3 -->
+                                <div id="step3" class="d-none">
                                     <div class="text-center mb-3">
                                         <i class="fas fa-envelope fa-3x text-primary mb-2"></i>
                                         <p class="small text-muted">

@@ -40,6 +40,7 @@ public class LoginStep1Servlet extends HttpServlet {
         if (username == null || password == null) {
             System.out.println("ERROR: Parameters are null!");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
             out.write("{\"success\": false, \"message\": \"Missing parameters\"}");
             out.flush();
             return;

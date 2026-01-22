@@ -37,7 +37,7 @@
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                                 <a class="small" href="login.jsp">로그인 화면</a>
-                                                <a class="btn btn-primary" href="login.jsp">초기화</a>
+                                                <a class="btn btn-primary" href="two_login.jsp">초기화</a>
                                             </div>
                                         </form>
                                     </div>

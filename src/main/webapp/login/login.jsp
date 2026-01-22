@@ -17,7 +17,7 @@
         }
     </style>
 </head>
-<body>
+<body class="bs-primary">
 <div id="layoutAuthentication">
     <div id="layoutAuthentication_content">
         <main>
