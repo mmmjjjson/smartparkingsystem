@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>404 Error - SB Admin</title>
+        <title>404 오류 - 관리자 시스템</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
@@ -20,7 +20,7 @@
                                 <div class="text-center mt-4">
                                     <h1 class="display-1">500</h1>
                                     <p class="lead">Internal Server Error</p>
-                                    <a href="index.html">
+                                    <a href="../index.jsp">
                                         <i class="fas fa-arrow-left me-1"></i>
                                         Return to Dashboard
                                     </a>
