@@ -3,7 +3,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container-fluid px-4">
-
         <!-- 타이틀 -->
         <!-- 로고 만들어서 이미지 넣어도 좋을듯 -->
         <a class="navbar-brand fw-bold me-6" href="#"><b>스마트 주차 관리 시스템</b></a>
