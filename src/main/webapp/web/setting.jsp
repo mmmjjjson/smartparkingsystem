@@ -151,7 +151,7 @@
 
     <div class="preview-section">
         <div class="btn-area">
-            <span style="color: var(--main-color); font-weight: bold; margin-right: 15px;">3. 저장하면</span>
+            <span style="color: var(--main-color); font-weight: bold; margin-right: 15px;"></span>
             <button type="button" class="save-btn" onclick="submitForm()">저장</button>
         </div>
 
@@ -175,8 +175,7 @@
             </div>
 
             <div class="update-info">
-                4. 시스템은 수정 사항을 업데이트하여<br>
-                이후 출차 및 정산에 수정된 내용을 적용한다.
+
             </div>
         </div>
     </div>
