@@ -103,7 +103,7 @@
 </div>
 
 <div class="container">
-    <div class="title-bar">1. '설정 관리' 메뉴에 접근한 관리자가</div>
+    <div class="title-bar">설정 관리 - 요금 및 할인 정책</div>
 
     <form action="save_process.jsp" method="post" id="parkingForm" class="setup-area">
         <div class="card">
