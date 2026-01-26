@@ -135,7 +135,7 @@
         </div>
 
         <div class="card highlight-card">
-            <span class="card-label">2. 수정할 항목을 입력하고 (할인율 설정)</span>
+            <span class="card-label">할인율 설정</span>
             <div class="input-row">
                 <div class="input-item">
                     <label>경차 할인율 (default: 0.3)</label>
