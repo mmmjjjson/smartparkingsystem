@@ -50,9 +50,10 @@
 <!-- 공통 header 구역 -->
 <%@ include file="../common/header.jsp"%>
 
-<!-- 차량 검색 영역 -->
-<!-- *** 추후 검색 기능 (필터링) 추가 해야 함 !!! *** -->
+<!-- 메인 페이지 -->
 <div class="container-fluid mt-4">
+    <!-- 차량 검색 영역 -->
+    <!-- *** 추후 검색 기능 (필터링) 추가 해야 함 !!! *** -->
     <div class="row justify-content-center my-4">
         <div class="col-md-6 d-flex">
             <input type="text" class="form-control" placeholder="검색할 차량번호 마지막 4자리를 입력하세요." style="margin-right:20px;">
