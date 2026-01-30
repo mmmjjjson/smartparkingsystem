@@ -67,16 +67,16 @@
             color: #444;
         }
 
-        .card { background: white; border: 1px solid var(--border-color); padding: 30px; margin-bottom: 25px; }
-        .card-label { display: inline-block; background: #eee; padding: 4px 12px; border: 1px solid #ccc; font-size: 13px; margin-bottom: 15px; font-weight: bold; }
+        .card { background: white; border: 1px solid var(--border-color); padding: 28px; margin-bottom: 25px; }
+        .card-label { display: inline-block; background: white; padding: 4px 12px 4px 0; border: 1px solid white; font-size: 17px; margin-bottom: 15px; font-weight: bold; }
 
-        /* 강조된 영역 (이미지 2번 단계) */
-        .highlight-card { border: 2.5px solid var(--main-color); }
+        /* 할인율 */
+        .highlight-card { border: 2.5px solid var(--main-color); margin-bottom: 0; }
 
         .input-row { display: flex; gap: 15px; }
         .input-item { flex: 1; border: 1px solid var(--border-color); padding: 20px; background: #fafafa; text-align: center; }
         .input-item label { display: block; font-size: 14px; color: #666; margin-bottom: 12px; font-weight: bold; }
-        .input-item input { width: 90%; padding: 12px; border: 1px solid #ccc; text-align: right; font-size: 15px; }
+        .input-item input { width: 90%; padding: 12px; border: 1px solid #ccc; text-align: right; font-size: 16px; }
 
         /* 우측 미리보기 및 저장 */
         .btn-area { text-align: right; margin-bottom: 15px; }
