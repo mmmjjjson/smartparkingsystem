@@ -44,11 +44,49 @@
         /* 주차 공간 상태별 배경 색*/
         .available { background-color: #e1e0e0; }
         .occupied { background-color: #bded8f; }
+
+        /* 영수증 출력 화면 */
+        @media print {
+            /* 1. 화면의 모든 요소를 아예 제거 (공간도 차지하지 않음) */
+            body > * {
+                display: none !important;
+            }
+
+            /* 2. 모달창과 영수증 영역만 강제로 살려내기 */
+            #parkingModal,
+            #parkingModal .modal-dialog,
+            #parkingModal .modal-content,
+            #parkingModal .modal-body,
+            #section-receipt,
+            #receipt-print-area {
+                display: block !important;
+                visibility: visible !important;
+                position: static !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            /* 3. 영수증 내부의 텍스트와 라인들만 보이게 */
+            #receipt-print-area * {
+                display: inline-block; /* 레이아웃 유지 */
+                visibility: visible !important;
+            }
+
+            .d-flex { display: flex !important; } /* 레이아웃 깨짐 방지 */
+
+            /* 4. 불필요한 버튼, 헤더 등은 절대 안 나오게 숨김 */
+            .modal-header, .modal-footer, .btn, .d-print-none, .btn-close {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
 <!-- 공통 header 구역 -->
-<%@ include file="../common/header.jsp"%>
+<%@ include file="../common/header_main.jsp"%>
 
 <!-- 메인 페이지 -->
 <div class="container-fluid mt-4">
@@ -66,7 +104,7 @@
     <!-- 주차 현황 요약 -->
     <!-- *** 추후 주차된 차량 수 반영 기능 추가해야 함 !!! *** --->
     <h3>주차 현황</h3>
-    <p>현재 <b>0대</b>의 차량이 주차되어 있습니다.</p>
+    <p>현재 <b></b>의 차량이 주차되어 있습니다.</p>
 
     <!-- 주차 구역 메인 보드 -->
     <div id="parking-board">
@@ -75,18 +113,10 @@
             <div class="column">
                 <% for(int i=1;i<=5;i++){
                     request.setAttribute("id","A-"+i);
-                    // 목업 데이터
                     // *** 추후 DB 값 대체 !!! ***
-                    if (i == 4) {
-                        request.setAttribute("status","occupied");
-                        request.setAttribute("car", "34가5678"); // 테스트 해보니 차량 번호 공백 없어야 할듯
-                        request.setAttribute("time", "08:41");
-                    } else {
-                        //
-                        request.setAttribute("status","available");
-                        request.setAttribute("car", null);
-                        request.setAttribute("time", null);
-                    }
+                    request.setAttribute("status", "available");
+                    request.setAttribute("car", null);
+                    request.setAttribute("time", null);
                 %>
                 <%@ include file="parking_card.jsp" %>
                 <% } %>
@@ -99,17 +129,10 @@
                     <div class="center-row">
                         <% for(int i=6;i<=10;i++){
                             request.setAttribute("id","A-"+i);
-                            // 목업 데이터
                             // *** 추후 DB 값 대체 !!! ***
-                            if (i == 8) {
-                                request.setAttribute("status","occupied");
-                                request.setAttribute("car", "12나3456");
-                                request.setAttribute("time", "09:05");
-                            } else {
-                                request.setAttribute("status","available");
-                                request.setAttribute("car", null);
-                                request.setAttribute("time", null);
-                            }
+                            request.setAttribute("status", "available");
+                            request.setAttribute("car", null);
+                            request.setAttribute("time", null);
                         %>
                         <%@ include file="parking_card.jsp" %>
                         <% } %>
@@ -133,17 +156,9 @@
             <div class="column">
                 <% for (int i = 16; i <= 20; i++){
                     request.setAttribute("id","A-"+i);
-                    // 목업 데이터
-                    // *** 추후 DB 값 대체 !!! ***
-                    if (i == 19) {
-                        request.setAttribute("status","occupied");
-                        request.setAttribute("car", "23다2345");
-                        request.setAttribute("time", "10:41");
-                    } else {
-                        request.setAttribute("status","available");
-                        request.setAttribute("car", null);
-                        request.setAttribute("time", null);
-                    }
+                    request.setAttribute("status", "available");
+                    request.setAttribute("car", null);
+                    request.setAttribute("time", null);
                 %>
                 <%@ include file="parking_card.jsp" %>
                 <% } %>
@@ -153,32 +168,7 @@
 </div>
 
 <!-- 주차 상태 처리 모달 -->
-<!-- *** 추후 DB 연동 및 추가 작업 필요 *** -->
-<!--- *** 싹 갈아엎고 싶음 ㅜㅜ *** --->
-<div class="modal fade" id="parkingModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- 모달 헤더 -->
-            <div class="modal-header">
-                <h5 class="modal-title">주차 처리</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <!-- 모달 본문 -->
-            <div class="modal-body">
-                <p id="modal-id"></p>
-                <p id="modal-car"></p>
-                <p id="modal-time"></p>
-            </div>
-
-            <!-- 모달 버튼 -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" id="modal-action"></button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-            </div>
-        </div>
-    </div>
-</div>
+<%@ include file="parking_modal.jsp"%>
 
 <!-- 공통 footer 구역 -->
 <%@ include file="../common/footer.jsp"%>
@@ -186,47 +176,14 @@
 <!-- bootstrap JS (모달 동작용) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    /* 모달 관련 객체 선언
-    모달 객체 불러와 정보 가져오기 (주차 구역, 차량 번호, 주차 시간, 주차 구역 상태)
-     */
-    const modal = new bootstrap.Modal(document.getElementById('parkingModal'));
-    const modalTitle = document.getElementById('modal-id');
-    const modalCar = document.getElementById('modal-car');
-    const modalTime = document.getElementById('modal-time');
-    const modalAction = document.getElementById('modal-action');
+<!-- 함수(날짜 형식, 주차 현황 숫자) 로직 JS -->
+<script src="function.js"></script>
 
-    // 주차 구역 클릭 이벤트 (클릭 시 정보 모달 팝업)
-    document.querySelectorAll('.parking-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const id = card.querySelector('.box-id').innerText;
-            const car = card.querySelector('.box-car').innerText;
-            const time = card.querySelector('.box-time').innerText;
+<!-- 메인 모달 JS -->
+<script src="main_modal.js"></script>
 
-            modalTitle.innerText = "구역: " + id;
-            modalCar.innerText = car==="사용 가능" ? "빈 자리" : "차량: "+car;
-            modalTime.innerText = time || "";
+<!-- 요금 계산 로직 JS -->
+<script src="parkingChargeLogic.js"></script>
 
-            // 주차 상태에 따른 버튼 변경
-            if(car==="사용 가능") {
-                modalAction.innerText = "입차 처리";
-                modalAction.classList.replace('btn-danger','btn-success');
-            } else {
-                modalAction.innerText = "출차 처리";
-                modalAction.classList.replace('btn-success','btn-danger');
-            }
-
-            modal.show();
-        });
-    });
-
-    // 입차, 출차 처리 버튼
-    // *** 추후 AJAX(화면 새로고침 없이 상태 변경) + 서버 연동 ***
-    modalAction.addEventListener('click', () => {
-        // 여기에 입차/출차 처리 로직 연결
-        alert(modalAction.innerText + " 완료 (여기서 AJAX 호출 가능)");
-        modal.hide();
-    });
-</script>
 </body>
 </html>
