@@ -1,4 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.LocalDate" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,7 +25,7 @@
             margin: 0 auto;
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -37,7 +39,7 @@
         }
 
         .header-title {
-            font-size: 16px;
+            font-size: 25px;
             font-weight: bold;
             color: #333;
             padding: 10px 15px;
@@ -58,7 +60,7 @@
             color: #333;
             cursor: pointer;
             border-radius: 4px;
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 500;
             transition: all 0.3s;
         }
@@ -81,6 +83,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: 500;
+            font-size: 18px;
         }
 
         /* 콘텐츠 */
@@ -98,7 +101,7 @@
         }
 
         .section-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             color: #333;
         }
@@ -112,6 +115,7 @@
             cursor: pointer;
             font-weight: 500;
             transition: all 0.3s;
+            font-size: 18px;
         }
 
         .add-btn:hover {
@@ -127,23 +131,24 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            text-align: center;
         }
 
         th {
             background-color: #f9f9f9;
             padding: 15px;
-            text-align: left;
+            text-align: center;
             font-weight: 600;
             color: #333;
             border-bottom: 2px solid #ddd;
-            font-size: 14px;
+            font-size: 18px;
         }
 
         td {
             padding: 15px;
             border-bottom: 1px solid #e0e0e0;
             color: #555;
-            font-size: 14px;
+            font-size: 18px;
         }
 
         tbody tr {
@@ -152,13 +157,6 @@
 
         tbody tr:hover {
             background-color: #e8f0f8;
-        }
-
-        .empty-message {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-            font-size: 16px;
         }
 
         /* 모달 */
@@ -185,7 +183,7 @@
             border-radius: 8px;
             width: 90%;
             max-width: 700px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -209,7 +207,7 @@
         .form-label {
             font-weight: 600;
             color: #333;
-            font-size: 14px;
+            font-size: 16px;
             padding: 8px 15px;
             border: 1px solid #333;
             display: inline-block;
@@ -220,7 +218,7 @@
             padding: 10px 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 14px;
+            font-size: 16px;
             color: #333;
         }
 
@@ -244,10 +242,6 @@
             flex: 1;
         }
 
-        .view-right {
-            width: 250px;
-        }
-
         .info-box {
             border: 1px solid #ddd;
             padding: 20px;
@@ -260,34 +254,15 @@
             width: 100px;
             font-weight: 600;
             color: #333;
-            font-size: 14px;
+            font-size: 18px;
             margin-bottom: 10px;
         }
 
         .info-value {
             display: inline-block;
-            font-size: 14px;
+            font-size: 18px;
             color: #555;
             line-height: 1.6;
-        }
-
-        .right-section {
-            border: 2px solid #4472c4;
-            padding: 20px;
-            border-radius: 4px;
-            text-align: center;
-        }
-
-        .right-section-label {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 10px;
-        }
-
-        .right-section-value {
-            font-size: 16px;
-            color: #333;
-            font-weight: 600;
         }
 
         .modal-buttons {
@@ -299,7 +274,7 @@
 
         .modal-btn {
             padding: 12px 50px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             border: none;
             border-radius: 4px;
@@ -343,7 +318,7 @@
         }
 
         .confirm-message {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
             color: #333;
             margin: 40px 0;
@@ -368,7 +343,7 @@
     <!-- 콘텐츠 -->
     <div class="content">
         <div class="section-header">
-            <div class="section-title">회원 관리 - 원정액 회원 정보 관리</div>
+            <div class="section-title">회원 관리 - 월정액 회원 정보 관리</div>
             <button class="add-btn" id="newMemberBtn">신규 회원 등록</button>
         </div>
 
@@ -383,28 +358,16 @@
                     <th>만료일</th>
                 </tr>
                 </thead>
+
                 <tbody id="memberTableBody">
-                <tr onclick="openModal('12가 3456', '김철수', '010-1234-5678', '2025-01-01', '2025-12-31')">
-                    <td>12가 3456</td>
-                    <td>김철수</td>
-                    <td>010-1234-5678</td>
-                    <td>2025-01-01</td>
-                    <td>2025-12-31</td>
-                </tr>
-                <tr onclick="openModal('34나 7890', '이영희', '010-2345-6789', '2025-01-01', '2025-06-30')">
-                    <td>34나 7890</td>
-                    <td>이영희</td>
-                    <td>010-2345-6789</td>
-                    <td>2025-01-01</td>
-                    <td>2025-06-30</td>
-                </tr>
-                <tr onclick="openModal('56다 1234', '박민수', '010-3456-7890', '2024-12-01', '2025-11-30')">
-                    <td>56다 1234</td>
-                    <td>박민수</td>
-                    <td>010-3456-7890</td>
-                    <td>2024-12-01</td>
-                    <td>2025-11-30</td>
-                </tr>
+                    <%@ include file="member_list.jsp" %>
+<%--                    <tr onclick="openModal('12가 3456', '김철수', '010-1234-5678', '2025-01-01', '2025-12-31')">--%>
+<%--                        <td>12가 3456</td>--%>
+<%--                        <td>김철수</td>--%>
+<%--                        <td>010-1234-5678</td>--%>
+<%--                        <td>2025-01-01</td>--%>
+<%--                        <td>2025-12-31</td>--%>
+<%--                    </tr>--%>
                 </tbody>
             </table>
         </div>
@@ -414,37 +377,39 @@
 <!-- 신규 등록 모달 -->
 <div class="modal" id="newMemberModal">
     <div class="modal-content">
-        <div class="modal-header">회원 정보 입력</div>
+        <form action="member_insert.jsp" method="post">
+            <div class="modal-header">회원 정보 입력</div>
 
-        <div class="form-group">
-            <label class="form-label">차량 번호 (필수)</label>
-            <input type="text" value="예: 12가 3456" class="form-input" id="newCarNumber">
-        </div>
+            <div class="form-group">
+                <label class="form-label">차량 번호 (필수)</label>
+                <input type="text" name="carNum" value="예: 12가 3456" class="form-input" id="newCarNumber">
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">이름 (필수)</label>
-            <input type="text" value="이름을 입력하세요" class="form-input" id="newName">
-        </div>
+            <div class="form-group">
+                <label class="form-label">이름 (필수)</label>
+                <input type="text" name="memberName" value="이름을 입력하세요" class="form-input" id="newName">
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">연락처 (필수)</label>
-            <input type="tel" value="예: 010-1234-5678" class="form-input" id="newPhone">
-        </div>
+            <div class="form-group">
+                <label class="form-label">연락처 (필수)</label>
+                <input type="tel" name="memberPhone" value="예: 010-1234-5678" class="form-input" id="newPhone">
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">시작일 (필수)</label>
-            <input type="date" value="예: 2025-01-01" class="form-input" id="newStartDate">
-        </div>
+            <div class="form-group">
+                <label class="form-label">시작일 (필수)</label>
+                <input type="date" name="startDate" value="예: 2025-01-01" class="form-input" id="newStartDate">
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">만료일 (필수)</label>
-            <input type="date" value="예: 2025-12-31" class="form-input" id="newExpireDate">
-        </div>
+            <div class="form-group">
+                <label class="form-label">만료일 (필수)</label>
+                <input type="date" name="endDate" value="예: 2025-12-31" class="form-input" id="newExpireDate">
+            </div>
 
-        <div class="modal-buttons">
-            <button class="modal-btn btn-confirm" onclick="handleNewMemberSubmit()">등록</button>
-            <button class="modal-btn btn-cancel" onclick="closeNewMemberModal()">취소</button>
-        </div>
+            <div class="modal-buttons">
+                <button type="submit" class="modal-btn btn-confirm" onclick="handleNewMemberSubmit()">등록</button>
+                <button type="button" class="modal-btn btn-cancel" onclick="closeNewMemberModal()">취소</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -491,49 +456,54 @@
 <!-- 회원 정보 수정 모달 -->
 <div class="modal" id="editMemberModal">
     <div class="modal-content">
-        <div class="modal-header">회원 정보 수정</div>
+        <form action="member_update.jsp" method="post">
+            <div class="modal-header">회원 정보 수정</div>
 
-        <div class="form-group">
-            <label class="form-label">차량 번호 (필수)</label>
-            <input type="text" class="form-input" id="editCarNumber">
-        </div>
+            <div class="form-group">
+                <label class="form-label">차량 번호 (필수)</label>
+                <input type="text" name="carNum" class="form-input" id="editCarNumber" readonly>
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">이름 (필수)</label>
-            <input type="text" class="form-input" id="editName">
-        </div>
+            <div class="form-group">
+                <label class="form-label">이름 (필수)</label>
+                <input type="text" name="memberName" class="form-input" id="editName">
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">연락처 (필수)</label>
-            <input type="tel" class="form-input" id="editPhone">
-        </div>
+            <div class="form-group">
+                <label class="form-label">연락처 (필수)</label>
+                <input type="tel" name="memberPhone" class="form-input" id="editPhone">
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">시작일 (필수)</label>
-            <input type="date" class="form-input" id="editStartDate">
-        </div>
+            <div class="form-group">
+                <label class="form-label">시작일 (필수)</label>
+                <input type="date" name="startDate" class="form-input" id="editStartDate">
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">만료일 (필수)</label>
-            <input type="date" class="form-input" id="editExpireDate">
-        </div>
+            <div class="form-group">
+                <label class="form-label">만료일 (필수)</label>
+                <input type="date" name="endDate" class="form-input" id="editExpireDate">
+            </div>
 
-        <div class="modal-buttons">
-            <button class="modal-btn btn-confirm" onclick="handleEditSubmit()">수정 완료</button>
-            <button class="modal-btn btn-cancel" onclick="closeEditModal()">취소</button>
-        </div>
+            <div class="modal-buttons">
+                <button type="submit" class="modal-btn btn-confirm" onclick="handleEditSubmit()">수정 완료</button>
+                <button type="button" class="modal-btn btn-cancel" onclick="closeEditModal()">취소</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- 삭제 확인 모달 -->
 <div class="modal" id="deleteConfirmModal">
     <div class="modal-content">
-        <div class="modal-header">회원 삭제</div>
-        <div class="confirm-message">정말 삭제 하시겠습니까?</div>
-        <div class="modal-buttons">
-            <button class="modal-btn btn-delete" onclick="confirmDelete()">삭제</button>
-            <button class="modal-btn btn-cancel" onclick="closeDeleteConfirmModal()">취소</button>
-        </div>
+        <form action="member_delete.jsp" method="post">
+            <input type="hidden" name="carNum" id="deleteCarNum">
+            <div class="modal-header">회원 삭제</div>
+            <div class="confirm-message">정말 삭제 하시겠습니까?</div>
+            <div class="modal-buttons">
+                <button type="submit" class="modal-btn btn-delete" onclick="confirmDelete()">삭제</button>
+                <button type="button" class="modal-btn btn-cancel" onclick="closeDeleteConfirmModal()">취소</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -542,8 +512,8 @@
         document.getElementById('viewCarNumber').textContent = carNumber;
         document.getElementById('viewName').textContent = name;
         document.getElementById('viewPhone').textContent = phone;
-        document.getElementById('viewStartDate').textContent = startDate;
-        document.getElementById('viewExpireDate').textContent = expireDate;
+        document.getElementById('viewStartDate').textContent = startDate.substring(0, 10);
+        document.getElementById('viewExpireDate').textContent = expireDate.substring(0, 10);
         document.getElementById('viewMemberModal').classList.add('active');
     }
 
@@ -597,7 +567,7 @@
         }
 
         const newRow = document.createElement('tr');
-        newRow.onclick = function() {
+        newRow.onclick = function () {
             openModal(carNumber, name, phone, startDate, expireDate);
         };
         newRow.innerHTML = `
@@ -619,6 +589,9 @@
     }
 
     function handleDelete() {
+        const carNum = document.getElementById('viewCarNumber').textContent;
+        document.getElementById('deleteCarNum').value = carNum;
+
         closeViewMemberModal();
         document.getElementById('deleteConfirmModal').classList.add('active');
     }
@@ -632,12 +605,12 @@
         document.getElementById('deleteConfirmModal').classList.remove('active');
     }
 
-    document.getElementById('newMemberBtn').addEventListener('click', function(e) {
+    document.getElementById('newMemberBtn').addEventListener('click', function (e) {
         e.preventDefault();
         openNewMemberModal();
     });
 
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         var newModal = document.getElementById('newMemberModal');
         var viewModal = document.getElementById('viewMemberModal');
         var editModal = document.getElementById('editMemberModal');
