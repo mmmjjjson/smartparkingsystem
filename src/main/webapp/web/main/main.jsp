@@ -2,6 +2,16 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <%-- 비로그인 접근 제한 --%>
+    <%
+        String adminId = (String) session.getAttribute("adminId");
+        System.out.println(session.getId());
+        System.out.println(adminId);
+        if (adminId == null) {
+            response.sendRedirect("/index.jsp");
+            return;
+        }
+    %>
     <meta charset="UTF-8">
     <title>반월당 스마트 주차 관리 시스템</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -48,7 +58,7 @@
 </head>
 <body>
 <!-- 공통 header 구역 -->
-<%@ include file="../common/header.jsp"%>
+<%--<%@ include file="../common/header.jsp"%>--%>
 
 <!-- 메인 페이지 -->
 <div class="container-fluid mt-4">
@@ -181,7 +191,7 @@
 </div>
 
 <!-- 공통 footer 구역 -->
-<%@ include file="../common/footer.jsp"%>
+<%--<%@ include file="../common/footer.jsp"%>--%>
 
 <!-- bootstrap JS (모달 동작용) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
