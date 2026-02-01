@@ -5,10 +5,10 @@
 
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link active" href="#">대시보드</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">회원 관리</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">설정 관리</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">통계</a></li>
+        <li class="nav-item"><a class="nav-link active" href="../main/main.jsp">대시보드</a></li>
+        <li class="nav-item"><a class="nav-link" href="../member.jsp">회원 관리</a></li>
+        <li class="nav-item"><a class="nav-link" href="../setting.jsp">설정 관리</a></li>
+        <li class="nav-item"><a class="nav-link" href="../statistic.jsp">통계</a></li>
       </ul>
     </div>
 
