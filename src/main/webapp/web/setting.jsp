@@ -91,7 +91,7 @@
     </style>
 </head>
 <body>
-
+<%--<jsp:include page="" />--%>
 <div class="header">
     <h1>스마트 주차 관리 시스템</h1>
     <ul class="nav">
@@ -209,6 +209,6 @@
         }
     }
 </script>
-
+<%--<%@ include file="../inc/footer.jsp"%>--%>
 </body>
 </html>
