@@ -3,8 +3,6 @@
 */
 const modal = new bootstrap.Modal(document.getElementById('parkingModal'));
 const modalTitle = document.getElementById('modal-id');
-const modalCar = document.getElementById('modal-car');
-const modalTime = document.getElementById('modal-time');
 const modalAction = document.getElementById('modal-action');
 
 // 주차 구역 클릭 이벤트 (클릭 시 정보 모달 팝업)
