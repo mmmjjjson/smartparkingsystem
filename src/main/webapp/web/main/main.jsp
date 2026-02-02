@@ -2,16 +2,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <%-- 비로그인 접근 제한 --%>
-    <%
-        String adminId = (String) session.getAttribute("adminId");
-        System.out.println(session.getId());
-        System.out.println(adminId);
-        if (adminId == null) {
-            response.sendRedirect("/index.jsp");
-            return;
-        }
-    %>
+    <%@include file="main_process.jsp"%>
     <meta charset="UTF-8">
     <title>반월당 스마트 주차 관리 시스템</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
