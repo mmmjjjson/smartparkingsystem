@@ -2,7 +2,7 @@
 function formatDateTime(dateStr) {
     if (!dateStr) return "-";
     const d = new Date(dateStr);
-    const z = (n) => n.toString().padStart(2, '0'); // 10 미만 숫자 앞에 0 붙이기
+    const z = (n) => n.toString().padStart(2, '0');
 
     return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()) +
         " " + z(d.getHours()) + ":" + z(d.getMinutes());

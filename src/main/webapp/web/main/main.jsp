@@ -94,7 +94,7 @@
     <!-- *** 추후 검색 기능 (필터링) 추가 해야 함 !!! *** -->
     <div class="row justify-content-center my-4">
         <div class="col-md-6 d-flex">
-            <input type="text" class="form-control" placeholder="검색할 차량번호 마지막 4자리를 입력하세요." style="margin-right:20px;">
+            <input type="text" class="form-control" placeholder="차량번호 마지막 4자리를 입력하세요." style="margin-right:20px;">
             <button class="btn btn-secondary px-4 text-nowrap">검색</button>
         </div>
     </div>
@@ -177,13 +177,13 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- 함수(날짜 형식, 주차 현황 숫자) 로직 JS -->
-<script src="function.js"></script>
+<script src="main_function.js"></script>
 
 <!-- 메인 모달 JS -->
 <script src="main_modal.js"></script>
 
 <!-- 요금 계산 로직 JS -->
-<script src="parkingChargeLogic.js"></script>
+<script src="main_parking_charge_logic.js"></script>
 
 </body>
 </html>
