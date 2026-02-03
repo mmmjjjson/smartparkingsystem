@@ -1,0 +1,37 @@
+/* 영수증 출력 화면 */
+@media print {
+    /* 1. 화면의 모든 요소를 아예 제거 (공간도 차지하지 않음) */
+    body > * {
+        display: none !important;
+    }
+
+    /* 2. 모달창과 영수증 영역만 강제로 살려내기 */
+    #parkingModal,
+    #parkingModal .modal-dialog,
+    #parkingModal .modal-content,
+    #parkingModal .modal-body,
+    #section-receipt,
+    #receipt-print-area {
+        display: block !important;
+        visibility: visible !important;
+        position: static !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* 3. 영수증 내부의 텍스트와 라인들만 보이게 */
+    #receipt-print-area * {
+        display: inline-block; /* 레이아웃 유지 */
+        visibility: visible !important;
+    }
+
+    .d-flex { display: flex !important; } /* 레이아웃 깨짐 방지 */
+
+    /* 4. 불필요한 버튼, 헤더 등은 절대 안 나오게 숨김 */
+    .modal-header, .modal-footer, .btn, .d-print-none, .btn-close {
+        display: none !important;
+    }
+}
