@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <div class="header">
     <div class="header-title">스마트 주차관리 시스템</div>
     <div class="nav-buttons">

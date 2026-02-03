@@ -20,17 +20,18 @@ public class LoginProcessServlet extends HttpServlet {
 
         // TODO : 그냥 파라미터 받아서 리다이렉트형식으로 하려니까 새로고침으로 넘어가야해서 그냥 AJAX로 만들어봄 (좀 어설플 수 있음)
         switch (step) {
-            case "1":
+            case "1" -> {
                 step1(req, resp);
-                break;
-            case "2":
+            }
+            case "2" -> {
                 step2(req, resp);
-                break;
-            case "3":
+            }
+            case "3" -> {
                 step3(req, resp);
-                break;
-            default:
+            }
+            default -> {
                 resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
         }
     }
 
