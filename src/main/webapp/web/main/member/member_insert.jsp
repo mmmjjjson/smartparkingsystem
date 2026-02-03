@@ -2,6 +2,7 @@
 <%@ page import="com.example.smartparkingsystem.member.model.*" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.LocalDate" %>
+<%-- 신규 회원 등록 --%>
 <%
     MembersDTO member = MembersDTO.builder()
             .carNum(request.getParameter("carNum"))

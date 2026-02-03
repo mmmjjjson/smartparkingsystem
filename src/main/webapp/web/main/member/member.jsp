@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>스마트 주차관리 시스템 - 회원 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -29,63 +30,6 @@
             overflow: hidden;
         }
 
-        /* 헤더 */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 30px;
-            border-bottom: 3px solid #333;
-        }
-
-        .header-title {
-            font-size: 25px;
-            font-weight: bold;
-            color: #333;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .nav-btn {
-            padding: 10px 20px;
-            border: 1px solid #ddd;
-            background-color: white;
-            color: #333;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 18px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .nav-btn:hover {
-            background-color: #f0f0f0;
-        }
-
-        .nav-btn.active {
-            background-color: #4472c4;
-            color: white;
-            border-color: #4472c4;
-        }
-
-        .logout-btn {
-            padding: 10px 20px;
-            background-color: white;
-            color: #333;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 18px;
-        }
-
         /* 콘텐츠 */
         .content {
             padding: 30px;
@@ -101,7 +45,7 @@
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
             color: #333;
         }
@@ -159,7 +103,7 @@
             background-color: #e8f0f8;
         }
 
-        /* 모달 */
+        /* 회원 정보 입력 모달 */
         .modal {
             display: none;
             position: fixed;
@@ -204,7 +148,7 @@
             gap: 8px;
         }
 
-        .form-label {
+        .form-label { /* 각 라벨 */
             font-weight: 600;
             color: #333;
             font-size: 16px;
@@ -214,7 +158,7 @@
             width: fit-content;
         }
 
-        .form-input {
+        .form-input { /* 각 입력 요소 */
             padding: 10px 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -329,17 +273,7 @@
 <body>
 <div class="container">
     <!-- 헤더 -->
-    <div class="header">
-        <div class="header-title">스마트 주차관리 시스템</div>
-        <div class="nav-buttons">
-            <button class="nav-btn">대시보드</button>
-            <button class="nav-btn active">회원 관리</button>
-            <button class="nav-btn">설정 관리</button>
-            <button class="nav-btn">통계</button>
-            <button class="logout-btn">로그아웃</button>
-        </div>
-    </div>
-
+    <%@ include file="../../common/header_member.jsp" %>
     <!-- 콘텐츠 -->
     <div class="content">
         <div class="section-header">
@@ -347,6 +281,7 @@
             <button class="add-btn" id="newMemberBtn">신규 회원 등록</button>
         </div>
 
+        <!-- 회원 목록 테이블 -->
         <div class="table-container">
             <table>
                 <thead>
@@ -360,14 +295,7 @@
                 </thead>
 
                 <tbody id="memberTableBody">
-                    <%@ include file="member_list.jsp" %>
-<%--                    <tr onclick="openModal('12가 3456', '김철수', '010-1234-5678', '2025-01-01', '2025-12-31')">--%>
-<%--                        <td>12가 3456</td>--%>
-<%--                        <td>김철수</td>--%>
-<%--                        <td>010-1234-5678</td>--%>
-<%--                        <td>2025-01-01</td>--%>
-<%--                        <td>2025-12-31</td>--%>
-<%--                    </tr>--%>
+                <%@ include file="member_list.jsp" %>
                 </tbody>
             </table>
         </div>
@@ -458,10 +386,11 @@
     <div class="modal-content">
         <form action="member_update.jsp" method="post">
             <div class="modal-header">회원 정보 수정</div>
+            <input type="hidden" name="originCarNum" id="originCarNum">
 
             <div class="form-group">
                 <label class="form-label">차량 번호 (필수)</label>
-                <input type="text" name="carNum" class="form-input" id="editCarNumber" readonly>
+                <input type="text" name="carNum" class="form-input" id="editCarNumber">
             </div>
 
             <div class="form-group">
@@ -492,7 +421,7 @@
     </div>
 </div>
 
-<!-- 삭제 확인 모달 -->
+<!-- 회원 삭제 모달 -->
 <div class="modal" id="deleteConfirmModal">
     <div class="modal-content">
         <form action="member_delete.jsp" method="post">
@@ -539,7 +468,12 @@
     }
 
     function openEditModal() {
-        document.getElementById('editCarNumber').value = document.getElementById('viewCarNumber').textContent;
+        // 기존 차량 번호
+        const originCarNum = document.getElementById('viewCarNumber').textContent;
+
+        // 새로 수정할 차량 번호
+        document.getElementById('originCarNum').value = originCarNum;
+        document.getElementById('editCarNumber').value = originCarNum;
         document.getElementById('editName').value = document.getElementById('viewName').textContent;
         document.getElementById('editPhone').value = document.getElementById('viewPhone').textContent;
         document.getElementById('editStartDate').value = document.getElementById('viewStartDate').textContent;
@@ -631,4 +565,5 @@
     }
 </script>
 </body>
+<%@ include file="../../common/footer.jsp" %>
 </html>

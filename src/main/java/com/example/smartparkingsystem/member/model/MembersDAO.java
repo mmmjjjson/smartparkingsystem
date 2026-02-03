@@ -20,9 +20,10 @@ public class MembersDAO {
 
     }
 
-    public void updateMember(MembersDTO membersDTO) { // 회원 정보 수정
+    public void updateMember(String originCarNum, MembersDTO membersDTO) { // 회원 정보 수정
         for (MembersDTO member : membersDTOList) {
-            if (member.getCarNum().equals(membersDTO.getCarNum())) {
+            if (member.getCarNum().equals(originCarNum)) {
+                member.setCarNum(membersDTO.getCarNum());
                 member.setMemberName(membersDTO.getMemberName());
                 member.setMemberPhone(membersDTO.getMemberPhone());
                 member.setStartDate(membersDTO.getStartDate());

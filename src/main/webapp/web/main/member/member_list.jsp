@@ -6,9 +6,10 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>회원 관리</title>
 </head>
 <body>
+<%-- 회원 전체 목록 --%>
 <%
     MembersDAO membersDAO = new MembersDAO();
     List<MembersDTO> members = membersDAO.selectAllMembers();

@@ -11,6 +11,7 @@ public class main {
         test();
     }
 
+    // 테스트용 메서드
     private static void test() {
         MembersDAO membersDAO = new MembersDAO();
 
@@ -39,8 +40,6 @@ public class main {
                 .endDate(LocalDateTime.now().plusMonths(12))
                 .build();
 
-        membersDAO.updateMember(updateMember);
-
         System.out.println("회원 수정");
         printMembers(membersDAO.selectAllMembers());
 
@@ -52,7 +51,6 @@ public class main {
         System.out.println("회원 삭제");
         printMembers(membersDAO.selectAllMembers());
     }
-
 
     // 회원 목록 출력용 메서드
     private static void printMembers(List<MembersDTO> members) {
