@@ -20,18 +20,10 @@ public class LoginProcessServlet extends HttpServlet {
 
         // TODO : 그냥 파라미터 받아서 리다이렉트형식으로 하려니까 새로고침으로 넘어가야해서 그냥 AJAX로 만들어봄 (좀 어설플 수 있음)
         switch (step) {
-            case "1" -> {
-                step1(req, resp);
-            }
-            case "2" -> {
-                step2(req, resp);
-            }
-            case "3" -> {
-                step3(req, resp);
-            }
-            default -> {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            }
+            case "1" -> step1(req, resp);
+            case "2" -> step2(req, resp);
+            case "3" -> step3(req, resp);
+            default -> resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
@@ -83,13 +75,15 @@ public class LoginProcessServlet extends HttpServlet {
     }
 
     // TODO: 나중에 DB연동시 수정
-    private boolean adminDB (String adminId, String password) {
+    private boolean adminDB(String adminId, String password) {
         return "admin".equals(adminId) && "1234".equals(password);
     }
-    private boolean emailDB (String email) {
+
+    private boolean emailDB(String email) {
         return "admin@naver.com".equals(email);
     }
-    private boolean otpDB (String otp) {
+
+    private boolean otpDB(String otp) {
         return "123456".equals(otp);
     }
 }

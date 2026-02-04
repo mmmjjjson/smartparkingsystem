@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <%-- 아이콘 --%>
+    <link rel="icon" href="data:,">
     <%@include file="/web/main/main_process.jsp"%>
 
     <meta charset="UTF-8">

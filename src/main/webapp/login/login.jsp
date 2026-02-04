@@ -53,6 +53,8 @@
         }
     </style>
 </head>
+<%-- 아이콘 --%>
+<link rel="icon" href="data:,">
 
 <body>
 
@@ -192,6 +194,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    const contextPath = "${pageContext.request.contextPath}"; // 절대 경로
+
     // Step 2로 이동
     function goStep2() {
         console.log("✅ Step 2로 이동");
@@ -245,7 +249,7 @@
         }
 
         // Servlet 연동
-        fetch("/login", {
+        fetch(contextPath + "/login", {
             method: "POST",
             credentials: "same-origin",
             headers: { // form값이 전송하는 파라미터를 받기위해 설정
@@ -272,7 +276,7 @@
             return;
         }
 
-        fetch("/login", {
+        fetch(contextPath + "/login", {
             method: "POST",
             credentials: "same-origin",
             headers: {
@@ -303,7 +307,7 @@
             return;
         }
 
-        fetch("/login", {
+        fetch(contextPath + "/login", {
             method: "POST",
             credentials: "same-origin",
             headers: {
@@ -326,7 +330,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         const otpInput = document.getElementById('otpCode');
         if (otpInput) {
-            otpInput.addEventListener('input', (e) => this.value = this.value.replace(/[^0-9]/g, ''));
+            otpInput.addEventListener('input', function(e) {  // 화살표 함수 대신 일반 function 사용
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
         }
     });
 
