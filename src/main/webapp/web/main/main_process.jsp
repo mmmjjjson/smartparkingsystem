@@ -5,7 +5,7 @@
     System.out.println(session.getId());
     System.out.println(adminId);
     if (adminId == null) {
-        response.sendRedirect("/index.jsp");
+        response.sendRedirect("/login");
         return;
     }
 %>

@@ -1,12 +1,11 @@
-create table parking_history
+CREATE TABLE IF NOT EXISTS `parking_history`
 (
-    no           int(10) auto_increment comment '인덱스'
-        primary key,
-    parking_area varchar(10)                           not null comment '주차구역',
-    car_num      varchar(10)                           not null comment '차량번호',
-    car_type     enum ('일반', '경차', '장애인') default '일반' not null comment '분류',
-    is_member    tinyint(1)                            not null comment '회원유무',
-    entry_time   datetime                              not null comment '입차시간',
-    exit_time    datetime                              null comment '출차시간'
-)
-    comment '주차내역';
+    `park_no`       BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '주차 기록 인덱스',
+    `parking_area`  VARCHAR(10) NOT NULL COMMENT '주차 구역 (A1 ~ A20)',
+    `car_num`       VARCHAR(10) NOT NULL COMMENT '차량번호',
+    `car_type`      VARCHAR(10)          DEFAULT '일반' COMMENT '차량 종류(일반/경차/장애인)',
+    `is_member`     BOOLEAN     NOT NULL DEFAULT FALSE COMMENT '월정액 회원 유무 True(회원) / False(비회원)',
+    `entry_time`    DATETIME    NOT NULL COMMENT '입차 시간',
+    `exit_time`     DATETIME COMMENT '출차 시간',
+    `total_minutes` INT COMMENT '총 주차 시간'
+) COMMENT '주차';

@@ -1,10 +1,17 @@
-create table payment_info
+CREATE TABLE IF NOT EXISTS `payment_info`
 (
-    basic_charge       int    default 2000 null comment '기본요금',
-    extra_charge       int    default 1000 null comment '추가요금',
-    small_car_discount double default 30   not null comment '경차할인율',
-    disabled_discount  double default 50   not null comment '장애인할인율',
-    basic_time         int    default 60   null comment '기본시간',
-    extra_time         int    default 30   null comment '초과 시간'
-)
-    comment '정산 정보';
+    `pno`                BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '정책 인덱스',
+    `free_time`          INT COMMENT '무료 회차 시간',
+    `basic_time`         INT COMMENT '기본 시간',
+    `extra_time`         INT COMMENT '초과 시간',
+    `basic_charge`       INT COMMENT '기본 요금',
+    `extra_charge`       INT COMMENT '초과 시간 당 추가 요금',
+    `max_charge`         INT COMMENT '일일 최대 요금',
+    `small_car_discount` DOUBLE COMMENT '경차 할인율',
+    `disabled_discount`  DOUBLE COMMENT '장애인 할인율',
+    `is_active`          BOOLEAN  DEFAULT TRUE COMMENT '정책 활성화 여부 True (현재) / False (이전)',
+    `admin_id`           VARCHAR(20) COMMENT '정책 수정한 관리자 아이디',
+    `updated_at`         DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '관리자 정책 수정일',
+    CONSTRAINT `chk_basic_time` CHECK (`basic_time` >= 0),
+    CONSTRAINT `fk_admin_id` FOREIGN KEY (`admin_id`) REFERENCES admin (`admin_id`)
+) COMMENT '정책';

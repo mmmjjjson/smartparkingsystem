@@ -1,15 +1,11 @@
-create table members
+CREATE TABLE IF NOT EXISTS `members`
 (
-    car_num      varchar(10)                            not null comment '차량번호'
-        primary key,
-    member_name  varchar(20)                            not null comment '회원 이름',
-    start_date   date                                   not null comment '이용 시작일',
-    end_date     date                                   not null comment '이용 만료일',
-    is_active    tinyint(1) default 1                   not null comment '이용일 만료 여',
-    created_at   datetime   default current_timestamp() null comment '최초 등록일',
-    updated_at   datetime                               null on update current_timestamp() comment '업데이트된 날짜',
-    member_phone varchar(15)                            not null comment '회원 전화번호',
-    constraint user_phone
-        unique (member_phone)
-)
-    comment '회원정보';
+    `mno`          BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '인덱스',
+    `car_num`      VARCHAR(10) NOT NULL COMMENT '차량 번호',
+    `member_name`  VARCHAR(20) NOT NULL COMMENT '이름',
+    `member_phone` VARCHAR(15) NOT NULL COMMENT '연락처',
+    `start_date`   DATE        NOT NULL COMMENT '이용 시작일',
+    `end_date`     DATE        NOT NULL COMMENT '이용 만료일',
+    INDEX idx_start_date (`start_date`),
+    INDEX idx_end_date (`end_date`)
+) COMMENT '회원';

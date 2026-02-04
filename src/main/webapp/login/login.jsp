@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>관리자 로그인</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="css/styles.css" rel="stylesheet"/>
+    <link href="../login/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
     <%-- 템플릿 수정 css --%>
@@ -106,15 +106,8 @@
                                             <label>비밀번호</label>
                                         </div>
 
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="checkbox" id="rememberMe">
-                                            <label class="form-check-label" for="rememberMe">
-                                                로그인 상태 유지
-                                            </label>
-                                        </div>
-
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <a class="small" href="password.jsp">비밀번호 재설정</a>
+                                            <a class="small" href="/password">비밀번호 재설정</a>
                                             <button type="submit" class="btn btn-primary px-4">
                                                 다음
                                             </button>
@@ -194,7 +187,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const contextPath = "${pageContext.request.contextPath}"; // 절대 경로
 
     // Step 2로 이동
     function goStep2() {
@@ -249,13 +241,13 @@
         }
 
         // Servlet 연동
-        fetch(contextPath + "/login", {
+        fetch("/login", {
             method: "POST",
             credentials: "same-origin",
             headers: { // form값이 전송하는 파라미터를 받기위해 설정
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: "step=1&adminId=" + adminId + "&password=" + password
+            body: "step=1&adminId=" + adminId + "&password=" + password,
         })
             .then(res => {
                 if (res.status === 200) {
@@ -276,7 +268,7 @@
             return;
         }
 
-        fetch(contextPath + "/login", {
+        fetch("/login", {
             method: "POST",
             credentials: "same-origin",
             headers: {
@@ -307,7 +299,7 @@
             return;
         }
 
-        fetch(contextPath + "/login", {
+        fetch("/login", {
             method: "POST",
             credentials: "same-origin",
             headers: {

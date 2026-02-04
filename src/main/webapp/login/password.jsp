@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <style>
-    body {
+    div:first-of-type {
         background-color: #f0f2f5;
     }
 </style>
@@ -13,7 +13,7 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>비밀번호 재설정 - 관리자 시스템</title>
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="../login/css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body>
@@ -35,8 +35,8 @@
                                                 <label for="inputEmail">이메일</label>
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <a class="small" href="login.jsp">로그인 화면</a>
-                                                <a class="btn btn-primary" href="login.jsp">초기화</a>
+                                                <a class="small" href="/login">로그인 화면</a>
+                                                <a class="btn btn-primary" href="/login">초기화</a>
                                             </div>
                                         </form>
                                     </div>
