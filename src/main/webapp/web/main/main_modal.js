@@ -61,15 +61,16 @@ document.querySelectorAll('.parking-card').forEach(card => {
 modalAction.addEventListener('click', () => {
     if (modalAction.innerText === "입차 등록") {
         const carRegex = /^\d{2,3}[가-힣]\d{4}$/; // 차량번호 정규표현식
-        const carNum = document.getElementById('input-carNum'); // input-carNum : 사용자 입력 차량번호
+        const inputCarNum = document.getElementById('input-carNum'); // input-carNum : 사용자 입력 차량번호
+        const carNum = inputCarNum.value.trim();
         const selectedCarType = document.querySelector('input[name="carType"]:checked');
 
-        if (!carNum.value.trim()) {
+        if (!carNum) {
             alert("차량 번호를 입력해 주세요");
             return;
-        } else if (!carRegex.test(carNum.value.trim())) {
+        } else if (!carRegex.test(carNum)) {
             alert('올바른 형식의 차량번호를 입력하세요.')
-            carNum.focus();
+            inputCarNum.focus();
             return;
         } else if (!selectedCarType) {
             alert('차종을 선택해 주세요.')
