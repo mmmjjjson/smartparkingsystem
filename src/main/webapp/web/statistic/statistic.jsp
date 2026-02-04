@@ -82,6 +82,8 @@
           font-size: 16px;
           font-weight: bold;
           margin-bottom: 15px;
+            width: 500px;
+            float: left;
         }
         /* 통계 블록 공통 박스 */
         .info-box {
@@ -121,7 +123,9 @@
           grid-template-columns: 2fr 1fr;
           gap: 20px;
         }
-
+        #car-type {
+            display: flex;
+        }
         .right-section {
           border: 2px solid #4472c4;
           padding: 20px;
@@ -132,6 +136,7 @@
         #pie_chart {
             width: 100%;
             height: 260px;   /* 또는 300px */
+            float: left;
         }
 
         /* 요약 */
@@ -147,6 +152,8 @@
           text-align: center;
           background: #fff;
           font-weight: bold;
+            font-size: 14px;
+            color: #333;
         }
 
 
@@ -159,7 +166,6 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/modules/annotations.js"></script>
 
 
@@ -299,6 +305,7 @@ function drawDailyChart(year, month) {
     }
 
     Highcharts.chart('daily-sales', {
+        accessibility: { enabled: false },
         chart: { type: 'line' },
         title: { text: ''},
         xAxis: {
@@ -396,15 +403,12 @@ document.getElementById('monthSelect').addEventListener('change', function() {
 
 <div class="info-box">
     <div class="section-title">월별 매출 바 그래프</div>
-
     <div class="filter-box">
         <select id="yearSelect2">
         </select>
     </div>
 
     <div id="monthly_sales" class="graph_placeholder">
-
-
         <script>
 // 월별 매출 SELECT 옵션 자동 생성
 function populateYearSelect() {
@@ -499,7 +503,7 @@ document.getElementById('yearSelect2').addEventListener('change', function() {
 
 
 <!-- 차종 통계 -->
-<div class="info-box">
+<div id="car-type" class="info-box">
     <div class="section-title">차종 통계</div>
 
     <div class="car-type-section">
@@ -580,59 +584,97 @@ drawCarTypePieAll();
 </script>
 
 <script>
-// 통계 요약 업데이트 함수
-function updateSummary(year, month) {
-    const today = new Date();
-    const todayStr = today.toISOString().slice(0,10); // "2026-02-04"
+    // 통계 요약 업데이트 함수
+    function updateSummary() {
+        console.log('updateSummary 함수 시작');
+        console.log('parkingDataByYear:', parkingDataByYear); // 데이터 확인!
 
-    // 1) 일별 총 매출액 (오늘)
-    let dailySales = 0;
-    // 2) 일일 입차 대수 (오늘)
-    let dailyCount = 0;
-    // 3) 누적 차량 대수 (전체)
-    let totalCount = 0;
+        const today = new Date();
+        const todayStr = today.toISOString().slice(0,10);
 
-    // 전체 연도 순회
-    for (let y of Object.keys(parkingDataByYear)) {
-        const yearData = parkingDataByYear[y];
-        for (let monthData of yearData) {
-            for (let rec of monthData.records) {
-                // 누적 차량
-                totalCount++;
+        console.log('오늘 날짜:', todayStr);
 
-                // 오늘 날짜 체크
-                if (rec.entry_time.startsWith(todayStr)) {
-                    dailyCount++;
+        let dailySales = 0;
+        let dailyCount = 0;
+        let totalCount = 0;
 
-                    // 매출 계산 (멤버 제외)
-                    if (rec.is_member !== 1) {
-                        const minutes = spendingTime(rec.entry_time, rec.exit_time);
-                        if (minutes > 10) {
-                            let charge = paymentInfo.basicCharge;
-                            if (minutes > paymentInfo.basicTime) {
-                                let extraUnits = Math.ceil((minutes - paymentInfo.basicTime)/paymentInfo.extraTime);
-                                charge += extraUnits * paymentInfo.extraCharge;
+        // parkingDataByYear가 undefined인지 체크
+        if (!parkingDataByYear) {
+            console.error('parkingDataByYear가 정의되지 않았습니다!');
+            return;
+        }
+
+        // 전체 연도 순회
+        for (let y of Object.keys(parkingDataByYear)) {
+            const yearData = parkingDataByYear[y];
+            for (let monthData of yearData) {
+                for (let rec of monthData.records) {
+                    totalCount++;
+
+                    if (rec.entry_time.startsWith(todayStr)) {
+                        dailyCount++;
+
+                        if (rec.is_member !== 1) {
+                            const minutes = spendingTime(rec.entry_time, rec.exit_time);
+                            if (minutes > 10) {
+                                let charge = paymentInfo.basicCharge;
+                                if (minutes > paymentInfo.basicTime) {
+                                    let extraUnits = Math.ceil((minutes - paymentInfo.basicTime)/paymentInfo.extraTime);
+                                    charge += extraUnits * paymentInfo.extraCharge;
+                                }
+                                if (rec.car_type === "경차") charge *= (1 - paymentDiscount.smallCarDiscount);
+                                if (rec.car_type === "장애인") charge *= (1 - paymentDiscount.disabledDiscount);
+                                if (charge > paymentInfo.maxCharge) charge = paymentInfo.maxCharge;
+                                charge = Math.floor(charge);
+                                dailySales += charge;
                             }
-                            if (rec.car_type === "경차") charge *= (1 - paymentDiscount.smallCarDiscount);
-                            if (rec.car_type === "장애인") charge *= (1 - paymentDiscount.disabledDiscount);
-                            if (charge > paymentInfo.maxCharge) charge = paymentInfo.maxCharge;
-                            charge = Math.floor(charge);
-                            dailySales += charge;
                         }
                     }
                 }
             }
         }
+
+        console.log('계산 결과 - dailySales:', dailySales);
+        console.log('계산 결과 - dailyCount:', dailyCount);
+        console.log('계산 결과 - totalCount:', totalCount);
+
+        const summaryBoxes = document.querySelectorAll('.summary-box');
+        console.log('summaryBoxes 개수:', summaryBoxes.length);
+
+        if (summaryBoxes.length >= 3) {
+            // 각각 개별적으로 업데이트하면서 에러 체크
+            try {
+                summaryBoxes[0].textContent = '일일 총 매출액 (오늘): ' + dailySales.toLocaleString() + '원';
+                console.log('Box 0 업데이트 완료');
+            } catch(e) {
+                console.error('Box 0 에러:', e);
+            }
+
+            try {
+                summaryBoxes[1].textContent = '일일 입차 대수 (오늘): ' + dailyCount + '대';
+                console.log('Box 1 업데이트 완료');
+            } catch(e) {
+                console.error('Box 1 에러:', e);
+            }
+
+            try {
+                summaryBoxes[2].textContent = '누적 차량 대수: ' + totalCount + '대';
+                console.log('Box 2 업데이트 완료');
+            } catch(e) {
+                console.error('Box 2 에러:', e);
+            }
+
+            console.log('화면 업데이트 완료!');
+        } else {
+            console.error('summary-box를 찾을 수 없습니다!');
+        }
     }
 
-    // 화면 반영
-    const summaryBoxes = document.querySelectorAll('.summary-box');
-    summaryBoxes[0].textContent = `일일 총 매출액 (오늘): ${dailySales.toLocaleString()}원`;
-    summaryBoxes[1].textContent = `일일 입차 대수 (오늘): ${dailyCount}대`;
-    summaryBoxes[2].textContent = `누적 차량 대수: ${totalCount}대`;
-}
-
-// 초기 실행
-updateSummary();
+    // 페이지 로드 후 실행
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateSummary);
+    } else {
+        // 이미 로드된 경우
+        updateSummary();
+    }
 </script>
-
