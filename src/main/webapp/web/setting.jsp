@@ -49,12 +49,13 @@
 
         /* 컨텐츠 레이아웃 */
         .container {
-            max-width: 1100px;
-            margin: 20px auto;
+            max-width: 1400px;
+            margin: 30px auto;
             padding: 0 20px;
             display: grid;
             grid-template-columns: 1.8fr 1fr;
-            gap: 25px;
+            gap: 30px;
+            font-size: 1.1rem;
         }
 
         .title-bar {
@@ -66,31 +67,31 @@
             color: #444;
         }
 
-        .card { background: white; border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; }
-        .card-label { display: inline-block; background: #eee; padding: 4px 12px; border: 1px solid #ccc; font-size: 13px; margin-bottom: 15px; font-weight: bold; }
+        .card { background: white; border: 2.5px solid var(--border-color); padding: 17px 28px 28px; margin-bottom: 25px; }
+        .card-label { display: inline-block; background: white; padding: 4px 12px 4px 0; border: 1px solid white; font-size: 17px; margin-bottom: 15px; font-weight: bold; }
 
-        /* 강조된 영역 (이미지 2번 단계) */
-        .highlight-card { border: 2.5px solid var(--main-color); }
+        /* 클릭시 박스 하이라이트 */
+        .card:hover { border: 2.5px solid var(--main-color); margin-bottom: 25px; }
 
         .input-row { display: flex; gap: 15px; }
-        .input-item { flex: 1; border: 1px solid var(--border-color); padding: 15px; background: #fafafa; text-align: center; }
-        .input-item label { display: block; font-size: 12px; color: #666; margin-bottom: 8px; font-weight: bold; }
-        .input-item input { width: 85%; padding: 8px; border: 1px solid #ccc; text-align: right; }
+        .input-item { flex: 1; border: 1px solid var(--border-color); padding: 20px; background: #fafafa; text-align: center; }
+        .input-item label { display: block; font-size: 15px; color: #666; margin-bottom: 12px; font-weight: bold; }
+        .input-item input { width: 90%; padding: 12px; border: 1px solid #ccc; text-align: right; font-size: 16px; }
 
         /* 우측 미리보기 및 저장 */
         .btn-area { text-align: right; margin-bottom: 15px; }
         .save-btn { background-color: var(--main-color); color: white; padding: 10px 50px; border: none; font-weight: bold; cursor: pointer; border-radius: 3px; font-size: 16px; }
 
-        .preview-box { background: white; border: 2.5px solid var(--main-color); padding: 25px; position: relative; }
+        .preview-box { background: white; border: 2.5px solid var(--main-color); padding: 35px; position: relative; }
         .preview-title { font-weight: bold; margin-bottom: 20px; display: block; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .preview-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
+        .preview-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 17px; }
         .preview-row b { color: var(--main-color); }
 
         .update-info { margin-top: 30px; color: var(--main-color); font-weight: bold; font-size: 14px; line-height: 1.6; }
     </style>
 </head>
 <body>
-// 임시 header!
+<%--<jsp:include page="" />--%>
 <div class="header">
     <h1>스마트 주차 관리 시스템</h1>
     <ul class="nav">
@@ -111,11 +112,11 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>기본 주차 요금 수정란 (default: 2,000원)</label>
-                    <input type="number" name="baseFee" id="baseFee" placeholder="3000" oninput="syncPreview()">
+                    <input type="text" name="baseFee" id="baseFee" placeholder="3000" oninput="syncPreview()">
                 </div>
                 <div class="input-item">
                     <label>기본 주차 시간 수정란 (default: 60분)</label>
-                    <input type="number" name="baseTime" id="baseTime" placeholder="60" oninput="syncPreview()">
+                    <input type="text" name="baseTime" id="baseTime" placeholder="60" oninput="syncPreview()">
                 </div>
             </div>
         </div>
@@ -125,16 +126,16 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>추가 요금 수정란 (default: 1,000원)</label>
-                    <input type="number" name="addFee" id="addFee" placeholder="1000" oninput="syncPreview()">
+                    <input type="text" name="addFee" id="addFee" placeholder="1000" oninput="syncPreview()">
                 </div>
                 <div class="input-item">
                     <label>추가 요금 기준 시간 수정란 (default: 30분)</label>
-                    <input type="number" name="addTime" id="addTime" placeholder="30" oninput="syncPreview()">
+                    <input type="text" name="addTime" id="addTime" placeholder="30" oninput="syncPreview()">
                 </div>
             </div>
         </div>
 
-        <div class="card highlight-card">
+        <div class="card">
             <span class="card-label">할인율 설정</span>
             <div class="input-row">
                 <div class="input-item">
@@ -208,6 +209,6 @@
         }
     }
 </script>
-
+<%--<%@ include file="../inc/footer.jsp"%>--%>
 </body>
 </html>
