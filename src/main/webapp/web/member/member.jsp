@@ -273,7 +273,7 @@
 <body>
 <div class="container">
     <!-- 헤더 -->
-    <%@ include file="../../common/header_member.jsp" %>
+    <%@ include file="../common/header_member.jsp" %>
     <!-- 콘텐츠 -->
     <div class="content">
         <div class="section-header">
@@ -565,5 +565,5 @@
     }
 </script>
 </body>
-<%@ include file="../../common/footer.jsp" %>
+<%@ include file="../common/footer.jsp" %>
 </html>
