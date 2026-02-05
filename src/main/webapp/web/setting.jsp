@@ -112,11 +112,11 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>기본 주차 요금 수정란 (default: 2,000원)</label>
-                    <input type="number" name="baseFee" id="baseFee" placeholder="3000" oninput="syncPreview()">
+                    <input type="text" name="baseFee" id="baseFee" placeholder="3000" oninput="syncPreview()">
                 </div>
                 <div class="input-item">
                     <label>기본 주차 시간 수정란 (default: 60분)</label>
-                    <input type="number" name="baseTime" id="baseTime" placeholder="60" oninput="syncPreview()">
+                    <input type="text" name="baseTime" id="baseTime" placeholder="60" oninput="syncPreview()">
                 </div>
             </div>
         </div>
@@ -126,11 +126,11 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>추가 요금 수정란 (default: 1,000원)</label>
-                    <input type="number" name="addFee" id="addFee" placeholder="1000" oninput="syncPreview()">
+                    <input type="text" name="addFee" id="addFee" placeholder="1000" oninput="syncPreview()">
                 </div>
                 <div class="input-item">
                     <label>추가 요금 기준 시간 수정란 (default: 30분)</label>
-                    <input type="number" name="addTime" id="addTime" placeholder="30" oninput="syncPreview()">
+                    <input type="text" name="addTime" id="addTime" placeholder="30" oninput="syncPreview()">
                 </div>
             </div>
         </div>
@@ -140,11 +140,11 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>경차 할인율 (default: 0.3)</label>
-                    <input type="text" name="discountCompact" id="discountCompact" placeholder="0.3" oninput="syncPreview()">
+                    <input type="number" name="discountCompact" id="discountCompact" placeholder="0.3" oninput="syncPreview()">
                 </div>
                 <div class="input-item">
                     <label>장애인 할인율 (default: 0.5)</label>
-                    <input type="text" name="discountDisabled" id="discountDisabled" placeholder="0.5" oninput="syncPreview()">
+                    <input type="number" name="discountDisabled" id="discountDisabled" placeholder="0.5" oninput="syncPreview()">
                 </div>
             </div>
         </div>
