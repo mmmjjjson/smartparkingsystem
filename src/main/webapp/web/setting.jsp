@@ -91,17 +91,7 @@
     </style>
 </head>
 <body>
-<%--<jsp:include page="" />--%>
-<div class="header">
-    <h1>스마트 주차 관리 시스템</h1>
-    <ul class="nav">
-        <li>대시보드</li>
-        <li>회원 관리</li>
-        <li class="active">설정 관리</li>
-        <li>통계</li>
-    </ul>
-    <button class="logout-btn">로그아웃</button>
-</div>
+<%@ include file="common/header_setting.jsp"%>>
 
 <div class="container">
     <div class="title-bar">설정 관리 - 요금 및 할인 정책</div>
