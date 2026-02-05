@@ -140,11 +140,11 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>경차 할인율 (default: 0.3)</label>
-                    <input type="number" name="discountCompact" id="discountCompact" placeholder="0.3" oninput="syncPreview()">
+                    <input type="text" name="discountCompact" id="discountCompact" placeholder="0.3" oninput="syncPreview()">
                 </div>
                 <div class="input-item">
                     <label>장애인 할인율 (default: 0.5)</label>
-                    <input type="number" name="discountDisabled" id="discountDisabled" placeholder="0.5" oninput="syncPreview()">
+                    <input type="text" name="discountDisabled" id="discountDisabled" placeholder="0.5" oninput="syncPreview()">
                 </div>
             </div>
         </div>
