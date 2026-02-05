@@ -1,5 +1,5 @@
 <%@ page import="com.example.smartparkingsystem.member.model.MembersDAO" %>
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%-- 회원 삭제 --%>
 <%
     String carNum = request.getParameter("carNum");

@@ -1,7 +1,7 @@
 <%@ page import="com.example.smartparkingsystem.member.model.MembersDAO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.example.smartparkingsystem.member.model.MembersDTO" %>
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
