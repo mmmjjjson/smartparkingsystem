@@ -79,12 +79,19 @@
 
         /* 섹션 제목 */
         .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .section-title1 {
           font-size: 16px;
           font-weight: bold;
           margin-bottom: 15px;
             width: 500px;
             float: left;
         }
+
         /* 통계 블록 공통 박스 */
         .info-box {
           border: 1px solid #ddd;
@@ -107,7 +114,7 @@
 
         /* 그래프 영역 */
         .graph_placeholder {
-          height: 280px;
+          height: 330px;
           border: 2px dashed #ccc;
           display: flex;
           align-items: center;
@@ -124,7 +131,6 @@
           gap: 20px;
         }
         #car-type {
-            display: flex;
         }
         .right-section {
           border: 2px solid #4472c4;
@@ -198,7 +204,7 @@
 
 <!-- *** 일별 매출 *** -->
 <div class="info-box">
-    <div class="section-title">일별 매출 선 그래프</div>
+    <div class="section-title1">일별 매출 선 그래프</div>
 
     <div class="filter-box">
         <select id="yearSelect">
@@ -310,7 +316,6 @@ function drawDailyChart(year, month) {
         title: { text: ''},
         xAxis: {
             categories: categories,
-            title: { text: '일' }
         },
         yAxis: {
             title: { text: '매출액 (원)' },
@@ -320,6 +325,13 @@ function drawDailyChart(year, month) {
             valueSuffix: ' 원',
             valuePrefix: ''
         },
+        credits: { // 오른쪽 하단 출처 링크
+            enabled: false
+        },
+        legend: { // 범례 표시 여부
+            enabled: false
+        },
+
         series: [{
             name: '일별 매출',
             data: salesData,
@@ -402,7 +414,7 @@ document.getElementById('monthSelect').addEventListener('change', function() {
 
 
 <div class="info-box">
-    <div class="section-title">월별 매출 바 그래프</div>
+    <div class="section-title1">월별 매출 바 그래프</div>
     <div class="filter-box">
         <select id="yearSelect2">
         </select>
@@ -469,7 +481,6 @@ function drawChart(year) {
         title: { text: ''},
         xAxis: {
             categories: yearData.map(d => d.month + '월'),
-            title: { text: '월' }
         },
         yAxis: [
             { title: { text: '월별 매출액 (원)' },
@@ -481,6 +492,16 @@ function drawChart(year) {
             }
         ],
         tooltip: { shared: true, valueSuffix: ' 원' },
+        credits: { // 오른쪽 하단 출처 링크
+            enabled: false
+        },
+        // exporting: { // 오른쪽 상단 메뉴 버튼
+        //     enabled: false
+        // },
+        legend: { // 범례 표시 여부
+            enabled: false
+        },
+
         series: [
             { type: 'line', name: '월별 매출', data: monthlySales, yAxis: 0, color: '#0073e6', zIndex: 1 },
             { type: 'column', name: '누적 매출', data: chartAllCharge, yAxis: 1, color: '#ffd2a9', opacity: 0.8, zIndex: 0 }
@@ -557,7 +578,7 @@ function getCarTypeCountAll() {
     return result;
 }
 
-// Highcharts 파이차트 (전체)
+// 파이차트
 function drawCarTypePieAll() {
     const countMap = getCarTypeCountAll();
     const seriesData = Object.entries(countMap).map(
@@ -575,6 +596,10 @@ function drawCarTypePieAll() {
                 dataLabels: { enabled: true, format: '{point.name}: {point.y}' }
             }
         },
+        credits: { // 오른쪽 하단 출처 링크
+            enabled: false
+        },
+
         series: [{ name: '차종', data: seriesData }]
     });
 }
