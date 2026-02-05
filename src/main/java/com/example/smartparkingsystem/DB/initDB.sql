@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS `mini_project3`;
+CREATE DATABASE IF NOT EXISTS `smart-_parking_system`;
 
-USE `mini_project3`;
+USE `smart-_parking_system`;
 
 CREATE TABLE IF NOT EXISTS `admin`
 (
@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS `members`
     `member_phone` VARCHAR(15) NOT NULL COMMENT '연락처',
     `start_date`   DATE        NOT NULL COMMENT '이용 시작일',
     `end_date`     DATE        NOT NULL COMMENT '이용 만료일',
-    INDEX idx_date (`start_date`, `end_date`)
+    `member_charge` INT NOT NULL COMMENT '회원권 결제 요금',
+    INDEX idx_date (`start_date`, `end_date`),
+    CONSTRAINT `chk_member_charge` CHECK (`member_charge` >= 0)
 ) COMMENT '회원';
 
 
