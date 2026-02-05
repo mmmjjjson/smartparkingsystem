@@ -92,7 +92,7 @@
     </style>
 </head>
 <body>
-<%@ include file="common/header_setting.jsp"%>>
+<%@ include file="common/header_setting.jsp"%>
 
 <div class="container">
     <div class="title-bar">설정 관리 - 요금 및 할인 정책</div>
