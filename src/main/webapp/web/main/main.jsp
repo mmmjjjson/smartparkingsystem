@@ -99,7 +99,7 @@
 <%@ include file="parking_modal.jsp"%>
 
 <!-- 공통 footer 구역 -->
-<%@ include file="../common/footer.jsp"%>
+<%--<%@ include file="../common/footer.jsp"%>--%>
 
 <!-- bootstrap JS (모달 동작용) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
