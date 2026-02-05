@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `payment_history`
     `final_charge`    INT      DEFAULT 0 COMMENT '결제 요금',
     `is_paid`         BOOLEAN  DEFAULT FALSE COMMENT '결제 여부',
     `payment_time`    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '결제 시간',
+    CONSTRAINT `chk_total_minutes` CHECK (`total_minutes` >= 0),
     CONSTRAINT `chk_total_charge` CHECK (`total_charge` >= 0),
     CONSTRAINT `chk_discount_amount` CHECK (`discount_amount` >= 0),
     CONSTRAINT `chk_final_charge` CHECK (`final_charge` >= 0),

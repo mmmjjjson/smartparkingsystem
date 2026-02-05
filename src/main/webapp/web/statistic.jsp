@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="ko">
-<%@include file="/web/main/main_process.jsp"%>
+<%--<%@include file="/web/main/main_process.jsp"%>--%>
 <head>
   <meta charset="UTF-8">
   <title>통계 | 스마트 주차 관리 시스템</title>

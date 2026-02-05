@@ -24,8 +24,7 @@ CREATE TABLE IF NOT EXISTS `members`
     `member_phone` VARCHAR(15) NOT NULL COMMENT '연락처',
     `start_date`   DATE        NOT NULL COMMENT '이용 시작일',
     `end_date`     DATE        NOT NULL COMMENT '이용 만료일',
-    INDEX idx_start_date (`start_date`),
-    INDEX idx_end_date (`end_date`)
+    INDEX idx_date (`start_date`, `end_date`)
 ) COMMENT '회원';
 
 
@@ -34,8 +33,8 @@ CREATE TABLE IF NOT EXISTS `parking_history`
     `park_no`       BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '주차 기록 인덱스',
     `parking_area`  VARCHAR(10) NOT NULL COMMENT '주차 구역 (A1 ~ A20)',
     `car_num`       VARCHAR(10) NOT NULL COMMENT '차량번호',
-    `car_type`      VARCHAR(10)          DEFAULT '일반' COMMENT '차량 종류(일반/경차/장애인)',
-    `is_member`     BOOLEAN     NOT NULL DEFAULT FALSE COMMENT '월정액 회원 유무 True(회원) / False(비회원)',
+    `car_type`      ENUM ('일반', '경차', '장애인') DEFAULT '일반' COMMENT '차량 종류(일반/경차/장애인)',
+    `is_member`     BOOLEAN     NOT NULL     DEFAULT FALSE COMMENT '월정액 회원 유무 True(회원) / False(비회원)',
     `entry_time`    DATETIME    NOT NULL COMMENT '입차 시간',
     `exit_time`     DATETIME COMMENT '출차 시간',
     `total_minutes` INT COMMENT '총 주차 시간'
@@ -56,7 +55,14 @@ CREATE TABLE IF NOT EXISTS `payment_info`
     `is_active`          BOOLEAN  DEFAULT TRUE COMMENT '정책 활성화 여부 True (현재) / False (이전)',
     `admin_id`           VARCHAR(20) COMMENT '정책 수정한 관리자 아이디',
     `updated_at`         DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '관리자 정책 수정일',
+    CONSTRAINT `chk_free_time` CHECK (`free_time` >= 0),
     CONSTRAINT `chk_basic_time` CHECK (`basic_time` >= 0),
+    CONSTRAINT `chk_extra_time` CHECK (`extra_time` >= 0),
+    CONSTRAINT `chk_basic_charge` CHECK (`basic_charge` >= 0),
+    CONSTRAINT `chk_extra_charge` CHECK (`extra_charge` >= 0),
+    CONSTRAINT `chk_max_charge` CHECK (`max_charge` >= 0),
+    CONSTRAINT `chk_small_car_discount` CHECK (`small_car_discount` >= 0),
+    CONSTRAINT `chk_disabled_discount` CHECK (`disabled_discount` >= 0),
     CONSTRAINT `fk_admin_id` FOREIGN KEY (`admin_id`) REFERENCES admin (`admin_id`)
 ) COMMENT '정책';
 
@@ -77,6 +83,7 @@ CREATE TABLE IF NOT EXISTS `payment_history`
     `final_charge`    INT      DEFAULT 0 COMMENT '결제 요금',
     `is_paid`         BOOLEAN  DEFAULT FALSE COMMENT '결제 여부',
     `payment_time`    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '결제 시간',
+    CONSTRAINT `chk_total_minutes` CHECK (`total_minutes` >= 0),
     CONSTRAINT `chk_total_charge` CHECK (`total_charge` >= 0),
     CONSTRAINT `chk_discount_amount` CHECK (`discount_amount` >= 0),
     CONSTRAINT `chk_final_charge` CHECK (`final_charge` >= 0),

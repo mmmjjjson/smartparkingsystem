@@ -4,7 +4,7 @@
 <head>
     <%-- 아이콘 --%>
     <link rel="icon" href="data:,">
-    <%@include file="/web/main/main_process.jsp"%>
+<%--    <%@include file="/web/main/main_process.jsp"%>--%>
 
     <meta charset="UTF-8">
     <title>반월당 스마트 주차 관리 시스템</title>
