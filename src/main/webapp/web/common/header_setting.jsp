@@ -3,7 +3,7 @@
     <h1>스마트 주차 관리 시스템</h1>
     <ul class="nav">
         <li><a href="main/main.jsp">대시보드</a></li>
-        <li><a href="member.jsp">회원 관리</a></li>
+        <li><a href="../web/main/member/member.jsp">회원 관리</a></li>
         <li class="active"><a href="setting.jsp">설정 관리</a></li>
         <li><a href="statistic.jsp">통계</a></li>
     </ul>
