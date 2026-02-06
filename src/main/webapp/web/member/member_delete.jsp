@@ -1,4 +1,4 @@
-<%@ page import="com.example.smartparkingsystem.member.model.MembersDAO" %>
+<%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%-- 회원 삭제 --%>
 <%

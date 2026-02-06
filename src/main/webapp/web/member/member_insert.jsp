@@ -2,6 +2,8 @@
 <%@ page import="com.example.smartparkingsystem.member.model.*" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.LocalDate" %>
+<%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
+<%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
 <%-- 신규 회원 등록 --%>
 <%
     MembersDTO member = MembersDTO.builder()

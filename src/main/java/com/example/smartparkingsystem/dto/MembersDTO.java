@@ -1,4 +1,4 @@
-package com.example.smartparkingsystem.member.model;
+package com.example.smartparkingsystem.dto;
 
 import lombok.*;
 

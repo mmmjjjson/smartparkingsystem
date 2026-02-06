@@ -1,6 +1,6 @@
-<%@ page import="com.example.smartparkingsystem.member.model.MembersDAO" %>
+<%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.example.smartparkingsystem.member.model.MembersDTO" %>
+<%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="ko">

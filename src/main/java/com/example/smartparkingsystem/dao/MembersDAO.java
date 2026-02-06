@@ -1,4 +1,6 @@
-package com.example.smartparkingsystem.member.model;
+package com.example.smartparkingsystem.dao;
+
+import com.example.smartparkingsystem.dto.MembersDTO;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.example.smartparkingsystem.member.model.*" %>
 <%@ page import="java.time.LocalDate" %>
+<%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
+<%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
 <%-- 회원 정보 수정 --%>
 <%
     String originCarNum = request.getParameter("originCarNum");
