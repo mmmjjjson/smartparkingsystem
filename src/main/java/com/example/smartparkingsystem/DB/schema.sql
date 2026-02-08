@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `mini_project3`;
+CREATE DATABASE IF NOT EXISTS `smart-_parking_system`;
 
-USE `mini_project3`;
+USE `smart-_parking_system`;
 
 # schema -> admin <-> member <-> parking_history -> payment_info -> payment_history

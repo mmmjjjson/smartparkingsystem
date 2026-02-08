@@ -174,7 +174,7 @@
 
                             <!-- FOOTER -->
                             <div class="card-footer text-center py-3 small text-muted">
-                                🔒 보안을 위해 2단계 인증이 활성화되어 있습니다
+                                🔒 보안을 위해 3단계 인증이 활성화되어 있습니다
                             </div>
 
                         </div>
@@ -228,7 +228,7 @@
         document.getElementById("otpCode").value = '';
     }
 
-    // Step 1 제출 (아이디/비밀번호) - 테스트용
+    // Step 1 제출 (아이디/비밀번호)
     function submitStep1(event) {
         event.preventDefault(); // 새로고침 방지
 
@@ -247,14 +247,17 @@
             headers: { // form값이 전송하는 파라미터를 받기위해 설정
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: "step=1&adminId=" + adminId + "&password=" + password,
+            body: "step=1&adminId=" + adminId + "&password=" + password
         })
             .then(res => {
-                if (res.status === 200) {
-                    goStep2();
-                } else {
+                if (res.status === 403) {
+                    alert("활동이 중지된 계정입니다.")
+                    return;
+                } else if (res.status === 401) {
                     alert("아이디 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.")
+                    return;
                 }
+                goStep2();
             })
     }
 

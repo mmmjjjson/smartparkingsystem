@@ -14,6 +14,9 @@ CREATE TABLE IF NOT EXISTS `admin`
     last_login_ip VARCHAR(45) NULL COMMENT '마지막 로그인 IP (보안용)',
     created_at    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '계정 생성일'
 ) COMMENT '관리자';
+INSERT INTO admin
+(admin_id, password, admin_name, birth, admin_email, is_active, last_login, last_login_ip, created_at)
+    VALUE ('admin', '1234', '관리자', '900101', 'admin@naver.com', true, NULL, NULL, NOW());
 
 
 CREATE TABLE IF NOT EXISTS `members`
