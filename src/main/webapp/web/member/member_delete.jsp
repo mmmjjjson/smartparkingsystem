@@ -9,5 +9,8 @@
         membersDAO.deleteMember(carNum);
     }
 
+    // 회원 정보 삭제 완료 메시지
+    session.setAttribute("flashMsg", "회원 정보가 삭제되었습니다.");
+
     response.sendRedirect("member.jsp");
 %>

@@ -27,7 +27,7 @@
 } else {
     for (MembersDTO member : members) {
 %>
-<tr onclick="openModal(
+<tr onclick="openViewModal(
         '<%= member.getCarNum() %>',
         '<%= member.getMemberName() %>',
         '<%= member.getMemberPhone() %>',

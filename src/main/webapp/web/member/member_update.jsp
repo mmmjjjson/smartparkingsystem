@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.example.smartparkingsystem.member.model.*" %>
+<%@ page import="com.example.smartparkingsystem.*" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
 <%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
@@ -17,6 +17,9 @@
 
     MembersDAO membersDAO = new MembersDAO();
     membersDAO.updateMember(originCarNum, membersDTO);
+
+    // 회원 정보 수정 완료 메시지
+    session.setAttribute("flashMsg", "회원 정보가 수정되었습니다.");
 
     response.sendRedirect("member.jsp");
 %>

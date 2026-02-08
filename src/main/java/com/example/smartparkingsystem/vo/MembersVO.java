@@ -1,14 +1,15 @@
-package com.example.smartparkingsystem.dto;
+package com.example.smartparkingsystem.vo;
 
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MembersDTO {
+public class MembersVO {
     private long mno;                   // 회원 번호
     private String carNum;              // 차량 번호
     private String memberName;          // 회원 이름

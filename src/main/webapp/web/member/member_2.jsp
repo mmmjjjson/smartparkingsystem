@@ -10,7 +10,7 @@
     <title>스마트 주차관리 시스템 - 회원 관리</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/member.css">
-<%--    <link rel="stylesheet" href="../../login/css/styles.css">--%>
+    <link rel="stylesheet" href="../../login/css/styles.css">
     <script src="js/member.js" defer></script>
 </head>
 <body>
@@ -28,7 +28,6 @@
         <!-- 회원 목록 테이블 -->
         <div class="table-container">
             <table>
-                <!-- 테이블 제목 -->
                 <thead>
                 <tr>
                     <th>차량 번호</th>
@@ -39,7 +38,6 @@
                 </tr>
                 </thead>
 
-                <!-- 회원 목록 -->
                 <tbody id="memberTableBody">
                 <%@ include file="member_list.jsp" %>
                 </tbody>
@@ -50,39 +48,39 @@
 
 <!-- 신규 회원 등록 모달 -->
 <div class="modal" id="newMemberModal">
-    <div class="modal-box modal-lg">
+    <div class="card mb-4">
         <form action="member_insert.jsp" method="post" onsubmit="return handleNewMemberSubmit()">
-            <div class="modal-header">회원 정보 입력</div>
+            <div class="card-header">회원 정보 입력</div>
 
-            <div class="form-group">
+            <div class="card-body">
                 <label class="label">차량 번호 (필수)</label>
                 <input type="text" name="carNum" placeholder="예: 12가3456" maxlength="8" class="input"
                        id="newCarNumber">
             </div>
 
-            <div class="form-group">
+            <div class="card-body">
                 <label class="label">이름 (필수)</label>
                 <input type="text" name="memberName" placeholder="이름을 입력하세요" class="input" id="newName">
             </div>
 
-            <div class="form-group">
+            <div class="card-body">
                 <label class="label">연락처 (필수)</label>
                 <input type="tel" name="memberPhone" placeholder="예: 010-1234-5678" maxlength="13"
                        oninput="autoHyphenPhone(this)" class="input" id="newPhone">
             </div>
 
-            <div class="form-group">
+            <div class="card-body">
                 <label class="label">시작일 (필수)</label>
                 <input type="date" name="startDate" class="input" id="newStartDate"
                        onchange="setEndDateByOneMonth('newStartDate', 'newExpireDate')">
             </div>
 
-            <div class="form-group">
+            <div class="card-body">
                 <label class="label">만료일 (필수)</label>
                 <input type="date" class="input" id="newExpireDate" readonly>
             </div>
 
-            <div class="modal-buttons">
+            <div class="card-body">
                 <button type="submit" class="btn btn-primary">등록</button>
                 <button type="button" class="btn btn-outline" onclick="closeAllModals()">취소</button>
             </div>
@@ -197,6 +195,5 @@
     }
 %>
 </body>
-
 <%@ include file="../common/footer.jsp" %>
 </html>
