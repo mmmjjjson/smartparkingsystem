@@ -281,7 +281,7 @@
                                     "month": 4,
                                     "records": [
                                         {"parking_area":"A01","car_num":"04라2004","car_type":"일반","is_member":1,"entry_time":"2025-04-02 08:15:00","exit_time":"2025-04-02 12:25:00"},
-                                        {"parking_area":"B01","car_num":"서울12마3456","car_type":"경차","is_member":0,"entry_time":"2025-04-04 09:25:00","exit_time":"2025-04-04 11:35:00"},
+                                        {"parking_area":"B01","car_num":"서울12마3456","car_type":"경차","is_member":1,"entry_time":"2025-04-04 09:25:00","exit_time":"2025-04-04 11:35:00"},
                                         {"parking_area":"C01","car_num":"서울23가4567","car_type":"일반","is_member":0,"entry_time":"2025-04-06 10:35:00","exit_time":"2025-04-06 13:45:00"},
                                         {"parking_area":"A02","car_num":"서울34나5678","car_type":"장애인","is_member":0,"entry_time":"2025-04-08 07:55:00","exit_time":"2025-04-08 10:00:00"},
                                         {"parking_area":"B02","car_num":"서울45다6789","car_type":"일반","is_member":0,"entry_time":"2025-04-10 14:15:00","exit_time":"2025-04-10 16:25:00"}
