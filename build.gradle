@@ -39,6 +39,8 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.25.3'
 
     implementation("com.zaxxer:HikariCP:5.0.1")
+
+    implementation("org.modelmapper:modelmapper:3.1.1")
 }
 
 test {
