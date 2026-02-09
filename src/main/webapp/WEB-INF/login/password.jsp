@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>비밀번호 재설정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="../login/css/styles.css" rel="stylesheet"/>
+    <link href="css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
     <style>
@@ -227,13 +227,7 @@
             },
             body: "step=1&adminId=" + adminId
         })
-            .then(res => {
-                if (res.status === 200) {
-                    goStep2();
-                } else { // 경고문을 띄우는게 맞을까??
-                    alert('등록된 아이디가 없습니다.')
-                }
-            })
+        goStep2();
     }
 
     // Step 2 제출 (이메일 입력 및 인증번호 발송)
@@ -260,7 +254,7 @@
                     document.getElementById("emailText").innerText = email + "로 인증번호를 발송했습니다.";
                     goStep3();
                 } else {
-                    alert('등록된 이메일이 없습니다.')
+                    alert('입력하신 정보가 일치하지 않습니다.')
                 }
             })
     }

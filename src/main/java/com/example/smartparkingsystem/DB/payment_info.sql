@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `payment_info`
     `max_charge`         INT COMMENT '일일 최대 요금',
     `small_car_discount` DOUBLE COMMENT '경차 할인율',
     `disabled_discount`  DOUBLE COMMENT '장애인 할인율',
-    `is_active`          BOOLEAN  DEFAULT TRUE COMMENT '정책 활성화 여부 True (현재) / False (이전)',
+    -- `is_active`          BOOLEAN  DEFAULT TRUE COMMENT '정책 활성화 여부 True (현재) / False (이전)',
     `admin_id`           VARCHAR(20) COMMENT '정책 수정한 관리자 아이디',
     `updated_at`         DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '관리자 정책 수정일',
     CONSTRAINT `chk_free_time` CHECK (`free_time` >= 0),

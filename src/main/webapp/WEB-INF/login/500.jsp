@@ -1,13 +1,12 @@
-<%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="ko">
     <head>
-        <meta charset="UTF-8" />
+        <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>404 오류 - 주차관리시스템</title>
+        <title>404 오류 - 관리자 시스템</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
@@ -19,12 +18,11 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-6">
                                 <div class="text-center mt-4">
-                                    <img class="mb-4 img-error" src="assets/img/error-404-monochrome.svg" />
-                                    <p class="lead">해당 요청은 서버에서 찾을 수 없는 URL입니다.</p>
-
-                                    <a href="../index.jsp">
+                                    <h1 class="display-1">500</h1>
+                                    <p class="lead">Internal Server Error</p>
+                                    <a href="../../index.jsp">
                                         <i class="fas fa-arrow-left me-1"></i>
-                                        돌아가기
+                                        Return to Dashboard
                                     </a>
                                 </div>
                             </div>
@@ -36,7 +34,7 @@
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2026</div>
+                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
                                 &middot;

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>관리자 로그인</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="../login/css/styles.css" rel="stylesheet"/>
+    <link href="css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
     <%-- 템플릿 수정 css --%>
@@ -313,7 +313,7 @@
         .then(res => {
             if (res.status === 200) {
                 alert("OTP 인증 성공")
-                window.location.href = "../web/main/main.jsp";
+                window.location.href = "../../web/main/main.jsp";
             } else {
                 alert("OTP Error 인증번호 오류")
             }
