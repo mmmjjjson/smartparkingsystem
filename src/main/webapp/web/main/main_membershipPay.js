@@ -44,7 +44,7 @@ document.getElementById('btn-check-member').addEventListener('click', () => {
     }
 
     if (member) {
-        alert('등록된 회원 정보가 있습니다.')
+        alert('등록된 회원 정보가 있습니다. 기존 정보로 입력을 진행합니다.')
         document.getElementById('mem-name').value = member.name;
         document.getElementById('mem-phone').value = member.phone;
     } else {
@@ -82,30 +82,24 @@ btnMembershipSubmit.addEventListener('click', () => {
 });
 
 // 페이지 로드 후 이벤트 등록 (맨 아래 추가)
-document.addEventListener('DOMContentLoaded', function() {
-    // 모달 전체에 이벤트 위임
-    const modal = document.getElementById('membershipPayModal');
+membershipPayModalElement.addEventListener('click', function (e) {
+    if (e.target?.id === 'btn-receipt-close-final') {
 
-    modal.addEventListener('click', function(e) {
-        if (e.target && e.target.id === 'btn-receipt-close-final') {
-            console.log('닫기 버튼 클릭!'); // 디버깅용
+        const card = window.currentCard;
+        if (card) {
+            card.dataset.status = 'available';
+            card.dataset.carNum = "";
+            card.dataset.inFullTime = "";
+            card.classList.replace('occupied', 'available');
+            card.querySelector('.box-car').innerText = "사용 가능";
+            card.querySelector('.box-time').innerText = "";
 
-            const card = window.currentCard;
-            if (card) {
-                card.dataset.status = 'available';
-                card.dataset.carNum = "";
-                card.dataset.inFullTime = "";
-                card.classList.replace('occupied', 'available');
-                card.querySelector('.box-car').innerText = "사용 가능";
-                card.querySelector('.box-time').innerText = "";
+            if (typeof updateParkingCount === 'function') updateParkingCount();
 
-                if (typeof updateParkingCount === 'function') updateParkingCount();
-
-                membershipPayModal.hide();
-                alert('회원권 결제 및 출차가 완료되었습니다.');
-            }
+            membershipPayModal.hide();
+            alert('회원권 결제 및 출차가 완료되었습니다.');
         }
-    });
+    }
 });
 
 // 모달 리셋 로직

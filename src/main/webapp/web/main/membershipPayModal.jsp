@@ -74,7 +74,7 @@
         </div>
 
       <div class="modal-footer" id="mem-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-receipt-close">닫기</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
         <button type="button" class="btn btn-primary px-4" id="btn-membership-submit">결제하기</button>
       </div>
     </div>
