@@ -30,7 +30,6 @@
             <button class="btn btn-secondary px-4 text-nowrap" id="btnCarSearch">검색</button>
         </div>
     </div>
-
     <hr>
 
     <!-- 주차 현황 요약 -->
@@ -101,6 +100,7 @@
 
 <!-- 주차 상태 처리 모달 -->
 <%@ include file="parking_modal.jsp"%>
+<%@include file="membershipPayModal.jsp"%>
 
 <!-- 공통 footer 구역 -->
 <%--<%@ include file="../common/footer.jsp"%>--%>
@@ -114,11 +114,14 @@
 <!-- 검색 모달 JS -->
 <script src="main_search.js"></script>
 
+<!-- 요금 계산 로직 JS -->
+<script src="main_parking_charge_logic.js"></script>
+
 <!-- 메인 모달 JS -->
 <script src="main_modal.js"></script>
 
-<!-- 요금 계산 로직 JS -->
-<script src="main_parking_charge_logic.js"></script>
+<!-- 회원권 결제 모달 JS -->
+<script src="main_membershipPay.js"></script>
 
 </body>
 </html>

@@ -91,6 +91,7 @@
 
             <!-- 모달 버튼 -->
             <div class="modal-footer">
+                <button type="button" class="btn btn-warning me-auto" id="btnMembershipPay" style="display: none;">회원권 결제</button>
                 <button type="button" class="btn btn-success" id="modal-action"></button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
             </div>

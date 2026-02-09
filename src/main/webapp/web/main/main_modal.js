@@ -4,17 +4,19 @@
 const modal = new bootstrap.Modal(document.getElementById('parkingModal'));
 const modalTitle = document.getElementById('modal-id');
 const modalAction = document.getElementById('modal-action');
+const btnMembershipPay = document.getElementById('btnMembershipPay');
 
 // 주차 구역 클릭 이벤트 (클릭 시 정보 모달 팝업)
-let currentCard = null;
+window.currentCard = null;
 document.querySelectorAll('.parking-card').forEach(card => {
     card.addEventListener('click', () => {
         // 클릭된 주차 구역 정보 변수 저장
-        currentCard = card;
+        window.currentCard = card;
 
         document.getElementById('section-entry').style.display = 'none';
         document.getElementById('section-exit').style.display = 'none';
         document.getElementById('section-receipt').style.display = 'none';
+        btnMembershipPay.style.display = 'none';
         modalAction.style.display = 'block';
         document.querySelector('#parkingModal .modal-footer button[data-bs-dismiss="modal"]').style.display = 'block';
 
@@ -28,13 +30,12 @@ document.querySelectorAll('.parking-card').forEach(card => {
             modalTitle.innerText = id + " 입차 관리";
             // 입차 처리 세팅
             document.getElementById('section-entry').style.display = 'block';
-            document.getElementById('section-exit').style.display = 'none';
             modalAction.innerText = "입차 등록";
         } else {
             modalTitle.innerText = id + " 출차 관리";
             // 출차 처리 세팅
-            document.getElementById('section-entry').style.display = 'none';
             document.getElementById('section-exit').style.display = 'block';
+            btnMembershipPay.style.display = 'block';
 
             const now = new Date();
             const inFullTime = currentCard.dataset.inFullTime;
@@ -129,6 +130,7 @@ modalAction.addEventListener('click', () => {
         document.getElementById('section-receipt').style.display = 'block';
 
         // 하단 버튼 숨기기
+        btnMembershipPay.style.display = 'none';
         modalAction.style.display = 'none';
         const footerCloseBtn = document.querySelector('#parkingModal .modal-footer button[data-bs-dismiss="modal"]');
         if (footerCloseBtn) footerCloseBtn.style.display = 'none';
