@@ -23,8 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.newStartDate = document.getElementById('newStartDate');
 
     // 수정 / 삭제용
-    window.originCarNum = document.getElementById('originCarNum');
-    window.deleteCarNum = document.getElementById('deleteCarNum');
+    window.mnoValue = document.getElementById('mno');
+    window.editMno = document.getElementById('editMno');
+    window.deleteMno = document.getElementById('deleteMno');
 
     window.editCarNumber = document.getElementById('editCarNumber');
     window.editName = document.getElementById('editName');
@@ -96,30 +97,30 @@ function handleNewMemberSubmit() {
 }
 
 /* ===================== 회원 상세 모달 ===================== */
-function openViewModal(car, name, phone, start, end) {
+function openViewModal(mno, car, name, phone, start, end) {
+    document.getElementById("deleteMno").value = mno;
+    document.getElementById("editMno").value = mno;
+
+    mnoValue.value = mno;
     viewCarNumber.textContent = car;
     viewName.textContent = name;
     viewPhone.textContent = phone;
     viewStartDate.textContent = start.substring(0, 10);
     viewExpireDate.textContent = end.substring(0, 10);
 
-    originCarNum.value = car;
-    deleteCarNum.value = car;
-
     openModal('viewMemberModal');
 }
 
 /* ===================== 회원 정보 수정 모달 ===================== */
 function openEditModal() {
+    editMno.value = mnoValue.value;
+
     // 조회 모달에 표시된 값 가져오기
     editCarNumber.value = viewCarNumber.textContent;
     editName.value = viewName.textContent;
     editPhone.value = viewPhone.textContent;
     editStartDate.value = viewStartDate.textContent;
     editExpireDate.value = viewExpireDate.textContent;
-
-    // 원본 차량 번호 저장
-    originCarNum.value = viewCarNumber.textContent;
 
     openModal('editMemberModal');
 }
@@ -155,7 +156,7 @@ function validateMember(carNum, name, phone, start, end = true) {
 
 /* ===================== 회원 삭제 모달 ===================== */
 function handleDelete() {
-    deleteCarNum.value = viewCarNumber.textContent;
+    deleteMno.value = mnoValue.value;
     openModal('deleteConfirmModal');
 }
 

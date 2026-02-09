@@ -79,7 +79,7 @@
 
             <div class="form-group">
                 <label class="label">만료일 (필수)</label>
-                <input type="date" class="input" id="newExpireDate" readonly>
+                <input type="date" name="endDate" class="input" id="newExpireDate" readonly>
             </div>
 
             <div class="modal-buttons">
@@ -95,6 +95,7 @@
     <div class="modal-box modal-lg">
         <div class="view-left">
             <div class="modal-header">회원 상세 정보</div>
+            <input type="hidden" name="mno" id="mno">
 
             <div class="form-group">
                 <div class="label">차량 번호:</div>
@@ -135,7 +136,7 @@
     <div class="modal-box modal-lg">
         <form action="member_update.jsp" method="post" onsubmit="return handleEditSubmit()">
             <div class="modal-header">회원 정보 수정</div>
-            <input type="hidden" name="originCarNum" id="originCarNum">
+            <input type="hidden" name="mno" id="editMno">
 
             <div class="form-group">
                 <label class="label">차량 번호 (필수)</label>
@@ -175,7 +176,7 @@
 <div class="modal" id="deleteConfirmModal">
     <div class="modal-box modal-md">
         <form action="member_delete.jsp" method="post">
-            <input type="hidden" name="carNum" id="deleteCarNum">
+            <input type="hidden" name="mno" id="deleteMno">
             <div class="modal-header">회원 삭제</div>
             <div class="confirm-message">정말 삭제 하시겠습니까?</div>
             <div class="modal-buttons">

@@ -2,7 +2,9 @@ package com.example.smartparkingsystem.vo;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @ToString
@@ -10,13 +12,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MembersVO {
-    private long mno;                   // 회원 번호
-    private String carNum;              // 차량 번호
-    private String memberName;          // 회원 이름
-    private LocalDateTime startDate;    // 이용 시작일
-    private LocalDateTime endDate;      // 이용 만료일
-    private boolean isActive;           // 이용일 만료일 여부
-    private LocalDateTime createdAt;    // 최초 등록일
-    private LocalDateTime updatedDate;  // 업데이트일
-    private String memberPhone;         // 회원 전화번호
+    private long mno;               // 회원 번호
+    private String carNum;          // 차량 번호
+    private String memberName;      // 회원 이름
+    private String memberPhone;     // 회원 전화번호
+    private LocalDate startDate;    // 이용 시작일
+    private LocalDate endDate;      // 이용 만료일
 }

@@ -10,47 +10,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MembersDAO {
-    private static List<MembersDTO> membersDTOList = new ArrayList<>(); // 회원 정보 저장할 리스트 생성
+//    // 회원 정보 저장할 리스트 생성
+//    private static List<MembersDTO> membersDTOList = new ArrayList<>();
+//
+//    // 신규 회원 등록
+//    public void insertMember(MembersDTO membersDTO) {
+//        membersDTOList.add(MembersDTO.builder()
+//                .carNum(membersDTO.getCarNum())
+//                .memberName(membersDTO.getMemberName())
+//                .memberPhone(membersDTO.getMemberPhone())
+//                .startDate(membersDTO.getStartDate())
+//                .createdAt(LocalDateTime.now())
+//                .endDate(membersDTO.getEndDate())
+//                .isActive(true)
+//                .build());
+//    }
+//
+//    // 회원 정보 수정
+//    public void updateMember(String originCarNum, MembersDTO membersDTO) {
+//        for (MembersDTO member : membersDTOList) {
+//            if (member.getCarNum().equals(originCarNum)) {
+//                member.setCarNum(membersDTO.getCarNum());
+//                member.setMemberName(membersDTO.getMemberName());
+//                member.setMemberPhone(membersDTO.getMemberPhone());
+//                member.setStartDate(membersDTO.getStartDate());
+//                member.setEndDate(membersDTO.getEndDate());
+//                member.setUpdatedDate(LocalDateTime.now());
+//                break;
+//            }
+//        }
+//    }
+//
+//    // 회원 삭제
+//    public void deleteMember(String carNum) {
+//        for (int i = 0; i < membersDTOList.size(); i++) {
+//             if (membersDTOList.get(i).getCarNum().equals(carNum)) {
+//                 membersDTOList.remove(i);
+//                 break;
+//             }
+//        }
+//    }
 
-    // 신규 회원 등록
-    public void insertMember(MembersDTO membersDTO) {
-        membersDTOList.add(MembersDTO.builder()
-                .carNum(membersDTO.getCarNum())
-                .memberName(membersDTO.getMemberName())
-                .memberPhone(membersDTO.getMemberPhone())
-                .startDate(membersDTO.getStartDate())
-                .createdAt(LocalDateTime.now())
-                .endDate(membersDTO.getEndDate())
-                .isActive(true)
-                .build());
-    }
-
-    // 회원 정보 수정
-    public void updateMember(String originCarNum, MembersDTO membersDTO) {
-        for (MembersDTO member : membersDTOList) {
-            if (member.getCarNum().equals(originCarNum)) {
-                member.setCarNum(membersDTO.getCarNum());
-                member.setMemberName(membersDTO.getMemberName());
-                member.setMemberPhone(membersDTO.getMemberPhone());
-                member.setStartDate(membersDTO.getStartDate());
-                member.setEndDate(membersDTO.getEndDate());
-                member.setUpdatedDate(LocalDateTime.now());
-                break;
-            }
-        }
-    }
-
-    // 회원 삭제
-    public void deleteMember(String carNum) {
-        for (int i = 0; i < membersDTOList.size(); i++) {
-             if (membersDTOList.get(i).getCarNum().equals(carNum)) {
-                 membersDTOList.remove(i);
-                 break;
-             }
-        }
-    }
-
-    // 회원 목록 조회
+//    // 회원 목록 조회
 //    public List<MembersDTO> selectAllMembers() {
 //        return membersDTOList;
 //    }
@@ -66,8 +67,8 @@ public class MembersDAO {
             preparedStatement.setString(1, membersVO.getCarNum());
             preparedStatement.setString(2, membersVO.getMemberName());
             preparedStatement.setString(3, membersVO.getMemberPhone());
-            preparedStatement.setDate(4, Date.valueOf(String.valueOf(membersVO.getStartDate())));
-            preparedStatement.setDate(5, Date.valueOf(String.valueOf(membersVO.getEndDate())));
+            preparedStatement.setDate(4, Date.valueOf(membersVO.getStartDate()));
+            preparedStatement.setDate(5, Date.valueOf(membersVO.getEndDate()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -85,8 +86,8 @@ public class MembersDAO {
             preparedStatement.setString(1, membersVO.getCarNum());
             preparedStatement.setString(2, membersVO.getMemberName());
             preparedStatement.setString(3, membersVO.getMemberPhone());
-            preparedStatement.setDate(4, Date.valueOf(String.valueOf(membersVO.getStartDate())));
-            preparedStatement.setDate(5, Date.valueOf(String.valueOf(membersVO.getEndDate())));
+            preparedStatement.setDate(4, Date.valueOf(membersVO.getStartDate()));
+            preparedStatement.setDate(5, Date.valueOf(membersVO.getEndDate()));
             preparedStatement.setLong(6, membersVO.getMno());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -122,8 +123,8 @@ public class MembersDAO {
                         .carNum(resultSet.getString("car_num"))
                         .memberName(resultSet.getString("member_name"))
                         .memberPhone(resultSet.getString("member_phone"))
-                        .startDate(resultSet.getDate("start_date").toLocalDate().atStartOfDay())
-                        .endDate(resultSet.getDate("end_date").toLocalDate().atStartOfDay())
+                        .startDate(resultSet.getDate("start_date").toLocalDate())
+                        .endDate(resultSet.getDate("end_date").toLocalDate())
                         .build();
 
                 membersVOList.add(membersVO);
@@ -150,8 +151,8 @@ public class MembersDAO {
                         .carNum(resultSet.getString("car_num"))
                         .memberName(resultSet.getString("member_name"))
                         .memberPhone(resultSet.getString("member_phone"))
-                        .startDate(resultSet.getDate("start_date").toLocalDate().atStartOfDay())
-                        .endDate(resultSet.getDate("end_date").toLocalDate().atStartOfDay())
+                        .startDate(resultSet.getDate("start_date").toLocalDate())
+                        .endDate(resultSet.getDate("end_date").toLocalDate())
                         .build();
                 return membersVO;
             }

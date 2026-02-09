@@ -1,6 +1,7 @@
 <%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
+<%@ page import="com.example.smartparkingsystem.vo.MembersVO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -12,7 +13,7 @@
 <%-- 회원 전체 목록 --%>
 <%
     MembersDAO membersDAO = new MembersDAO();
-    List<MembersDTO> members = membersDAO.selectAllMembers();
+    List<MembersVO> members = membersDAO.selectAllMembers();
 %>
 
 <%
@@ -25,9 +26,10 @@
 </tr>
 <%
 } else {
-    for (MembersDTO member : members) {
+    for (MembersVO member : members) {
 %>
 <tr onclick="openViewModal(
+        <%=member.getMno()%>,
         '<%= member.getCarNum() %>',
         '<%= member.getMemberName() %>',
         '<%= member.getMemberPhone() %>',
@@ -40,9 +42,9 @@
     </td>
     <td><%=member.getMemberPhone()%>
     </td>
-    <td><%=member.getStartDate().toLocalDate()%>
+    <td><%=member.getStartDate()%>
     </td>
-    <td><%=member.getEndDate().toLocalDate()%>
+    <td><%=member.getEndDate()%>
     </td>
 </tr>
 <%

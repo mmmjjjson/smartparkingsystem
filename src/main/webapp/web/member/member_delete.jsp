@@ -2,12 +2,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%-- 회원 삭제 --%>
 <%
-    String carNum = request.getParameter("carNum");
+    Long mno = Long.valueOf(request.getParameter("mno"));
 
-    if (carNum != null && !carNum.isEmpty()) {
-        MembersDAO membersDAO = new MembersDAO();
-        membersDAO.deleteMember(carNum);
-    }
+    MembersDAO membersDAO = new MembersDAO();
+    membersDAO.deleteMember(mno);
 
     // 회원 정보 삭제 완료 메시지
     session.setAttribute("flashMsg", "회원 정보가 삭제되었습니다.");
