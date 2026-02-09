@@ -10,7 +10,6 @@
             --main-color: #4a76c5;
             --bg-color: #f8f9fa;
             --border-color: #ced4da;
-            --box-width: 320px;
             --gap: 15px;
         }
 
@@ -22,6 +21,7 @@
             color: #333;
         }
 
+        /* 헤더 영역 */
         .header {
             background-color: #fff;
             border-bottom: 2px solid #222;
@@ -30,7 +30,7 @@
             align-items: center;
             padding: 10px 30px;
         }
-        
+
         .header h1 { font-size: 18px; margin: 0; }
 
         .nav { display: flex; list-style: none; margin: 0; padding: 0; }
@@ -41,32 +41,34 @@
             margin-left: -1px;
             cursor: pointer;
             font-size: 14px;
+            transition: 0.2s;
         }
+        .nav li:hover { background: #e0e0e0; }
         .nav li.active {
             background-color: var(--main-color);
             color: white;
             border-color: var(--main-color);
         }
 
-        .logout-btn {
-            border: 1px solid #333;
-            background: #fff;
-            padding: 5px 15px;
-            cursor: pointer;
-        }
-
+        /* 컨텐츠 영역 */
         .container {
-            width: calc((var(--box-width) * 3) + (var(--gap) * 2) + 42px);
+            width: 95%;
+            max-width: 1000px;
             margin: 20px auto;
             box-sizing: border-box;
         }
 
+        /* 타이틀 바 수정: 저장 버튼을 우측에 배치하기 위해 flex 적용 */
         .title-bar {
             background-color: #e9ecef;
-            padding: 12px 20px;
+            padding: 10px 20px;
             border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-weight: bold;
             margin-bottom: 20px;
+            border-radius: 4px;
         }
 
         .card {
@@ -75,6 +77,7 @@
             padding: 20px;
             margin-bottom: 20px;
             box-sizing: border-box;
+            border-radius: 4px;
         }
 
         .card-label {
@@ -83,20 +86,17 @@
             font-weight: bold;
             color: #333;
             margin-bottom: 15px;
-            /* 배경과 테두리 삭제 */
-            background: none;
-            border: none;
-            padding: 0;
         }
 
         .input-row {
             display: flex;
             gap: var(--gap);
+            flex-wrap: wrap;
         }
 
         .input-item {
-            width: var(--box-width);
-            flex: none;
+            flex: 1;
+            min-width: 250px;
             border: 1px solid var(--border-color);
             padding: 15px;
             background: #fafafa;
@@ -106,6 +106,7 @@
             flex-direction: column;
             justify-content: center;
             box-sizing: border-box;
+            border-radius: 4px;
         }
 
         .input-item label {
@@ -121,145 +122,131 @@
             border: 1px solid #ccc;
             text-align: center;
             margin: 0 auto;
+            border-radius: 3px;
         }
 
-        .content-body {
-            display: flex;
-            gap: var(--gap);
-            width: 100%;
+        .input-item input:focus {
+            outline: 2px solid var(--main-color);
+            border-color: transparent;
         }
 
-        .setup-area {
-            flex: none;
-            width: calc((var(--box-width) * 2) + var(--gap) + 42px);
-        }
-
-        .preview-section {
-            flex: none;
-            width: var(--box-width);
-        }
-
-        .preview-box {
-            background: white;
-            border: 2.5px solid var(--main-color);
-            padding: 20px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-
-        .preview-title {
-            font-weight: bold;
-            margin-bottom: 15px;
-            display: block;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
-            font-size: 15px;
-        }
-
-        .preview-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .preview-row b { color: var(--main-color); }
-
+        /* 우측 상단 저장 버튼 */
         .save-btn {
             background-color: var(--main-color);
             color: white;
-            padding: 10px 40px;
+            padding: 8px 25px;
             border: none;
             font-weight: bold;
             cursor: pointer;
-            border-radius: 3px;
-            width: 100%;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .save-btn:hover {
+            background-color: #365da3;
         }
     </style>
 </head>
 <body>
+
 <%@ include file="common/header_setting.jsp"%>
 
 <div class="container">
-    <div class="title-bar">설정 관리 - 요금 및 할인 정책</div>
+    <div class="title-bar">
+        <span>설정 관리 - 요금 및 할인 정책</span>
+        <button class="save-btn" onclick="saveSettings()">저장하기</button>
+    </div>
 
     <div class="card">
-        <span class="card-label">기본 요금 및 월 주차 설정</span>
+        <span class="card-label">기본 요금 및 일일 최대 요금 설정</span>
         <div class="input-row">
             <div class="input-item">
-                <label>기본 주차 요금 수정란</label>
-                <input type="text" value="3,000">
+                <label>기본 주차 요금(원)</label>
+                <input type="text" id="in-base-fee" value="3,000" oninput="formatFeeInputs()">
             </div>
             <div class="input-item">
-                <label>기본 주차 시간 수정란</label>
-                <input type="text" value="60">
+                <label>기본 주차 시간(분)</label>
+                <input type="text" id="in-base-time" value="60">
             </div>
             <div class="input-item">
-                <label>월 주차 요금 수정란</label>
-                <input type="text" value="100,000">
+                <label>일일 최대 요금(원)</label>
+                <input type="text" id="in-day-max-fee" value="15,000" oninput="formatFeeInputs()">
             </div>
         </div>
     </div>
 
-    <div class="content-body">
-        <div class="setup-area">
-            <div class="card">
-                <span class="card-label">추가 요금 설정</span>
-                <div class="input-row">
-                    <div class="input-item">
-                        <label>추가 요금 수정란</label>
-                        <input type="text" value="1,000">
-                    </div>
-                    <div class="input-item">
-                        <label>추가 요금 기준 시간 수정란</label>
-                        <input type="text" value="30">
-                    </div>
-                </div>
+    <div class="card">
+        <span class="card-label"> 무료 회차 시간 및 추가 요금 설정</span>
+        <div class="input-row">
+            <div class="input-item">
+                <label>무료 회차 시간(분)</label>
+                <input type="text" id="in-free-time" value="10">
             </div>
-
-            <div class="card" style="margin-bottom: 0;">
-                <span class="card-label">할인율 설정</span>
-                <div class="input-row">
-                    <div class="input-item">
-                        <label>경차 할인율</label>
-                        <input type="text" value="0.3">
-                    </div>
-                    <div class="input-item">
-                        <label>장애인 할인율</label>
-                        <input type="text" value="0.5">
-                    </div>
-                </div>
+            <div class="input-item">
+                <label>추가 요금(원)</label>
+                <input type="text" id="in-add-fee" value="1,000" oninput="formatFeeInputs()">
+            </div>
+            <div class="input-item">
+                <label>추가 요금 기준 시간(분)</label>
+                <input type="text" id="in-add-time" value="30">
             </div>
         </div>
+    </div>
 
-        <div class="preview-section">
-            <div class="preview-box">
-                <span class="preview-title">현재 설정 미리보기</span>
-                <div class="preview-row">
-                    <span>기본 요금 :</span>
-                    <b>3,000원 / 60분</b>
-                </div>
-                <div class="preview-row">
-                    <span>추가 요금 :</span>
-                    <b>1,000원 / 30분</b>
-                </div>
-                <div class="preview-row">
-                    <span>월 주차 요금 :</span>
-                    <b>100,000원</b>
-                </div>
-                <div class="preview-row">
-                    <span>경차 할인 :</span>
-                    <b>30%</b>
-                </div>
-                <div class="preview-row" style="margin-bottom: 0;">
-                    <span>장애인 할인 :</span>
-                    <b>50%</b>
-                </div>
+    <div class="card" style="margin-bottom: 0;">
+        <span class="card-label">할인율 및 월 주차 요금 설정</span>
+        <div class="input-row">
+            <div class="input-item">
+                <label>경차 할인율</label>
+                <input type="text" id="in-light-dis" value="0.3">
             </div>
-            <button class="save-btn" onclick="alert('저장되었습니다.')">저장</button>
+            <div class="input-item">
+                <label>장애인 할인율</label>
+                <input type="text" id="in-disabled-dis" value="0.5">
+            </div>
+            <div class="input-item">
+                <label>월 정액권(원)</label>
+                <input type="text" id="in-monthly-fee" value="100,000" oninput="formatFeeInputs()">
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function formatNumber(val) {
+        if (!val) return "";
+        let num = val.toString().replace(/[^0-9.]/g, '');
+        return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function formatFeeInputs() {
+        const feeIds = ['in-base-fee', 'in-add-fee', 'in-monthly-fee', 'in-day-max-fee'];
+        feeIds.forEach(id => {
+            let input = document.getElementById(id);
+            if(input) input.value = formatNumber(input.value);
+        });
+    }
+
+    function saveSettings() {
+        const data = {
+            baseFee: document.getElementById('in-base-fee').value.replace(/,/g, ''),
+            baseTime: document.getElementById('in-base-time').value,
+            dayMaxFee: document.getElementById('in-day-max-fee').value.replace(/,/g, ''),
+            addFee: document.getElementById('in-add-fee').value.replace(/,/g, ''),
+            addTime: document.getElementById('in-add-time').value,
+            freeTime: document.getElementById('in-free-time').value,
+            lightDis: document.getElementById('in-light-dis').value,
+            disabledDis: document.getElementById('in-disabled-dis').value,
+            monthlyFee: document.getElementById('in-monthly-fee').value.replace(/,/g, '')
+        };
+
+        console.log("저장될 데이터:", data);
+        alert('설정이 성공적으로 변경되었습니다.');
+    }
+
+    window.onload = formatFeeInputs;
+</script>
 
 </body>
 </html>
