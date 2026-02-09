@@ -4,10 +4,18 @@ import com.example.smartparkingsystem.vo.MembersVO;
 import lombok.Cleanup;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MembersDAO {
+    // 회원 여부 확인 메서드
+    public boolean isMember(LocalDate endDate) {
+        if (endDate == null) return false;
+
+        return !endDate.isBefore(LocalDate.now());
+    }
+
 //    // 회원 정보 저장할 리스트 생성
 //    private static List<MembersDTO> membersDTOList = new ArrayList<>();
 //
@@ -134,17 +142,30 @@ public class MembersDAO {
     }
 
     // 회원 검색 조회
-    public List<MembersVO> selectMembers(String keyword) {
+    public List<MembersVO> selectMembers(String searchType, String keyword) {
         List<MembersVO> membersVOList = new ArrayList<>();
-        String sql = "SELECT * FROM members WHERE car_num LIKE ? OR member_name LIKE ? OR member_phone LIKE ?";
+
+        String column;
+        switch (searchType) {
+            case "carNum":
+                column = "car_num";
+                break;
+            case "name":
+                column = "member_name";
+                break;
+            case "phone":
+                column = "member_phone";
+                break;
+            default:
+                throw new IllegalArgumentException("잘못된 검색 타입");
+        }
+
+        String sql = "SELECT * FROM members WHERE " + column + " LIKE ?";
 
         try {
-            String likeKeyword = "%" + keyword + "%";
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, likeKeyword);
-            preparedStatement.setString(2, likeKeyword);
-            preparedStatement.setString(3, likeKeyword);
+            preparedStatement.setString(1, "%" + keyword + "%");
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {

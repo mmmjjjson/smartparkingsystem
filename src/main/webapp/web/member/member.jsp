@@ -32,17 +32,17 @@
         </div>
 
         <!-- 회원 정보 검색 -->
-        <div class="search-bar">
-            <select id="searchType">
-                <option value="carNum">차량 번호</option>
-                <option value="name">이름</option>
-                <option value="phone">연락처</option>
+        <form method="get" action="member.jsp" class="search-bar">
+            <select id="searchType" name="searchType">
+                <option value="carNum" <%= "carNum".equals(request.getParameter("searchType")) ? "selected" : "" %>>차량 번호</option>
+                <option value="name" <%= "name".equals(request.getParameter("searchType")) ? "selected" : "" %>>이름</option>
+                <option value="phone" <%= "phone".equals(request.getParameter("searchType")) ? "selected" : "" %>>연락처</option>
             </select>
 
-            <input type="text" id="keyword" placeholder="검색어 입력" />
+            <input type="text" name="keyword" value="<%= request.getParameter("keyword") == null ? "" : request.getParameter("keyword") %>">
 
             <button onclick="searchMember()">검색</button>
-        </div>
+        </form>
 
 
         <!-- 회원 목록 테이블 -->

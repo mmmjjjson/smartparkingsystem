@@ -11,13 +11,14 @@
 </head>
 <body>
 <%
+    String searchType = request.getParameter("searchType");
     String keyword = request.getParameter("keyword");
 
     MembersDAO membersDAO = new MembersDAO();
     List<MembersVO> membersList;
 
-    if (keyword != null && !keyword.trim().isEmpty()) {
-        membersList = membersDAO.selectMembers(keyword.trim());
+    if (keyword != null && !keyword.trim().isEmpty() && searchType != null && !searchType.isEmpty()) {
+        membersList = membersDAO.selectMembers(searchType, keyword.trim());
     } else {
         membersList = membersDAO.selectAllMembers();
     }

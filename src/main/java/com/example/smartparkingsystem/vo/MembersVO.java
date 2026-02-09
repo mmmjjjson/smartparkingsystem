@@ -18,4 +18,10 @@ public class MembersVO {
     private String memberPhone;     // 회원 전화번호
     private LocalDate startDate;    // 이용 시작일
     private LocalDate endDate;      // 이용 만료일
+
+    // 회원 여부 확인 메서드
+    public boolean isMember() {
+        if (this.endDate == null) return false;
+        return !this.endDate.isBefore(LocalDate.now());
+    }
 }
