@@ -1,6 +1,5 @@
 <%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
 <%@ page import="com.example.smartparkingsystem.vo.MembersVO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
@@ -8,16 +7,36 @@
 <head>
     <meta charset="UTF-8">
     <title>회원 관리</title>
+    <link rel="stylesheet" href="css/member.css">
 </head>
 <body>
-<%-- 회원 전체 목록 --%>
 <%
+    String keyword = request.getParameter("keyword");
+
     MembersDAO membersDAO = new MembersDAO();
-    List<MembersVO> members = membersDAO.selectAllMembers();
+    List<MembersVO> membersList;
+
+    if (keyword != null && !keyword.trim().isEmpty()) {
+        membersList = membersDAO.selectMembers(keyword.trim());
+    } else {
+        membersList = membersDAO.selectAllMembers();
+    }
 %>
 
+<!-- 회원 목록 -->
+<!-- 테이블 제목 -->
+<thead>
+    <tr>
+        <th>차량 번호</th>
+        <th>이름</th>
+        <th>연락처</th>
+        <th>시작일</th>
+        <th>만료일</th>
+    </tr>
+</thead>
+<tbody>
 <%
-    if (members.isEmpty()) {
+    if (membersList.isEmpty()) {
 %>
 <tr>
     <td colspan="5" style="text-align: center;">
@@ -26,10 +45,10 @@
 </tr>
 <%
 } else {
-    for (MembersVO member : members) {
+    for (MembersVO member : membersList) {
 %>
 <tr onclick="openViewModal(
-        <%=member.getMno()%>,
+    <%=member.getMno()%>,
         '<%= member.getCarNum() %>',
         '<%= member.getMemberName() %>',
         '<%= member.getMemberPhone() %>',
@@ -51,5 +70,6 @@
         }
     }
 %>
+</tbody>
 </body>
 </html>

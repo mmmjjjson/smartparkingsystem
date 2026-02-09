@@ -26,6 +26,8 @@ body {
     padding: 30px;
 }
 
+
+/* 소제목 */
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -40,6 +42,37 @@ body {
     font-weight: bold;
     color: #333;
 }
+
+
+/* 회원 정보 검색창 */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.search-bar input {
+    width: 400px;
+}
+
+.search-bar select {
+    text-align: center;
+    width: 150px;
+}
+
+.search-bar button {
+    width: 150px;
+}
+
+.search-bar > * {
+    padding: 6px 8px;
+}
+
+/*.search-bar input,*/
+/*.search-bar select {*/
+/*    padding: 6px 8px;*/
+/*}*/
 
 
 /* 버튼 */

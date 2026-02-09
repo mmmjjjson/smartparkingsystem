@@ -1,11 +1,9 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.dto.MembersDTO;
 import com.example.smartparkingsystem.vo.MembersVO;
 import lombok.Cleanup;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,17 +133,21 @@ public class MembersDAO {
         return membersVOList;
     }
 
-    // 해당 회원 조회
-    public MembersVO selectOneMember(Long mno) {
-        String sql = "SELECT * FROM members WHERE mno = ?";
+    // 회원 검색 조회
+    public List<MembersVO> selectMembers(String keyword) {
+        List<MembersVO> membersVOList = new ArrayList<>();
+        String sql = "SELECT * FROM members WHERE car_num LIKE ? OR member_name LIKE ? OR member_phone LIKE ?";
 
         try {
+            String likeKeyword = "%" + keyword + "%";
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, mno);
+            preparedStatement.setString(1, likeKeyword);
+            preparedStatement.setString(2, likeKeyword);
+            preparedStatement.setString(3, likeKeyword);
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 MembersVO membersVO = MembersVO.builder()
                         .mno(resultSet.getLong("mno"))
                         .carNum(resultSet.getString("car_num"))
@@ -154,11 +156,11 @@ public class MembersDAO {
                         .startDate(resultSet.getDate("start_date").toLocalDate())
                         .endDate(resultSet.getDate("end_date").toLocalDate())
                         .build();
-                return membersVO;
+                membersVOList.add(membersVO);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return membersVOList;
     }
 }

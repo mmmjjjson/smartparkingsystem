@@ -50,8 +50,14 @@ public enum MembersService {
         return membersDTOList;
     }
 
-    // 해당 회원 조회
-    public  MembersDTO getOneMember(Long mno) {
-        return modelMapper.map(membersDAO.selectOneMember(mno), MembersDTO.class);
-    }
+    // 회원 검색 조회
+//    public  MembersDTO getOneMember(String keyword) {
+//        List<MembersVO> membersVOList = membersDAO.selectMembers(keyword);
+//
+//        List<MembersDTO> membersDTOList = membersVOList.stream()
+//                .map(membersVO -> modelMapper.map(membersVO, MembersDTO.class))
+//                .toList();
+//
+//        return membersDTOList;
+//    }
 }
