@@ -1,6 +1,5 @@
 package com.example.smartparkingsystem.controller;
 
-import com.example.smartparkingsystem.dao.AdminDAO;
 import com.example.smartparkingsystem.dto.AdminDTO;
 import com.example.smartparkingsystem.service.AdminService;
 import jakarta.servlet.ServletException;
