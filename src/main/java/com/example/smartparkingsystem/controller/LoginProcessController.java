@@ -88,6 +88,8 @@ public class LoginProcessController extends HttpServlet {
         if (otpDB(otpCode)) {
             HttpSession session = req.getSession();
             String adminId = (String) session.getAttribute("tempAdminId"); // adminId로 변경
+
+            // TODO Filter 적용하기
             session.setAttribute("adminId", adminId); // 최종 로그인 세션 적용
             session.removeAttribute("tempAdminId"); // 임시 세션 제거
             adminService.renewalLog(adminId, req.getRemoteAddr()); // 로그인 날짜, IP

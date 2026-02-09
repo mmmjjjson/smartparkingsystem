@@ -79,7 +79,9 @@ public class LoginPasswordController extends HttpServlet {
             String newPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
             adminService.changePassword(adminId, newPassword);
 
-            // TODO 비밀번호 랜덤키로 변경후 로그인 다음 페이지는 바로 비밀번호 변경페이지로 이동
+            /* TODO 비밀번호 랜덤키로 변경후 로그인 다음 페이지는 바로 비밀번호 변경페이지로 이동
+                비밀번호 변경 페이지 만들면 연결만 하면 될거같음
+             */
             session.removeAttribute("logAdminId");
             session.removeAttribute("logEmail");
             resp.setStatus(HttpServletResponse.SC_OK);
