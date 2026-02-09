@@ -1,0 +1,68 @@
+package com.example.smartparkingsystem.dao;
+
+import com.example.smartparkingsystem.vo.PaymentInfoVO;
+import lombok.Cleanup;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class PaymentInfoDAO {
+    public List<PaymentInfoVO> selectAllInfo() {
+        List<PaymentInfoVO> paymentInfoVOList = new ArrayList<>();
+        String sql = "SELECT * from payment_info";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                PaymentInfoVO paymentInfoVO = PaymentInfoVO.builder()
+                        .pno(resultSet.getInt("pno"))
+                        .freeTime(resultSet.getInt("free_time"))
+                        .basicCharge(resultSet.getInt("basic_time"))
+                        .extraTime(resultSet.getInt("extra_time"))
+                        .basicCharge(resultSet.getInt("basic_charge"))
+                        .extraCharge(resultSet.getInt("extra_charge"))
+                        .maxCharge(resultSet.getInt("max_charge"))
+                        .smallCarDiscount(resultSet.getDouble("small_car_discount"))
+                        .disabledDiscount(resultSet.getDouble("disabled_discount"))
+                        .adminId(resultSet.getString("admin_id"))
+                        .updatedAt(resultSet.getObject("updated_at", LocalDateTime.class))
+                        .build();
+                paymentInfoVOList.add(paymentInfoVO);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return paymentInfoVOList;
+    }
+
+    public void insertInfo(PaymentInfoVO paymentInfoVO) {
+        String sql = "insert into payment_info (free_time, basic_time, extra_time, basic_charge, extra_charge, max_charge, small_car_discount, disabled_discount, admin_id, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, paymentInfoVO.getFreeTime());
+            preparedStatement.setInt(2, paymentInfoVO.getBasicTime());
+            preparedStatement.setInt(3, paymentInfoVO.getExtraTime());
+            preparedStatement.setInt(4, paymentInfoVO.getBasicCharge());
+            preparedStatement.setInt(5, paymentInfoVO.getExtraCharge());
+            preparedStatement.setInt(6, paymentInfoVO.getMaxCharge());
+            preparedStatement.setDouble(7, paymentInfoVO.getSmallCarDiscount());
+            preparedStatement.setDouble(8, paymentInfoVO.getDisabledDiscount());
+            preparedStatement.setString(9, paymentInfoVO.getAdminId());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+}
