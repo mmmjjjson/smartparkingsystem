@@ -23,6 +23,38 @@ public class PaymentInfoDAO {
         return instance;
     }
 
+    public List<PaymentInfoVO> selectAllInfo() {
+        List<PaymentInfoVO> paymentInfoVOList = new ArrayList<>();
+        String sql = "SELECT * from payment_info";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                PaymentInfoVO paymentInfoVO = PaymentInfoVO.builder()
+                        .pno(resultSet.getInt("pno"))
+                        .freeTime(resultSet.getInt("free_time"))
+                        .basicTime(resultSet.getInt("basic_time"))
+                        .extraTime(resultSet.getInt("extra_time"))
+                        .basicCharge(resultSet.getInt("basic_charge"))
+                        .extraCharge(resultSet.getInt("extra_charge"))
+                        .maxCharge(resultSet.getInt("max_charge"))
+                        .memberCharge(resultSet.getInt("member_charge"))
+                        .smallCarDiscount(resultSet.getDouble("small_car_discount"))
+                        .disabledDiscount(resultSet.getDouble("disabled_discount"))
+                        .adminId(resultSet.getString("admin_id"))
+                        .updatedAt(resultSet.getObject("updated_at", LocalDateTime.class))
+                        .build();
+                paymentInfoVOList.add(paymentInfoVO);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return paymentInfoVOList;
+    }
+
     public PaymentInfoVO selectInfo() {
         String sql = "SELECT * from payment_info ORDER BY pno desc limit 1";
         PaymentInfoVO paymentInfoVO = null;
