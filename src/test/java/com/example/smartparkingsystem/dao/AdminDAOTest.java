@@ -33,12 +33,12 @@ class AdminDAOTest {
     @Test
     public void AdminUpdate() {
         AdminVO adminVO = AdminVO.builder()
-                .admin_id("test1")
+                .adminId("test1")
                 .password("test1")
                 .adminName("수정")
-                .birth("950904")
                 .adminEmail("수정@gmail.com")
-                .is_active(true)
+                .isActive(true)
+                .isPasswordReset(false)
                 .build();
         log.info(adminVO);
         adminDAO.updateAdmin(adminVO);

@@ -263,7 +263,7 @@
     function submitStep3(event) {
         event.preventDefault();
 
-        const email = document.getElementById('verificationForm').value;
+        // const email = document.getElementById('verificationForm').value;
         const otpCode = document.getElementById('inputVerificationCode').value;
 
         if (otpCode.length !== 6) {

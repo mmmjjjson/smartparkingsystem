@@ -46,7 +46,7 @@ public class LoginProcessController extends HttpServlet {
         }
 
         // 사용여부 False
-        if (!adminService.getAdminById(adminId).is_active()) {
+        if (!adminService.getAdminById(adminId).isActive()) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 (접근 제한)
             return;
         }
@@ -86,9 +86,8 @@ public class LoginProcessController extends HttpServlet {
         // OTP 완료시 임시 세션 변경
         if (otpDB(otpCode)) {
             HttpSession session = req.getSession();
-            String adminId = (String) session.getAttribute("tempAdminId"); // adminId로 변경
-
-            // TODO Filter 적용하기
+            String adminId = (String) session.getAttribute("tempAdminId"); // 임시 세션 불러오고
+            // adminId로 변경
             session.setAttribute("adminId", adminId); // 최종 로그인 세션 적용
             session.removeAttribute("tempAdminId"); // 임시 세션 제거
             adminService.renewalLog(adminId, req.getRemoteAddr()); // 로그인 날짜, IP

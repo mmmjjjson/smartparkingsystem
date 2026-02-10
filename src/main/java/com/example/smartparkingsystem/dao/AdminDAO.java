@@ -24,15 +24,15 @@ public class AdminDAO {
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 AdminVO adminVO = AdminVO.builder()
-                        .admin_id(resultSet.getString("admin_id"))
+                        .adminId(resultSet.getString("admin_id"))
                         .password(resultSet.getString("password"))
                         .adminName(resultSet.getString("admin_name"))
-                        .birth(resultSet.getString("birth"))
                         .adminEmail(resultSet.getString("admin_email"))
-                        .is_active(resultSet.getBoolean("is_active"))
-                        .last_login(resultSet.getObject("last_login", LocalDateTime.class))
-                        .last_login_ip(resultSet.getString("last_login_ip"))
-                        .created_at(resultSet.getObject("created_at", LocalDateTime.class))
+                        .isActive(resultSet.getBoolean("is_active"))
+                        .lastLogin(resultSet.getObject("last_login", LocalDateTime.class))
+                        .lastLoginIp(resultSet.getString("last_login_ip"))
+                        .isPasswordReset(resultSet.getBoolean("is_password_reset"))
+                        .createdAt(resultSet.getObject("created_at", LocalDateTime.class))
                         .build();
                 adminVOList.add(adminVO);
             }
@@ -52,15 +52,15 @@ public class AdminDAO {
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return AdminVO.builder()
-                        .admin_id(resultSet.getString("admin_id"))
+                        .adminId(resultSet.getString("admin_id"))
                         .password(resultSet.getString("password"))
                         .adminName(resultSet.getString("admin_name"))
-                        .birth(resultSet.getString("birth"))
                         .adminEmail(resultSet.getString("admin_email"))
-                        .is_active(resultSet.getBoolean("is_active"))
-                        .last_login(resultSet.getObject("last_login", LocalDateTime.class))
-                        .last_login_ip(resultSet.getString("last_login_ip"))
-                        .created_at(resultSet.getObject("created_at", LocalDateTime.class))
+                        .isActive(resultSet.getBoolean("is_active"))
+                        .lastLogin(resultSet.getObject("last_login", LocalDateTime.class))
+                        .lastLoginIp(resultSet.getString("last_login_ip"))
+                        .isPasswordReset(resultSet.getBoolean("is_password_reset"))
+                        .createdAt(resultSet.getObject("created_at", LocalDateTime.class))
                         .build();
             }
         } catch (SQLException e) {
@@ -71,16 +71,16 @@ public class AdminDAO {
 
     // 정보 수정
     public void updateAdmin(AdminVO adminVO) {
-        String sql = "UPDATE admin SET password = ?, admin_name = ?, birth = ?, admin_email = ?, is_active = ? WHERE admin_id = ?";
+        String sql = "UPDATE admin SET password = ?, admin_name = ?, admin_email = ?, is_active = ?, is_password_reset = ? WHERE admin_id = ?";
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, adminVO.getPassword());
             preparedStatement.setString(2, adminVO.getAdminName());
-            preparedStatement.setString(3, adminVO.getBirth());
-            preparedStatement.setString(4, adminVO.getAdminEmail());
-            preparedStatement.setBoolean(5, adminVO.is_active());
-            preparedStatement.setString(6, adminVO.getAdmin_id());
+            preparedStatement.setString(3, adminVO.getAdminEmail());
+            preparedStatement.setBoolean(4, adminVO.isActive());
+            preparedStatement.setBoolean(5, adminVO.isPasswordReset());
+            preparedStatement.setString(6, adminVO.getAdminId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

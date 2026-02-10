@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `payment_info`
     `basic_charge`       INT COMMENT '기본 요금',
     `extra_charge`       INT COMMENT '초과 시간 당 추가 요금',
     `max_charge`         INT COMMENT '일일 최대 요금',
+    `member_charge`      INT COMMENT '월회원 요금',
     `small_car_discount` DOUBLE COMMENT '경차 할인율',
     `disabled_discount`  DOUBLE COMMENT '장애인 할인율',
     -- `is_active`          BOOLEAN  DEFAULT TRUE COMMENT '정책 활성화 여부 True (현재) / False (이전)',
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `payment_info`
     CONSTRAINT `chk_basic_charge` CHECK (`basic_charge` >= 0),
     CONSTRAINT `chk_extra_charge` CHECK (`extra_charge` >= 0),
     CONSTRAINT `chk_max_charge` CHECK (`max_charge` >= 0),
+    CONSTRAINT `chk_member_charge` CHECK (`member_charge` >= 0),
     CONSTRAINT `chk_small_car_discount` CHECK (`small_car_discount` >= 0),
     CONSTRAINT `chk_disabled_discount` CHECK (`disabled_discount` >= 0),
     CONSTRAINT `fk_admin_id` FOREIGN KEY (`admin_id`) REFERENCES admin (`admin_id`)

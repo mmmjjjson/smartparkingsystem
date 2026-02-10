@@ -7,16 +7,19 @@ CREATE TABLE IF NOT EXISTS `admin`
     admin_id      VARCHAR(20) PRIMARY KEY COMMENT '관리자 아이디',
     password      VARCHAR(50) NOT NULL COMMENT '관리자 비밀번호',
     admin_name    VARCHAR(20) NOT NULL COMMENT '관리자 이름',
-    birth         VARCHAR(6)  NOT NULL COMMENT '관리자 생년월일 6자리',
+#     birth         VARCHAR(6)  NOT NULL COMMENT '관리자 생년월일 6자리',
     admin_email   VARCHAR(50) NOT NULL UNIQUE COMMENT '이메일',
     is_active     BOOLEAN  DEFAULT TRUE COMMENT '사용여부 True 사용중, False 사용중지',
     last_login    DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '마지막 로그인 날짜',
     last_login_ip VARCHAR(45) NULL COMMENT '마지막 로그인 IP (보안용)',
+    `is_password_reset` BOOLEAN DEFAULT FALSE COMMENT '재설정후 최초 로그인 여부 True 최초, False 일반',
     created_at    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '계정 생성일'
 ) COMMENT '관리자';
 INSERT INTO admin
-(admin_id, password, admin_name, birth, admin_email, is_active, last_login, last_login_ip, created_at)
-    VALUE ('admin', '1234', '관리자', '900101', 'admin@naver.com', true, NULL, NULL, NOW());
+(admin_id, password, admin_name, admin_email, is_active, last_login, last_login_ip, created_at)
+    VALUES ('admin', '1234', '관리자', 'admin@naver.com', true, NULL, NULL, NOW()),
+           ('test', '1111', 'Test', 'test@naver.com', false, NULL, NULL, NOW())
+           ('test1', '2222', 'Test1', 'test1@naver.com', true, NULL, NULL, NOW())
 
 
 CREATE TABLE IF NOT EXISTS `members`
@@ -55,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `payment_info`
     `basic_charge`       INT COMMENT '기본 요금',
     `extra_charge`       INT COMMENT '초과 시간 당 추가 요금',
     `max_charge`         INT COMMENT '일일 최대 요금',
+    `member_charge`      INT COMMENT '월회원 요금',
     `small_car_discount` DOUBLE COMMENT '경차 할인율',
     `disabled_discount`  DOUBLE COMMENT '장애인 할인율',
     `is_active`          BOOLEAN  DEFAULT TRUE COMMENT '정책 활성화 여부 True (현재) / False (이전)',
@@ -66,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `payment_info`
     CONSTRAINT `chk_basic_charge` CHECK (`basic_charge` >= 0),
     CONSTRAINT `chk_extra_charge` CHECK (`extra_charge` >= 0),
     CONSTRAINT `chk_max_charge` CHECK (`max_charge` >= 0),
+    CONSTRAINT `chk_member_charge` CHECK (`member_charge` >= 0),
     CONSTRAINT `chk_small_car_discount` CHECK (`small_car_discount` >= 0),
     CONSTRAINT `chk_disabled_discount` CHECK (`disabled_discount` >= 0),
     CONSTRAINT `fk_admin_id` FOREIGN KEY (`admin_id`) REFERENCES admin (`admin_id`)

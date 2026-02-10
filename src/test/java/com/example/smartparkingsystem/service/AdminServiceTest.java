@@ -36,12 +36,12 @@ class AdminServiceTest {
     @Test
     public void adminServiceUpdate() {
         AdminDTO adminDTO = AdminDTO.builder()
-                .admin_id("test1")
+                .adminId("test1")
                 .password("test1")
-                .adminName("수정2")
-                .birth("950905")
-                .adminEmail("수정2@gmail.com")
-                .is_active(false)
+                .adminName("test2")
+                .adminEmail("test2@gmail.com")
+                .isActive(false)
+                .isPasswordReset(false)
                 .build();
         log.info(adminDTO);
         adminService.modifyAdmin(adminDTO);
