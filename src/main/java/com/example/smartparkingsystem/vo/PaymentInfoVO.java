@@ -17,6 +17,7 @@ public class PaymentInfoVO {
     private int basicCharge; // 기본 요금
     private int extraCharge; // 초과 시간 당 추가 요금
     private int maxCharge; // 일일 최대 요금
+    private int memberCharge; // 회원권 결제 요금
     private double smallCarDiscount; // 경차 할인율
     private double disabledDiscount; // 장애인 할인율
     private String adminId; //정책 수정한 관리자 아이디
