@@ -2,10 +2,10 @@
 <div class="header">
     <h1>스마트 주차 관리 시스템</h1>
     <ul class="nav">
-        <li>대시보드</li>
-        <li>회원 관리</li>
-        <li class="active">설정 관리</li>
-        <li>통계</li>
+        <li class="nav-item"><a class="nav-link" href="../main/main">대시보드</a></li>
+        <li class="nav-item"><a class="nav-link" href="../member/member">회원 관리</a></li>
+        <li class="nav-item"><a class="nav-link" href="setting">설정 관리</a></li>
+        <li class="nav-item"><a class="nav-link" href="../statistic/statistic">통계</a></li>
     </ul>
     <button class="logout-btn">로그아웃</button>
 </div>
