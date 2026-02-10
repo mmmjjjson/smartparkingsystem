@@ -13,12 +13,17 @@
     String startDate = request.getParameter("startDate");
     String endDate = request.getParameter("endDate");
 
+    LocalDate start = (startDate != null && !startDate.isEmpty())
+            ? LocalDate.parse(startDate) : LocalDate.now();
+    LocalDate end = (endDate != null && !endDate.isEmpty())
+            ? LocalDate.parse(endDate) : start.plusMonths(1).minusDays(1); // 기본 1개월
+
     MembersVO member = MembersVO.builder()
             .carNum(carNum)
             .memberName(memberName)
             .memberPhone(memberPhone)
-            .startDate(LocalDate.parse(startDate))
-            .endDate(LocalDate.parse(endDate))
+            .startDate(start)
+            .endDate(end)
             .build();
 
     MembersDAO membersDAO = new MembersDAO();

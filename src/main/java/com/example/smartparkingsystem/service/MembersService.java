@@ -39,20 +39,9 @@ public enum MembersService {
         membersDAO.deleteMember(mno);
     }
 
-    // 회원 목록 조회
-    public List<MembersDTO> getAllMembers() {
-        List<MembersVO> membersVOList = membersDAO.selectAllMembers();
-
-        List<MembersDTO> membersDTOList = membersVOList.stream()
-                .map(membersVO -> modelMapper.map(membersVO, MembersDTO.class))
-                .toList();
-
-        return membersDTOList;
-    }
-
     // 회원 검색 조회
-//    public  MembersDTO getOneMember(String keyword) {
-//        List<MembersVO> membersVOList = membersDAO.selectMembers(keyword);
+//    public  MembersDTO getMembers(String searchType, String keyword, String status) {
+//        List<MembersVO> membersVOList = membersDAO.selectMembers(searchType, keyword, status);
 //
 //        List<MembersDTO> membersDTOList = membersVOList.stream()
 //                .map(membersVO -> modelMapper.map(membersVO, MembersDTO.class))

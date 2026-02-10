@@ -11,8 +11,6 @@
             .carNum(request.getParameter("carNum"))
             .memberName(request.getParameter("memberName"))
             .memberPhone(request.getParameter("memberPhone"))
-            .startDate(LocalDate.parse(request.getParameter("startDate")))
-            .endDate(LocalDate.parse(request.getParameter("endDate")))
             .build();
 
     MembersDAO membersDAO = new MembersDAO();

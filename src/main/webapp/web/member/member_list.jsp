@@ -7,7 +7,6 @@
 <head>
     <meta charset="UTF-8">
     <title>회원 관리</title>
-    <link rel="stylesheet" href="css/member.css">
 </head>
 <body>
 <%
@@ -18,10 +17,12 @@
     MembersDAO membersDAO = new MembersDAO();
     List<MembersVO> membersList;
 
-    if (keyword != null && !keyword.trim().isEmpty() && searchType != null && !searchType.isEmpty()) {
-        membersList = membersDAO.selectMembers(searchType, keyword.trim());
+    if (keyword != null && !keyword.trim().isEmpty()) {
+        // 검색이면 status 무시
+        membersList = membersDAO.selectMembers(searchType, keyword.trim(), null);
     } else {
-        membersList = membersDAO.selectAllMembers();
+        // 검색 없으면 status 적용
+        membersList = membersDAO.selectMembers(null, null, status);
     }
 %>
 
@@ -47,22 +48,15 @@
 </tr>
 <%
 } else {
-    boolean hasData = false;
-
     for (MembersVO member : membersList) {
-        if (status == null && !member.isMember()) continue;
-
-        if ("expired".equals(status) && member.isMember()) continue;
-
-        hasData = true;
 %>
 <tr onclick="openViewModal(
-    <%=member.getMno()%>,
-        '<%= member.getCarNum() %>',
-        '<%= member.getMemberName() %>',
-        '<%= member.getMemberPhone() %>',
-        '<%= member.getStartDate() %>',
-        '<%= member.getEndDate() %>'
+    <%= member.getMno() %>,
+        `<%= member.getCarNum() %>`,
+        `<%= member.getMemberName() %>`,
+        `<%= member.getMemberPhone() %>`,
+        `<%= member.getStartDate() %>`,
+        `<%= member.getEndDate() %>`
         )">
     <td><%=member.getCarNum()%>
     </td>
@@ -73,15 +67,6 @@
     <td><%=member.getStartDate()%>
     </td>
     <td><%=member.getEndDate()%>
-    </td>
-</tr>
-<%
-    }
-    if (!hasData) {
-%>
-<tr>
-    <td colspan="5" style="text-align:center;">
-        <%= "expired".equals(status) ? "비회원이 없습니다" : "등록된 비회원이 없습니다" %>
     </td>
 </tr>
 <%

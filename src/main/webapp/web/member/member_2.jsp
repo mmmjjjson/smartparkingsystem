@@ -2,235 +2,267 @@
 <%@ page import="java.time.LocalDate" %>
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html>
-<%--<%@include file="/web/main/main_process.jsp"%>--%>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>스마트 주차관리 시스템 - 회원 관리</title>
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/member.css">
-    <link rel="stylesheet" href="../../login/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 기존 CSS / JS 유지 -->
+<%--    <link rel="stylesheet" href="css/member.css">--%>
+<%--    <link rel="stylesheet" href="../../login/css/styles.css">--%>
+
     <script src="js/member.js" defer></script>
+    <script src="../main/main_membershipPay.js" defer></script>
 </head>
-<body>
-<div class="container">
-    <!-- 헤더 -->
+
+<body class="bg-light">
+
+<div class="container-fluid px-4">
     <%@ include file="../common/header_member.jsp" %>
 
-    <!-- 콘텐츠 -->
-    <div class="content">
-        <div class="section-header">
-            <div class="section-title">회원 관리 - 월정액 회원 정보 관리</div>
+    <!-- 제목 + 버튼 -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <h4 class="fw-bold mb-0">회원 관리 - 월정액 회원 정보 관리</h4>
+        <div class="d-flex gap-2">
             <button class="btn btn-primary" id="newMemberBtn">신규 회원 등록</button>
+            <button class="btn btn-outline-primary" id="btnMembershipPay">회원권 결제</button>
         </div>
+    </div>
 
-        <!-- 회원 목록 테이블 -->
-        <div class="table-container">
-            <table>
-                <thead>
-                <tr>
-                    <th>차량 번호</th>
-                    <th>이름</th>
-                    <th>연락처</th>
-                    <th>시작일</th>
-                    <th>만료일</th>
-                </tr>
-                </thead>
+    <!-- 검색 / 필터 -->
+    <div class="card mb-3">
+        <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
 
-                <tbody id="memberTableBody">
+            <form method="get" action="member.jsp" class="d-flex gap-2">
+                <select name="searchType" class="form-select">
+                    <option value="carNum" <%= "carNum".equals(request.getParameter("searchType")) ? "selected" : "" %>>차량 번호</option>
+                    <option value="name" <%= "name".equals(request.getParameter("searchType")) ? "selected" : "" %>>이름</option>
+                    <option value="phone" <%= "phone".equals(request.getParameter("searchType")) ? "selected" : "" %>>연락처</option>
+                </select>
+
+                <input type="text" name="keyword" class="form-control"
+                       value="<%= request.getParameter("keyword") == null ? "" : request.getParameter("keyword") %>">
+
+                <button class="btn btn-dark">검색</button>
+            </form>
+
+            <div class="btn-group">
+                <a href="member.jsp"
+                   class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">
+                    회원
+                </a>
+                <a href="member.jsp?status=expired"
+                   class="btn btn-outline-secondary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">
+                    비회원
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 회원 목록 -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle text-center mb-0">
                 <%@ include file="member_list.jsp" %>
-                </tbody>
-                <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- 신규 회원 등록 모달 -->
-<div class="modal" id="newMemberModal">
-    <div class="card mb-4">
-        <form action="member_insert.jsp" method="post" onsubmit="return handleNewMemberSubmit()">
-            <div class="card-header">회원 정보 입력</div>
-
-            <div class="card-body">
-                <label class="label">차량 번호 (필수)</label>
-                <input type="text" name="carNum" placeholder="예: 12가3456" maxlength="8" class="input"
-                       id="newCarNumber">
-            </div>
-
-            <div class="card-body">
-                <label class="label">이름 (필수)</label>
-                <input type="text" name="memberName" placeholder="이름을 입력하세요" class="input" id="newName">
-            </div>
-
-            <div class="card-body">
-                <label class="label">연락처 (필수)</label>
-                <input type="tel" name="memberPhone" placeholder="예: 010-1234-5678" maxlength="13"
-                       oninput="autoHyphenPhone(this)" class="input" id="newPhone">
-            </div>
-
-            <div class="card-body">
-                <label class="label">시작일 (필수)</label>
-                <input type="date" name="startDate" class="input" id="newStartDate"
-                       onchange="setEndDateByOneMonth('newStartDate', 'newExpireDate')">
-            </div>
-
-            <div class="card-body">
-                <label class="label">만료일 (필수)</label>
-                <input type="date" class="input" id="newExpireDate" readonly>
-            </div>
-
-            <div class="card-body">
-                <button type="submit" class="btn btn-primary">등록</button>
-                <button type="button" class="btn btn-outline" onclick="closeAllModals()">취소</button>
-            </div>
-        </form>
+<!-- ========================= 회원권 결제 모달 ========================= -->
+<div class="modal fade" id="membershipPayModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form action="membership_pay.jsp" method="post">
+                <input type="hidden" name="mno" id="memMno">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">회원권 결제</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">차량 번호</label>
+                        <input type="text" class="form-control" id="memCarNum" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">이름</label>
+                        <input type="text" class="form-control" id="memName" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">연락처</label>
+                        <input type="text" class="form-control" id="memPhone" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">시작일</label>
+                        <input type="text" class="form-control" id="memStartDate" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">만료일</label>
+                        <input type="text" class="form-control" id="memEndDate" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">결제금액</label>
+                        <input type="text" class="form-control" id="memPrice" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary">결제</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<!-- 회원 상세 정보 모달 (조회만) -->
-<div class="modal" id="viewMemberModal">
-    <div class="modal-box modal-lg">
-        <div class="view-left">
-            <div class="modal-header">회원 상세 정보</div>
 
-            <div class="form-group">
-                <div class="label">차량 번호:</div>
-                <div class="input" id="viewCarNumber"></div>
+<!-- ========================= 신규 회원 모달 ========================= -->
+<div class="modal fade" id="newMemberModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form action="member_insert.jsp" method="post" onsubmit="return handleNewMemberSubmit()">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">신규 회원 등록</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">차량 번호</label>
+                        <input type="text" name="carNum" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">이름</label>
+                        <input type="text" name="memberName" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">연락처</label>
+                        <input type="tel" name="memberPhone" class="form-control">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">시작일</label>
+                            <input type="date" name="startDate" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">만료일</label>
+                            <input type="date" name="endDate" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary">등록</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= 회원 상세 모달 ========================= -->
+<div class="modal fade" id="viewMemberModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">회원 상세 정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <div class="form-group">
-                <div class="label">이름:</div>
-                <div class="input" id="viewName"></div>
+            <div class="modal-body">
+                <input type="hidden" id="mno">
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>차량 번호 :</strong> <span id="viewCarNumber"></span></li>
+                    <li class="list-group-item"><strong>이름 :</strong> <span id="viewName"></span></li>
+                    <li class="list-group-item"><strong>연락처 :</strong> <span id="viewPhone"></span></li>
+                    <li class="list-group-item"><strong>시작일 :</strong> <span id="viewStartDate"></span></li>
+                    <li class="list-group-item"><strong>만료일 :</strong> <span id="viewExpireDate"></span></li>
+                </ul>
             </div>
 
-            <div class="form-group">
-                <div class="label">연락처:</div>
-                <div class="input" id="viewPhone"></div>
-            </div>
-
-            <div class="form-group">
-                <div class="label">시작일:</div>
-                <div class="input" id="viewStartDate"></div>
-            </div>
-
-            <div class="form-group">
-                <div class="label">만료일:</div>
-                <div class="input" id="viewExpireDate"></div>
-            </div>
-
-            <div class="modal-buttons">
+            <div class="modal-footer">
                 <button class="btn btn-primary" onclick="openEditModal()">수정</button>
                 <button class="btn btn-danger" onclick="handleDelete()">삭제</button>
-                <button class="btn btn-outline" onclick="closeAllModals()">닫기</button>
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 회원 정보 수정 모달 -->
-<div class="modal" id="editMemberModal">
-    <div class="modal-box modal-lg">
-        <form action="member_update.jsp" method="post" onsubmit="return handleEditSubmit()">
-            <div class="modal-header">회원 정보 수정</div>
-            <input type="hidden" name="originCarNum" id="originCarNum">
+<!-- ========================= 회원 수정 모달 ========================= -->
+<div class="modal fade" id="editMemberModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form action="member_update.jsp" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">회원 정보 수정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
-            <div class="form-group">
-                <label class="label">차량 번호 (필수)</label>
-                <input type="text" name="carNum" class="input" id="editCarNumber">
-            </div>
+                <div class="modal-body">
+                    <input type="hidden" name="mno" id="editMno">
 
-            <div class="form-group">
-                <label class="label">이름 (필수)</label>
-                <input type="text" name="memberName" class="input" id="editName">
-            </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">차량 번호</label>
+                        <input type="text" name="carNum" class="form-control" id="editCarNumber">
+                    </div>
 
-            <div class="form-group">
-                <label class="label">연락처 (필수)</label>
-                <input type="tel" name="memberPhone" class="input" maxlength="13" oninput="autoHyphenPhone(this)"
-                       id="editPhone">
-            </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">이름</label>
+                        <input type="text" name="memberName" class="form-control" id="editName">
+                    </div>
 
-            <div class="form-group">
-                <label class="label">시작일 (필수)</label>
-                <input type="date" name="startDate" class="input" id="editStartDate">
-            </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">연락처</label>
+                        <input type="tel" name="memberPhone" class="form-control" id="editPhone">
+                    </div>
 
-            <div class="form-group">
-                <label class="label">만료일 (필수)</label>
-                <input type="date" name="endDate" class="input" id="editExpireDate">
-            </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">시작일</label>
+                            <input type="date" name="startDate" class="form-control" id="editStartDate">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">만료일</label>
+                            <input type="date" name="endDate" class="form-control" id="editExpireDate">
+                        </div>
+                    </div>
+                </div>
 
-            <div class="modal-buttons">
-                <button type="submit" class="btn btn-primary">수정 완료</button>
-                <button type="button" class="btn btn-outline" onclick="closeAllModals()">취소</button>
-            </div>
-        </form>
+                <div class="modal-footer">
+                    <button class="btn btn-primary">수정 완료</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<!-- 회원 삭제 모달 -->
-<div class="modal" id="deleteConfirmModal">
-    <div class="modal-box modal-md">
-        <form action="member_delete.jsp" method="post">
-            <input type="hidden" name="carNum" id="deleteCarNum">
-            <div class="modal-header">회원 삭제</div>
-            <div class="confirm-message">정말 삭제 하시겠습니까?</div>
-            <div class="modal-buttons">
-                <button type="submit" class="btn btn-danger">삭제</button>
-                <button type="button" class="btn btn-outline" onclick="closeAllModals()">취소</button>
-            </div>
-        </form>
+<!-- ========================= 회원 삭제 모달 ========================= -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="member_delete.jsp" method="post">
+                <input type="hidden" name="mno" id="deleteMno">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-danger">회원 삭제</h5>
+                </div>
+                <div class="modal-body text-center">
+                    정말 삭제하시겠습니까?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger">삭제</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<!-- 결과 안내 모달 -->
-<%
-    String flashMsg = (String) session.getAttribute("flashMsg");
-    if (flashMsg != null) {
-%>
-<div id="flashMessage" data-msg="<%= flashMsg %>"></div>
-<%
-        session.removeAttribute("flashMsg");
-    }
-%>
-</body>
 <%@ include file="../common/footer.jsp" %>
+</body>
 </html>

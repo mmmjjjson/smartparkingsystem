@@ -9,53 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MembersDAO {
-//    // 회원 정보 저장할 리스트 생성
-//    private static List<MembersDTO> membersDTOList = new ArrayList<>();
-//
-//    // 신규 회원 등록
-//    public void insertMember(MembersDTO membersDTO) {
-//        membersDTOList.add(MembersDTO.builder()
-//                .carNum(membersDTO.getCarNum())
-//                .memberName(membersDTO.getMemberName())
-//                .memberPhone(membersDTO.getMemberPhone())
-//                .startDate(membersDTO.getStartDate())
-//                .createdAt(LocalDateTime.now())
-//                .endDate(membersDTO.getEndDate())
-//                .isActive(true)
-//                .build());
-//    }
-//
-//    // 회원 정보 수정
-//    public void updateMember(String originCarNum, MembersDTO membersDTO) {
-//        for (MembersDTO member : membersDTOList) {
-//            if (member.getCarNum().equals(originCarNum)) {
-//                member.setCarNum(membersDTO.getCarNum());
-//                member.setMemberName(membersDTO.getMemberName());
-//                member.setMemberPhone(membersDTO.getMemberPhone());
-//                member.setStartDate(membersDTO.getStartDate());
-//                member.setEndDate(membersDTO.getEndDate());
-//                member.setUpdatedDate(LocalDateTime.now());
-//                break;
-//            }
-//        }
-//    }
-//
-//    // 회원 삭제
-//    public void deleteMember(String carNum) {
-//        for (int i = 0; i < membersDTOList.size(); i++) {
-//             if (membersDTOList.get(i).getCarNum().equals(carNum)) {
-//                 membersDTOList.remove(i);
-//                 break;
-//             }
-//        }
-//    }
-
-//    // 회원 목록 조회
-//    public List<MembersDTO> selectAllMembers() {
-//        return membersDTOList;
-//    }
-
-    /**************************************************************************************************/
     // 신규 회원 등록
     public void insertMember(MembersVO membersVO) {
         String sql = "INSERT INTO members (car_num, member_name, member_phone, start_date, end_date) VALUES (?, ?, ?, ?, ?)";
@@ -76,7 +29,7 @@ public class MembersDAO {
 
     // 회원 정보 수정
     public void updateMember(MembersVO membersVO) {
-        String sql = "UPDATE members SET car_num = ?, member_name = ?, member_phone = ?, start_date = ?, end_date = ? WHERE mno = ?";
+        String sql = "UPDATE members SET car_num = ?, member_name = ?, member_phone = ? WHERE mno = ?";
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
@@ -85,9 +38,7 @@ public class MembersDAO {
             preparedStatement.setString(1, membersVO.getCarNum());
             preparedStatement.setString(2, membersVO.getMemberName());
             preparedStatement.setString(3, membersVO.getMemberPhone());
-            preparedStatement.setDate(4, Date.valueOf(membersVO.getStartDate()));
-            preparedStatement.setDate(5, Date.valueOf(membersVO.getEndDate()));
-            preparedStatement.setLong(6, membersVO.getMno());
+            preparedStatement.setLong(4, membersVO.getMno());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -108,15 +59,14 @@ public class MembersDAO {
         }
     }
 
-    // 회원 목록 조회
-    public List<MembersVO> selectAllMembers() {
-        List<MembersVO> membersVOList = new ArrayList<>();
-
+    // 특정 회원 목록 조회
+    public MembersVO selectOneMember(String carNum) {
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
-            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM members");
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM members WHERE car_num = ?");
+            preparedStatement.setString(1, carNum);
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 MembersVO membersVO = MembersVO.builder()
                         .mno(resultSet.getLong("mno"))
                         .carNum(resultSet.getString("car_num"))
@@ -126,39 +76,55 @@ public class MembersDAO {
                         .endDate(resultSet.getDate("end_date").toLocalDate())
                         .build();
 
-                membersVOList.add(membersVO);
+                return membersVO;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return membersVOList;
+        return null;
     }
 
     // 회원 검색 조회
-    public List<MembersVO> selectMembers(String searchType, String keyword) {
+    public List<MembersVO> selectMembers(String searchType, String keyword, String status) {
         List<MembersVO> membersVOList = new ArrayList<>();
 
-        String column;
-        switch (searchType) {
-            case "carNum":
-                column = "car_num";
-                break;
-            case "name":
-                column = "member_name";
-                break;
-            case "phone":
-                column = "member_phone";
-                break;
-            default:
-                throw new IllegalArgumentException("잘못된 검색 타입");
-        }
+        // StringBuilder: 문자열 이어 붙이는 클래스. + 대신 append 사용하여 문자열 이어 붙임.
+        StringBuilder sql = new StringBuilder("SELECT * FROM members WHERE 1=1");
 
-        String sql = "SELECT * FROM members WHERE " + column + " LIKE ?";
+        boolean isSearch = keyword != null && !keyword.isEmpty() && searchType != null && !searchType.isEmpty();
+
+        // 검색 키워드가 있으면 키워드 필터 추가
+        if (isSearch) {
+            String column;
+            switch (searchType) {
+                case "carNum":
+                    column = "car_num";
+                    break;
+                case "name":
+                    column = "member_name";
+                    break;
+                case "phone":
+                    column = "member_phone";
+                    break;
+                default:
+                    throw new IllegalArgumentException("잘못된 검색 타입");
+            }
+            sql.append(" AND ").append(column).append(" LIKE ?");
+        } else  {
+            // 검색 키워드가 없을 시 status 필터 적용
+            if ("expired".equals(status)) {
+                sql.append(" AND end_date < CURDATE()"); // 비회원
+            } else {
+                sql.append(" AND end_date >= CURDATE()"); // 회원
+            }
+        }
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
-            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, "%" + keyword + "%");
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+            if (isSearch) {
+                preparedStatement.setString(1, "%" + keyword + "%");
+            }
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
