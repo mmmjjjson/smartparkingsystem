@@ -1,5 +1,6 @@
 package com.example.smartparkingsystem.dao;
 
+import com.example.smartparkingsystem.dto.ParkingHistoryDTO;
 import com.example.smartparkingsystem.util.ConnectionUtil;
 import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import lombok.Cleanup;
@@ -16,8 +17,8 @@ import java.time.LocalDateTime;
 public class ParkingHistoryDAO {
     /* 입차 등록 */
     public void insertEntry(ParkingHistoryVO parkingHistoryVO) {
-        String sql = "INSERT INTO parking_history (parking_area, car_num, car_type, entry_time) " +
-                "VALUES (?, ?, ?, now())";
+        String sql = "INSERT INTO parking_history (parking_area, car_num, car_type, is_member, entry_time) " +
+                "VALUES (?, ?, ?, EXISTS(SELECT 1 FROM members WHERE car_num = ?) , now())";
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
@@ -25,6 +26,34 @@ public class ParkingHistoryDAO {
             preparedStatement.setString(1, parkingHistoryVO.getParkingArea());
             preparedStatement.setString(2, parkingHistoryVO.getCarNum());
             preparedStatement.setString(3, parkingHistoryVO.getCarType());
+            preparedStatement.setString(4, parkingHistoryVO.getCarNum());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /* isMember 상태 변경
+    * 출차하지 않은 isMember=0 차량이 members 테이블에 등록되었을 때 */
+    public void updateIsMember(ParkingHistoryVO parkingHistoryVO) {
+        ParkingHistoryVO dbVO = selectParkingHistory(parkingHistoryVO.getParkNo());
+        if (dbVO == null || dbVO.getEntryTime() == null) {
+            throw new IllegalStateException("입차 기록 없음");
+        }
+
+        if (parkingHistoryVO.getCarNum() == null || parkingHistoryVO.getCarNum().isBlank()) {
+            throw new IllegalArgumentException("차량 번호 없음");
+        }
+
+        String sql = "UPDATE parking_history SET is_member = 1 " +
+                "WHERE EXISTS(SELECT 1 FROM members WHERE car_num = ?) AND park_no = ? " +
+                "AND is_member = 0 AND exit_time IS NULL";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, parkingHistoryVO.getCarNum());
+            preparedStatement.setLong(2, parkingHistoryVO.getParkNo());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -47,6 +76,7 @@ public class ParkingHistoryDAO {
                         .parkingArea(resultSet.getString("parking_area"))
                         .carNum(resultSet.getString("car_num"))
                         .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
                         .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
                         .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
                         .totalMinutes(resultSet.getInt("total_minutes"))
@@ -67,7 +97,7 @@ public class ParkingHistoryDAO {
 
         String sql = "UPDATE parking_history SET exit_time = now(), total_minutes = ? WHERE park_no = ?";
         LocalDateTime now = LocalDateTime.now();
-        int totalMinutes = (int) Duration.between(parkingHistoryVO.getEntryTime(), now).toMinutes();
+        int totalMinutes = (int) Duration.between(dbVO.getEntryTime(), now).toMinutes();
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();

@@ -28,17 +28,29 @@ public enum ParkingHistoryService {
 
     /* 기록 조회 */
     public ParkingHistoryDTO getParkingHistory(long parkNo) {
-        return modelMapper.map(parkingHistoryDAO.selectParkingHistory(parkNo), ParkingHistoryDTO.class);
+        ParkingHistoryVO parkingHistoryVO = parkingHistoryDAO.selectParkingHistory(parkNo);
+        if (parkingHistoryVO == null) {
+            throw new IllegalArgumentException(parkNo + " 주차 기록 없음");
+        }
+        return modelMapper.map(parkingHistoryVO, ParkingHistoryDTO.class);
     }
 
-    /* 주차 상태 변경 */
-
-    /* 회원 여부 판단 */
-
+    /* 회원권 상태 변경 */
+    public void changeIsMemberState(ParkingHistoryDTO parkingHistoryDTO) {
+        parkingHistoryDAO.updateIsMember(modelMapper.map(parkingHistoryDTO, ParkingHistoryVO.class));
+    }
 
     /* 출차 처리 */
     public void registerExit(ParkingHistoryDTO parkingHistoryDTO) {
         ParkingHistoryVO parkingHistoryVO = modelMapper.map(parkingHistoryDTO, ParkingHistoryVO.class);
+
+        // DTO->VO 과정에서 null값 들어가는 오류 발생 시 DB에 저장된 값 불러와 다시 저장
+        if (parkingHistoryVO.getEntryTime() == null) {
+            ParkingHistoryVO dbVO = parkingHistoryDAO.selectParkingHistory(parkingHistoryVO.getParkNo());
+            parkingHistoryVO = ParkingHistoryVO.builder()
+                    .entryTime(dbVO.getEntryTime())
+                    .build();
+        }
         parkingHistoryDAO.updateExit(parkingHistoryVO);
     }
 

@@ -30,6 +30,13 @@ class ParkingHistoryServiceTest {
     }
 
     @Test
+    void changeIsMemberState() {
+        long parkNo = 20;
+        ParkingHistoryDTO parkingHistoryDTO = parkingHistoryService.getParkingHistory(parkNo);
+        parkingHistoryService.changeIsMemberState(parkingHistoryDTO);
+    }
+
+    @Test
     public void registerExitTest() {
         long parkNo = 2;
         parkingHistoryService.registerExit(parkingHistoryService.getParkingHistory(parkNo));

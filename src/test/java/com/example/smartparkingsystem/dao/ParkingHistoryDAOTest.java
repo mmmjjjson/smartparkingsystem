@@ -52,6 +52,17 @@ class ParkingHistoryDAOTest {
     }
 
     @Test
+    void updateIsMember() {
+        long park_no = 3;
+        ParkingHistoryVO updateVO = parkingHistoryDAO.selectParkingHistory(park_no);
+        parkingHistoryDAO.updateIsMember(updateVO);
+
+        park_no = 5;
+        ParkingHistoryVO nonUpdateVO = parkingHistoryDAO.selectParkingHistory(park_no);
+        parkingHistoryDAO.updateIsMember(nonUpdateVO);
+    }
+
+    @Test
     void selectParkingHistoryTest() {
         Long parkNo = 1L;
         log.info(parkingHistoryDAO.selectParkingHistory(parkNo));
@@ -59,7 +70,7 @@ class ParkingHistoryDAOTest {
 
     @Test
     void updateExitTest() {
-        Long parkNo = 1L;
+        long parkNo = 1;
         ParkingHistoryVO parkingHistoryVO = parkingHistoryDAO.selectParkingHistory(parkNo);
         parkingHistoryDAO.updateExit(parkingHistoryVO);
     }
