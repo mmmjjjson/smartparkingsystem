@@ -12,39 +12,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentInfoDAO {
-    public List<PaymentInfoVO> selectAllInfo() {
-        List<PaymentInfoVO> paymentInfoVOList = new ArrayList<>();
-        String sql = "SELECT * from payment_info";
+    private static PaymentInfoDAO instance;
+
+    private PaymentInfoDAO() {}
+
+    public static PaymentInfoDAO getInstance() {
+        if (instance == null) {
+            instance = new PaymentInfoDAO();
+        }
+        return instance;
+    }
+
+    public PaymentInfoVO selectInfo() {
+        String sql = "SELECT * from payment_info ORDER BY pno desc limit 1";
+        PaymentInfoVO paymentInfoVO = null;
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next()) {
-                PaymentInfoVO paymentInfoVO = PaymentInfoVO.builder()
+            if (resultSet.next()) {
+                paymentInfoVO = PaymentInfoVO.builder()
                         .pno(resultSet.getInt("pno"))
                         .freeTime(resultSet.getInt("free_time"))
-                        .basicCharge(resultSet.getInt("basic_time"))
+                        .basicTime(resultSet.getInt("basic_time"))
                         .extraTime(resultSet.getInt("extra_time"))
                         .basicCharge(resultSet.getInt("basic_charge"))
                         .extraCharge(resultSet.getInt("extra_charge"))
                         .maxCharge(resultSet.getInt("max_charge"))
+                        .memberCharge(resultSet.getInt("member_charge"))
                         .smallCarDiscount(resultSet.getDouble("small_car_discount"))
                         .disabledDiscount(resultSet.getDouble("disabled_discount"))
                         .adminId(resultSet.getString("admin_id"))
                         .updatedAt(resultSet.getObject("updated_at", LocalDateTime.class))
                         .build();
-                paymentInfoVOList.add(paymentInfoVO);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return paymentInfoVOList;
+        return paymentInfoVO;
     }
 
     public void insertInfo(PaymentInfoVO paymentInfoVO) {
-        String sql = "insert into payment_info (free_time, basic_time, extra_time, basic_charge, extra_charge, max_charge, small_car_discount, disabled_discount, admin_id, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
+        String sql = "insert into payment_info (free_time, basic_time, extra_time, basic_charge, extra_charge, max_charge, member_charge, small_car_discount, disabled_discount, admin_id, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
@@ -55,9 +66,10 @@ public class PaymentInfoDAO {
             preparedStatement.setInt(4, paymentInfoVO.getBasicCharge());
             preparedStatement.setInt(5, paymentInfoVO.getExtraCharge());
             preparedStatement.setInt(6, paymentInfoVO.getMaxCharge());
-            preparedStatement.setDouble(7, paymentInfoVO.getSmallCarDiscount());
-            preparedStatement.setDouble(8, paymentInfoVO.getDisabledDiscount());
-            preparedStatement.setString(9, paymentInfoVO.getAdminId());
+            preparedStatement.setInt(7, paymentInfoVO.getMemberCharge());
+            preparedStatement.setDouble(8, paymentInfoVO.getSmallCarDiscount());
+            preparedStatement.setDouble(9, paymentInfoVO.getDisabledDiscount());
+            preparedStatement.setString(10, paymentInfoVO.getAdminId());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
