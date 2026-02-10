@@ -12,14 +12,12 @@ class PaymentInfoDAOTest {
     @BeforeEach
     public void ready() {
         // 모든 테스트 전에 TodoDAO 타입의 객체를 생성
-        paymentInfoDAO = new PaymentInfoDAO();
+        paymentInfoDAO = PaymentInfoDAO.getInstance();
     }
 
     @Test
     public void selectInfo() {
-        for (PaymentInfoVO paymentInfoVO : paymentInfoDAO.selectAllInfo()) {
-            log.info(paymentInfoVO);
-        }
+        log.info(paymentInfoDAO.selectInfo());
     }
 
     @Test
@@ -31,6 +29,7 @@ class PaymentInfoDAOTest {
                 .basicCharge(3000)
                 .extraCharge(1000)
                 .maxCharge(15000)
+                .memberCharge(100000)
                 .smallCarDiscount(0.3)
                 .disabledDiscount(0.5)
                 .adminId("admin")
