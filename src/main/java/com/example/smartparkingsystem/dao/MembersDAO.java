@@ -9,13 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MembersDAO {
-    // 회원 여부 확인 메서드
-    public boolean isMember(LocalDate endDate) {
-        if (endDate == null) return false;
-
-        return !endDate.isBefore(LocalDate.now());
-    }
-
 //    // 회원 정보 저장할 리스트 생성
 //    private static List<MembersDTO> membersDTOList = new ArrayList<>();
 //

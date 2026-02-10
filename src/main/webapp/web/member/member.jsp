@@ -42,8 +42,22 @@
             <input type="text" name="keyword" value="<%= request.getParameter("keyword") == null ? "" : request.getParameter("keyword") %>">
 
             <button onclick="searchMember()">검색</button>
-        </form>
 
+            <div class="isMember">
+                <!-- 비회원 조회 -->
+                <a href="member.jsp?status=expired"
+                   class="btn btn-outline-secondary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">
+                    비회원
+                </a>
+
+                <!-- 전체 회원(기본 화면으로 복귀) -->
+                <a href="member.jsp"
+                   class="btn btn-outline-secondary <%= request.getParameter("status") == null ? "active" : "" %>">
+                    회원
+                </a>
+            </div>
+
+        </form>
 
         <!-- 회원 목록 테이블 -->
         <div class="table-container">

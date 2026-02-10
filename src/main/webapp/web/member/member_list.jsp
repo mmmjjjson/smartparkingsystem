@@ -13,6 +13,7 @@
 <%
     String searchType = request.getParameter("searchType");
     String keyword = request.getParameter("keyword");
+    String status = request.getParameter("status");
 
     MembersDAO membersDAO = new MembersDAO();
     List<MembersVO> membersList;
@@ -27,13 +28,13 @@
 <!-- 회원 목록 -->
 <!-- 테이블 제목 -->
 <thead>
-    <tr>
-        <th>차량 번호</th>
-        <th>이름</th>
-        <th>연락처</th>
-        <th>시작일</th>
-        <th>만료일</th>
-    </tr>
+<tr>
+    <th>차량 번호</th>
+    <th>이름</th>
+    <th>연락처</th>
+    <th>시작일</th>
+    <th>만료일</th>
+</tr>
 </thead>
 <tbody>
 <%
@@ -46,7 +47,14 @@
 </tr>
 <%
 } else {
+    boolean hasData = false;
+
     for (MembersVO member : membersList) {
+        if (status == null && !member.isMember()) continue;
+
+        if ("expired".equals(status) && member.isMember()) continue;
+
+        hasData = true;
 %>
 <tr onclick="openViewModal(
     <%=member.getMno()%>,
@@ -65,6 +73,15 @@
     <td><%=member.getStartDate()%>
     </td>
     <td><%=member.getEndDate()%>
+    </td>
+</tr>
+<%
+    }
+    if (!hasData) {
+%>
+<tr>
+    <td colspan="5" style="text-align:center;">
+        <%= "expired".equals(status) ? "비회원이 없습니다" : "등록된 비회원이 없습니다" %>
     </td>
 </tr>
 <%

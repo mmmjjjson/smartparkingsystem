@@ -69,10 +69,12 @@ body {
     padding: 6px 8px;
 }
 
-/*.search-bar input,*/
-/*.search-bar select {*/
-/*    padding: 6px 8px;*/
-/*}*/
+
+/* 회원 구분 버튼 */
+.isMember {
+    display: inline-block;
+    float: right;
+}
 
 
 /* 버튼 */

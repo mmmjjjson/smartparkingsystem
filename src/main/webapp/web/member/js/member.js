@@ -176,6 +176,7 @@ btnMembershipSubmit.addEventListener('click', () => {
     alert("결제가 완료되었습니다!");
 });
 
+/* ===================== 모달 리셋 ===================== */
 membershipPayModalElement.addEventListener('click', function (e) {
     if (e.target?.id === 'btn-receipt-close-final') {
 
