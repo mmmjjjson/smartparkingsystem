@@ -1,0 +1,166 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 기본 폰트 설정 */
+body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* 헤더 하단 마진 제거 */
+.navbar {
+    width: 100%;
+    margin-bottom: 0 !important;
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+}
+
+/* 전체 컨테이너 */
+.container {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1.8fr 1fr;
+    gap: 30px;
+    font-size: 1.1rem;
+}
+
+/* 타이틀 바 */
+.title-bar {
+    grid-column: span 2;
+    background-color: #e9ecef;
+    padding: 12px 20px;
+    border: 1px solid #dee2e6;
+    font-weight: bold;
+    color: #444;
+    border-radius: 6px;
+}
+
+/* 카드 */
+.card {
+    background: white;
+    border: 2px solid #dee2e6 !important;
+    border-radius: 12px !important;
+    padding: 17px 28px 28px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: border-color 0.2s;
+}
+
+.card:hover {
+    border: 2px solid #4a76c5 !important;
+}
+
+.card-label {
+    display: inline-block;
+    font-size: 17px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 입력 행 */
+.input-row {
+    display: flex;
+    gap: 15px;
+}
+
+.input-item {
+    flex: 1;
+    border: 1px solid #dee2e6;
+    padding: 20px;
+    background: #fafafa;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.input-item label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.input-item input {
+    width: 90%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-align: right;
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: border-color 0.2s;
+}
+
+.input-item input:focus {
+    outline: none;
+    border-color: #4a76c5;
+}
+
+/* 우측 저장 버튼 영역 */
+.btn-area {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.save-btn {
+    background-color: #4a76c5;
+    color: white;
+    padding: 10px 50px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.2s;
+}
+
+.save-btn:hover {
+    background-color: #3a66b5;
+}
+
+/* 미리보기 박스 */
+.preview-box {
+    background: white;
+    border: 2px solid #4a76c5;
+    border-radius: 12px;
+    padding: 35px;
+    box-shadow: 0 2px 8px rgba(74, 118, 197, 0.1);
+}
+
+.preview-title {
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: block;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    color: #333;
+}
+
+.preview-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.preview-row b {
+    color: #4a76c5;
+}
+
+.update-info {
+    margin-top: 30px;
+    color: #4a76c5;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1.6;
+}

@@ -23,6 +23,7 @@
 <%--    <%@include file="/web/main/main_process.jsp"%>--%>
 
     <meta charset="UTF-8">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <title>반월당 스마트 주차 관리 시스템</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -38,6 +39,12 @@
 
 <!-- 메인 페이지 -->
 <div class="container-fluid mt-4">
+    <!-- 주차 현황 요약 -->
+    <div class="section-header">
+        <h3 class="section-title">주차 현황</h3>
+        <p>현재 <b></b>의 차량이 주차되어 있습니다.</p>
+    </div>
+
     <!-- 차량 검색 영역 -->
     <!-- *** 추후 검색 기능 (필터링) 추가 해야 함 !!! *** -->
     <div class="row justify-content-center my-4">
@@ -46,12 +53,6 @@
             <button class="btn btn-secondary px-4 text-nowrap" id="btnCarSearch">검색</button>
         </div>
     </div>
-    <hr>
-
-    <!-- 주차 현황 요약 -->
-    <!-- *** 추후 주차된 차량 수 반영 기능 추가해야 함 !!! *** --->
-    <h3>주차 현황</h3>
-    <p>현재 <b></b>의 차량이 주차되어 있습니다.</p>
 
     <!-- 주차 구역 메인 보드 -->
     <div id="parking-board">
