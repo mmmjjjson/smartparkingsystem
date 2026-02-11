@@ -13,8 +13,15 @@
     </div>
 
     <span class="navbar-text">
-            <a href="#" class="text-white text-decoration-none">로그아웃</a>
-        </span>
+        <ul class="navbar-nav d-flex flex-row gap-3 p-0 m-0" style="align-items: center;">
+            <li class="nav-item">
+                <a href="#" class="text-white text-decoration-none">MyPage</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="text-white text-decoration-none">로그아웃</a>
+            </li>
+        </ul>
+    </span>
   </div>
 </nav>
 

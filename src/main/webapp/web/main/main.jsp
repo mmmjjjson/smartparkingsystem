@@ -40,17 +40,18 @@
 <!-- 메인 페이지 -->
 <div class="container-fluid mt-4">
     <!-- 주차 현황 요약 -->
-    <div class="section-header">
-        <h3 class="section-title">주차 현황</h3>
-        <p>현재 <b></b>의 차량이 주차되어 있습니다.</p>
-    </div>
+    <div class="section-header d-flex justify-content-between align-items-end">
+        <div>
+            <h3 class="section-title">주차 현황</h3>
+            <p class="mb-0">현재 <b>6대</b>의 차량이 주차되어 있습니다.</p>
+        </div>
 
-    <!-- 차량 검색 영역 -->
-    <!-- *** 추후 검색 기능 (필터링) 추가 해야 함 !!! *** -->
-    <div class="row justify-content-center my-4">
-        <div class="col-md-6 d-flex">
-            <input type="text" class="form-control" id="inputCarNum" placeholder="차량번호 마지막 4자리를 입력하세요." style="margin-right:20px;">
-            <button class="btn btn-secondary px-4 text-nowrap" id="btnCarSearch">검색</button>
+        <!-- 차량 검색 창 -->
+        <div class="d-flex" style="gap: 10px; margin-bottom: 5px;">
+            <input type="text" class="form-control" id="inputCarNum"
+                   placeholder="검색할 차량번호 4자리를 입력하세요."
+                   style="width: 450px; height: 38px;">
+            <button class="btn btn-secondary px-4 text-nowrap" id="btnCarSearch" style="height: 38px;">검색</button>
         </div>
     </div>
 
