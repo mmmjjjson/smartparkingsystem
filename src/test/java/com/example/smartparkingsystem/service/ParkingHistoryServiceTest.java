@@ -30,6 +30,18 @@ class ParkingHistoryServiceTest {
     }
 
     @Test
+    void getOccupiedTest() {
+        for (ParkingHistoryDTO dto : parkingHistoryService.getOccupied()) {
+            log.info(dto);
+        }
+    }
+
+    @Test
+    void getRecentParking() {
+        log.info(parkingHistoryService.getRecentParking("11가1001"));
+    }
+
+    @Test
     void changeIsMemberState() {
         long parkNo = 20;
         ParkingHistoryDTO parkingHistoryDTO = parkingHistoryService.getParkingHistory(parkNo);

@@ -37,7 +37,13 @@
                         <tr><th>차종</th><td id="info-type"></td></tr>
                         <tr><th>입차시간</th><td id="info-inTime"></td></tr>
                         <tr><th>출차시간</th><td id="info-outTime"></td></tr>
-                        <tr><th>총 요금</th><td id="info-totalPrice" class="text-danger fw-bold"></td></tr>
+                        <tr>
+                            <th>총 요금</th>
+                            <td>
+                                <span id="info-totalPrice" class="text-danger fw-bold"></span>
+                                <span id="info-isMember" class="text-danger fw-bold" style="margin-left: 5px;"></span>
+                            </td>
+                        </tr>
                     </table>
                 </div>
 

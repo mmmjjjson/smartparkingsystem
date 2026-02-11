@@ -35,6 +35,7 @@ document.querySelectorAll('.parking-card').forEach(card => {
         const car = card.dataset.carNum;
         const inFullTime = currentCard.dataset.inFullTime;
         const type = card.dataset.carType;
+        const memberLabel = (card.dataset.isMember === "true") ? "(회원 할인 적용)" : "";
 
         if (status === 'available') {
             modalTitle.innerText = id + " 입차 관리";
@@ -49,13 +50,16 @@ document.querySelectorAll('.parking-card').forEach(card => {
 
             const now = new Date();
             const outFullTime = now.toISOString();
-            const chargeResult = calculateParkingCharge(inFullTime, outFullTime, type);
+            const effectiveType = (card.dataset.isMember === "true") ? "월정액" : type;
+            const chargeResult = calculateParkingCharge(inFullTime, outFullTime, effectiveType);
+
             // 데이터 매핑
             document.getElementById('info-car').innerText = car; // 차량 번호
             document.getElementById('info-type').innerText = type; // 차종
             document.getElementById('info-inTime').innerText = formatDateTime(inFullTime); // 주차 시간
             document.getElementById('info-outTime').innerText = formatDateTime(outFullTime); // 출차 시간
             document.getElementById('info-totalPrice').innerText = chargeResult.total.toLocaleString() + "원";
+            document.getElementById('info-isMember').innerText = memberLabel;
 
             modalAction.innerText = "결제하기";
             modalAction.className = "btn btn-danger";
@@ -76,8 +80,10 @@ modalAction.addEventListener('click', () => {
 // 입차 등록 함수
 function handleEntry() {
     const inputCarNum = document.getElementById('input-carNum'); // input-carNum : 사용자 입력 차량번호
-    const carNum = inputCarNum.value.trim();
+    const parkingArea = currentCard.dataset.id;
     const selectedCarType = document.querySelector('input[name="carType"]:checked');
+    const carType = selectedCarType.value;
+    const carNum = inputCarNum.value.trim();
 
     if (!carNum) {
         alert("차량 번호를 입력해 주세요");
@@ -93,26 +99,49 @@ function handleEntry() {
         return;
     }
 
-    const carType = selectedCarType.value;
+    // 서버 즉시 업데이트 (DB 전)
+    // const now = new Date();
+    // const fullTime = now.toISOString();
+    // currentCard.dataset.status = 'occupied'; // 데이터 바꾸기
+    // currentCard.dataset.carNum = carNum; // 차량 번호
+    // currentCard.dataset.inFullTime = fullTime; // 주차 시간
+    // currentCard.dataset.carType = carType; // 차종
 
-    // 현재 시간 생성
-    const now = new Date();
-    const fullTime = now.toISOString();
+    fetch('/parking/entry', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}, // 데이터 형식 지정
+        body: `parkingArea=${parkingArea}&carNum=${carNum}&carType=${carType}` // 보낼 데이터
+    })
+        .then(res => res.json()) // 서버의 응답을 JSON으로 변환
+        .then(data => { // 서버가 보낸 응답 객체
+            if (!data.success) {
+                alert('입차 등록 실패! ' + data.message);
+                return;
+            }
 
-    currentCard.dataset.status = 'occupied'; // 데이터 바꾸기
-    currentCard.dataset.carNum = carNum; // 차량 번호
-    currentCard.dataset.inFullTime = fullTime; // 주차 시간
-    currentCard.dataset.carType = carType; // 차종
+            if (data.exists) {
+                alert('이미 주차 중인 차량입니다.');
+                return;
+            }
 
-    // UI 업데이트
-    currentCard.classList.replace('available', 'occupied'); // 배경색 변경
-    currentCard.querySelector('.box-car').innerText = carNum;
-    currentCard.querySelector('.box-time').innerText = "00:00";
+            // DB 저장 성공 시
+            currentCard.dataset.status = 'occupied';
+            currentCard.dataset.parkNo = data.parkNo;
+            currentCard.dataset.carNum = carNum;
+            currentCard.dataset.carType = carType;
+            currentCard.dataset.inFullTime = data.entryTime;
 
-    alert(`${carNum} 차량 입차 완료!`)
-    modal.hide();
-    updateParkingCount();
-    inputCarNum.value = ""; // 입력창 초기화
+            // UI 업데이트
+            currentCard.classList.replace('available', 'occupied'); // 배경색 변경
+            currentCard.querySelector('.box-car').innerText = carNum;
+            currentCard.querySelector('.box-time').innerText = "00:00";
+
+            alert(`${carNum} 차량 입차 완료!`)
+            modal.hide();
+            updateParkingCount();
+            inputCarNum.value = ""; // 입력창 초기화
+        })
+        .catch(err => alert('오류 발생! 관리자에게 문의하세요.' + err));
 }
 
 // 결제 진행 함수
@@ -122,7 +151,13 @@ function handlePayment() {
     const outFullTime = new Date().toISOString();
     const carType = currentCard.dataset.carType;
     const carNum = currentCard.dataset.carNum;
-    const chargeResult = calculateParkingCharge(inFullTime, outFullTime, carType);
+    const effectiveType = (currentCard.dataset.isMember === "true") ? "월정액" : carType;
+    const chargeResult = calculateParkingCharge(inFullTime, outFullTime, effectiveType);
+
+    console.log("effectiveType:", effectiveType);
+    console.log("isMember:", currentCard.dataset.isMember);
+    console.log("chargeResult:", chargeResult); // ← 여기 추가
+
 
     // 영수증 데이터 매핑
     document.getElementById('rec-car').innerText = carNum;
@@ -156,22 +191,78 @@ function handlePayment() {
 document.getElementById('btn-close-final').addEventListener('click', () => {
     if (!currentCard) return;
 
-    // 1. 데이터 초기화
-    currentCard.dataset.status = 'available';
-    currentCard.dataset.carNum = "";
-    currentCard.dataset.inFullTime = "";
-    currentCard.dataset.carType = "";
+    const parkNo = currentCard.dataset.parkNo;
 
-    // 2. UI 초기화
-    currentCard.classList.replace('occupied', 'available');
-    currentCard.querySelector('.box-car').innerText = "사용 가능";
-    currentCard.querySelector('.box-time').innerText = "";
+    fetch('/parking/exit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}, // 데이터 형식 지정
+        body: `parkNo=${parkNo}`
+    })
+        .then(res => res.json()) // 서버의 응답을 JSON으로 변환
+        .then(data => { // 서버가 보낸 응답 객체
+            if (!data.success) {
+                alert('출차 처리 실패' + data.message);
+                return;
+            }
+            // 1. 데이터 초기화
+            currentCard.dataset.status = 'available';
+            currentCard.dataset.carNum = "";
+            currentCard.dataset.inFullTime = "";
+            currentCard.dataset.carType = "";
+            currentCard.dataset.parkNo = "";
 
-    // 3. 모달 닫기
-    modal.hide();
-    updateParkingCount();
-    alert("정산이 완료되어 출차 처리되었습니다.");
+            // 2. UI 초기화
+            currentCard.classList.replace('occupied', 'available');
+            currentCard.querySelector('.box-car').innerText = "사용 가능";
+            currentCard.querySelector('.box-time').innerText = "";
+
+            // 3. 모달 닫기
+            modal.hide();
+            updateParkingCount();
+            alert("정산이 완료되어 출차 처리되었습니다.");
+        })
+        .catch(err => alert('오류 발생! 관리자에게 문의하세요.' + err));
 });
+
+function updateElapsedTime() {
+    const now = new Date();
+    document.querySelectorAll('.parking-card.occupied').forEach(card => {
+        const timeDisplay = card.querySelector('.box-time');
+        if (!timeDisplay) return;
+
+        // 1. 비어있는 구역이면 시간 글자를 지우고 다음 카드로 넘어감
+        if (card.classList.contains('available')) {
+            timeDisplay.innerText = "";
+            return;
+        }
+
+        const inFullTime = card.dataset.inFullTime;
+        if (!inFullTime || isNaN(new Date(inFullTime).getTime())) {
+            // 입차 직후 데이터가 잠시 없을 경우 00:00 유지
+            if (card.classList.contains('occupied') && timeDisplay.innerText === "") {
+                timeDisplay.innerText = "00:00";
+            }
+            return;
+        }
+
+        const entryTime = new Date(inFullTime);
+        const diffMins = Math.floor((now - entryTime) / 60000);
+
+        // 서버-클라이언트 시차 - 방지
+        // ex. 서버 시간 2시 00분 05초 -> 내 컴퓨터 1시 59분 57초
+        const totalMins = diffMins < 0 ? 0 : diffMins;
+
+        const hours = Math.floor(totalMins / 60);
+        const mins = totalMins % 60;
+        const timeStr = String(hours).padStart(2, '0') + ":" + String(mins).padStart(2, '0');
+
+        timeDisplay.innerText = timeStr;
+    });
+
+    if (typeof updateParkingCount === 'function') {
+        updateParkingCount();
+    }
+}
 
 /* 창 닫힐 때 섹션 리셋 */
 document.getElementById('parkingModal').addEventListener('hidden.bs.modal', () => {
@@ -181,19 +272,6 @@ document.getElementById('parkingModal').addEventListener('hidden.bs.modal', () =
     document.getElementById('input-carNum').value = "";
 })
 
-setInterval(() => {
-    const now = new Date();
-    document.querySelectorAll('.parking-card.occupied').forEach(card => {
-        const inFullTime = card.dataset.inFullTime;
-        if (inFullTime) {
-            const diffMins = Math.floor((now - new Date(inFullTime)) / 60000);
-            const hours = Math.floor(diffMins / 60);
-            const mins = diffMins % 60;
-            const timeStr = String(hours).padStart(2, '0') + ":" + String(mins).padStart(2, '0');
-            card.querySelector('.box-time').innerText = timeStr;
-        }
-    });
-    updateParkingCount();
-}, 60000);
+updateElapsedTime();
 
-updateParkingCount();
+setInterval(updateElapsedTime, 60000);

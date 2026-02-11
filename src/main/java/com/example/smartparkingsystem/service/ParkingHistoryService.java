@@ -7,6 +7,9 @@ import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Log4j2
 public enum ParkingHistoryService {
     INSTANCE;
@@ -35,6 +38,22 @@ public enum ParkingHistoryService {
         return modelMapper.map(parkingHistoryVO, ParkingHistoryDTO.class);
     }
 
+    /* 현재 주차 중인 기록 조회 */
+    public List<ParkingHistoryDTO> getOccupied() {
+        List<ParkingHistoryDTO> occupiedList = new ArrayList<>();
+        for (ParkingHistoryVO vo : parkingHistoryDAO.selectOccupied()) {
+            occupiedList.add(modelMapper.map(vo, ParkingHistoryDTO.class));
+        }
+        return occupiedList;
+    }
+
+    /* 차량의 최근 주차 조회 */
+    public ParkingHistoryDTO getRecentParking(String carNum) {
+        ParkingHistoryVO vo = parkingHistoryDAO.selectRecentParking(carNum);
+        if (vo == null) return null;
+        return modelMapper.map(vo, ParkingHistoryDTO.class);
+    }
+
     /* 회원권 상태 변경 */
     public void changeIsMemberState(ParkingHistoryDTO parkingHistoryDTO) {
         parkingHistoryDAO.updateIsMember(modelMapper.map(parkingHistoryDTO, ParkingHistoryVO.class));
@@ -48,6 +67,7 @@ public enum ParkingHistoryService {
         if (parkingHistoryVO.getEntryTime() == null) {
             ParkingHistoryVO dbVO = parkingHistoryDAO.selectParkingHistory(parkingHistoryVO.getParkNo());
             parkingHistoryVO = ParkingHistoryVO.builder()
+                    .parkNo(dbVO.getParkNo())
                     .entryTime(dbVO.getEntryTime())
                     .build();
         }

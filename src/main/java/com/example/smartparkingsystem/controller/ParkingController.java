@@ -1,0 +1,93 @@
+package com.example.smartparkingsystem.controller;
+
+import com.example.smartparkingsystem.dto.ParkingHistoryDTO;
+import com.example.smartparkingsystem.service.ParkingHistoryService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
+
+import java.io.IOException;
+
+@Log4j2
+@WebServlet(name = "parkingController", value = "/parking/*")
+public class ParkingController extends HttpServlet {
+    private final ParkingHistoryService parkingService = ParkingHistoryService.INSTANCE;
+
+    // 입출차 처리
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json;charset=UTF-8"); // 응답 형식 JSON화 (js에서 읽을 수 있도록)
+        String action = req.getPathInfo();
+
+        switch (action) {
+            case "/entry" -> handleEntry(req, resp);// 입차처리
+            case "/exit" -> handleExit(req, resp); // 출차처리
+            default -> resp.sendError(HttpServletResponse.SC_NOT_FOUND); // 404 에러
+        }
+    }
+
+    private void handleEntry(HttpServletRequest req, HttpServletResponse resp) {
+        String parkingArea = req.getParameter("parkingArea");
+        String carNum = req.getParameter("carNum");
+        String carType = req.getParameter("carType");
+
+        try {
+            // 1. [체크] DB에 넣기 전에 "먼저" 확인해야 함
+            ParkingHistoryDTO existing = parkingService.getRecentParking(carNum);
+
+            // 이미 주차 중인 차량이면 중단
+            if (existing != null) {
+                resp.getWriter().write("{\"success\": false, \"message\": \"이미 주차 중인 차량입니다.\"}");
+                return;
+            }
+
+            // 2. [등록] 중복이 없으니 그제서야 DB에 저장
+            ParkingHistoryDTO parkingHistoryDTO = ParkingHistoryDTO.builder()
+                    .parkingArea(parkingArea).carNum(carNum).carType(carType).build();
+            parkingService.registerEntry(parkingHistoryDTO);
+
+            // 3. [조회] 방금 저장된 따끈따끈한 정보를 다시 가져옴 (ID, 시간 필요)
+            ParkingHistoryDTO saved = parkingService.getRecentParking(carNum);
+
+            if (saved == null) {
+                // 여기가 터지면 DB Insert는 됐는데 Select가 안되는 상황
+                resp.setStatus(500);
+                resp.getWriter().write("{\"success\": false, \"message\": \"DB 조회 실패\"}");
+                return;
+            }
+
+            // 4. [응답] 날짜 변환 및 JSON 전송
+            String entryTimeStr = String.valueOf(saved.getEntryTime()).replace(" ", "T");
+            resp.getWriter().write(
+                    "{\"success\": true" +
+                            ", \"entryTime\": \"" + entryTimeStr + "\"" +
+                            ", \"parkNo\": " + saved.getParkNo() + "}"
+            );
+
+        } catch (Exception e) {
+            log.error("입차 처리 중 진짜 에러 발생: ", e); // 이 로그가 서버 콘솔에 찍힙니다.
+            resp.setStatus(500);
+            try { resp.getWriter().write("{\"success\": false, \"message\": \"서버 내부 오류\"}"); } catch(Exception ex){}
+        }
+    }
+
+    private void handleExit(HttpServletRequest req, HttpServletResponse resp) {
+        // 1. main_modal.js에서 넘어온 값
+        long parkNo = Long.parseLong(req.getParameter("parkNo"));
+
+        // 2. DB 업데이트
+        ParkingHistoryDTO parkingHistoryDTO = ParkingHistoryDTO.builder()
+                .parkNo(parkNo).build();
+        parkingService.registerExit(parkingHistoryDTO);
+
+        // 3. JS한테 성공 응답 보내기
+        try {
+            resp.getWriter().write("{\"success\": true}");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

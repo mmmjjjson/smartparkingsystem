@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 public class ParkingHistoryDAO {
@@ -68,6 +70,65 @@ public class ParkingHistoryDAO {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, parkNo);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                parkingHistoryVO = ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return parkingHistoryVO;
+    }
+
+    /* 현재 주차 중인 구역 조회 */
+    public List<ParkingHistoryVO> selectOccupied() {
+        List<ParkingHistoryVO> occupiedList = new ArrayList<>();
+        String sql = "SELECT * FROM parking_history WHERE exit_time IS NULL";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                ParkingHistoryVO parkingHistoryVO = ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build();
+                occupiedList.add(parkingHistoryVO);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return occupiedList;
+    }
+
+    /* 최근 입차 조회 */
+    public ParkingHistoryVO selectRecentParking(String carNum) {
+        ParkingHistoryVO parkingHistoryVO = null;
+        String sql = "SELECT * FROM parking_history WHERE car_num = ? AND exit_time IS NULL " +
+                "ORDER BY entry_time DESC LIMIT 1";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, carNum);
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {

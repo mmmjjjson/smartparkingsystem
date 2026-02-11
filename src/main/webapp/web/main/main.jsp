@@ -1,4 +1,20 @@
+<%@ page import="com.example.smartparkingsystem.dto.ParkingHistoryDTO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.example.smartparkingsystem.service.ParkingHistoryService" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    ParkingHistoryService parkingHistoryService = ParkingHistoryService.INSTANCE;
+    List<ParkingHistoryDTO> occupiedList = parkingHistoryService.getOccupied();
+
+    Map<String, ParkingHistoryDTO> occupiedMap = new HashMap<>();
+    if (occupiedList != null) {
+        for (ParkingHistoryDTO dto : occupiedList) {
+            occupiedMap.put(dto.getParkingArea(), dto);
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -43,11 +59,25 @@
             <!-- 좌측 주차 구역 A1 ~ A5 (세로 정렬) -->
             <div class="column">
                 <% for(int i=1;i<=5;i++){
-                    request.setAttribute("id","A-"+i);
-                    // *** 추후 DB 값 대체 !!! ***
-                    request.setAttribute("status", "available");
-                    request.setAttribute("car", null);
-                    request.setAttribute("time", null);
+                    String currentId = "A-" + i;
+                    ParkingHistoryDTO occupiedInfo = occupiedMap.get(currentId);
+                    request.setAttribute("id", currentId);
+
+                    if (occupiedInfo != null) {
+                        request.setAttribute("status", "occupied");
+                        request.setAttribute("car", occupiedInfo.getCarNum());
+                        request.setAttribute("time", occupiedInfo.getEntryTime());
+                        request.setAttribute("type", occupiedInfo.getCarType());
+                        request.setAttribute("parkNo", occupiedInfo.getParkNo());
+                        request.setAttribute("isMember", occupiedInfo.isMember());
+                    } else {
+                        request.setAttribute("status", "available");
+                        request.setAttribute("car", null);
+                        request.setAttribute("time", null);
+                        request.setAttribute("type", null);
+                        request.setAttribute("parkNo", null);
+                        request.setAttribute("isMember", null);
+                    }
                 %>
                 <%@ include file="parking_card.jsp" %>
                 <% } %>
@@ -59,11 +89,25 @@
                     <!-- 중앙 상단 주차 구역 A6 ~ A10 -->
                     <div class="center-row">
                         <% for(int i=6;i<=10;i++){
-                            request.setAttribute("id","A-"+i);
-                            // *** 추후 DB 값 대체 !!! ***
-                            request.setAttribute("status", "available");
-                            request.setAttribute("car", null);
-                            request.setAttribute("time", null);
+                            String currentId = "A-" + i;
+                            ParkingHistoryDTO occupiedInfo = occupiedMap.get(currentId);
+                            request.setAttribute("id", currentId);
+
+                            if (occupiedInfo != null) {
+                                request.setAttribute("status", "occupied");
+                                request.setAttribute("car", occupiedInfo.getCarNum());
+                                request.setAttribute("time", occupiedInfo.getEntryTime());
+                                request.setAttribute("type", occupiedInfo.getCarType());
+                                request.setAttribute("parkNo", occupiedInfo.getParkNo());
+                                request.setAttribute("isMember", occupiedInfo.isMember());
+                            } else {
+                                request.setAttribute("status", "available");
+                                request.setAttribute("car", null);
+                                request.setAttribute("time", null);
+                                request.setAttribute("type", null);
+                                request.setAttribute("parkNo", null);
+                                request.setAttribute("isMember", null);
+                            }
                         %>
                         <%@ include file="parking_card.jsp" %>
                         <% } %>
@@ -71,11 +115,25 @@
                     <!-- 중앙 주차 하단 구역 A11 ~ A15 -->
                     <div class="center-row">
                         <% for(int i=11;i<=15;i++){
-                            // *** 추후 DB 값 대체 !!! ***
-                            request.setAttribute("id","A-"+i);
-                            request.setAttribute("status","available");
-                            request.setAttribute("car", null);
-                            request.setAttribute("time", null);
+                            String currentId = "A-" + i;
+                            ParkingHistoryDTO occupiedInfo = occupiedMap.get(currentId);
+                            request.setAttribute("id", currentId);
+
+                            if (occupiedInfo != null) {
+                                request.setAttribute("status", "occupied");
+                                request.setAttribute("car", occupiedInfo.getCarNum());
+                                request.setAttribute("time", occupiedInfo.getEntryTime());
+                                request.setAttribute("type", occupiedInfo.getCarType());
+                                request.setAttribute("parkNo", occupiedInfo.getParkNo());
+                                request.setAttribute("isMember", occupiedInfo.isMember());
+                            } else {
+                                request.setAttribute("status", "available");
+                                request.setAttribute("car", null);
+                                request.setAttribute("time", null);
+                                request.setAttribute("type", null);
+                                request.setAttribute("parkNo", null);
+                                request.setAttribute("isMember", null);
+                            }
                         %>
                         <%@ include file="parking_card.jsp" %>
                         <% } %>
@@ -86,10 +144,25 @@
             <!-- 우측 주차 구역 A16 ~ A20 -->
             <div class="column">
                 <% for (int i = 16; i <= 20; i++){
-                    request.setAttribute("id","A-"+i);
-                    request.setAttribute("status", "available");
-                    request.setAttribute("car", null);
-                    request.setAttribute("time", null);
+                    String currentId = "A-" + i;
+                    ParkingHistoryDTO occupiedInfo = occupiedMap.get(currentId);
+                    request.setAttribute("id", currentId);
+
+                    if (occupiedInfo != null) {
+                        request.setAttribute("status", "occupied");
+                        request.setAttribute("car", occupiedInfo.getCarNum());
+                        request.setAttribute("time", occupiedInfo.getEntryTime());
+                        request.setAttribute("type", occupiedInfo.getCarType());
+                        request.setAttribute("parkNo", occupiedInfo.getParkNo());
+                        request.setAttribute("isMember", occupiedInfo.isMember());
+                    } else {
+                        request.setAttribute("status", "available");
+                        request.setAttribute("car", null);
+                        request.setAttribute("time", null);
+                        request.setAttribute("type", null);
+                        request.setAttribute("parkNo", null);
+                        request.setAttribute("isMember", null);
+                    }
                 %>
                 <%@ include file="parking_card.jsp" %>
                 <% } %>

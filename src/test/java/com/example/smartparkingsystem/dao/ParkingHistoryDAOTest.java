@@ -63,9 +63,22 @@ class ParkingHistoryDAOTest {
     }
 
     @Test
+    void selectOccupiedTest() {
+        for (ParkingHistoryVO vo : parkingHistoryDAO.selectOccupied()) {
+            log.info(vo);
+        }
+    }
+
+    @Test
     void selectParkingHistoryTest() {
-        Long parkNo = 1L;
+        long parkNo = 1;
         log.info(parkingHistoryDAO.selectParkingHistory(parkNo));
+    }
+
+    @Test
+    void selectRecentParkingTest() {
+        String carNum = "11가1001";
+        log.info(parkingHistoryDAO.selectRecentParking(carNum));
     }
 
     @Test
