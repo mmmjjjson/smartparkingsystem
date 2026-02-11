@@ -160,7 +160,7 @@
     <form name="setting" action="/setting" method="post">
     <div class="title-bar">
         <span>설정 관리 - 요금 및 할인 정책</span>
-        <button class="save-btn" type="submit">저장하기</button>
+        <button class="save-btn" type="submit" onclick="saveSetting()">저장하기</button>
     </div>
 
     <div class="card">
@@ -220,6 +220,9 @@
 </div>
 
 <script>
+    function saveSetting() {
+        alert('설정이 성공적으로 변경되었습니다.')
+    }
 
 
     // function formatNumber(val) {
