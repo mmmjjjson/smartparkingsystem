@@ -20,10 +20,8 @@
     <script src="../main/main_membershipPay.js" defer></script>
 </head>
 <body class="bg-light">
-<div class="container py-4">
-
-    <%@ include file="../common/header_member.jsp" %>
-
+<%@ include file="../common/header_member.jsp" %>
+<div class="container-fluid mt-4">
     <!-- 콘텐츠 -->
     <div class="content">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -35,8 +33,9 @@
 
         <!-- 회원 정보 검색 -->
         <form method="get" action="member.jsp" class="row g-2 mb-3 align-items-center">
+            <input type="hidden" name="status"
+                   value="<%= request.getParameter("status") == null ? "" : request.getParameter("status") %>">
             <div class="col-auto">
-                <input type="hidden" name="status">
                 <select id="searchType" name="searchType" class="form-select">
                     <option value="carNum" <%= "carNum".equals(request.getParameter("searchType")) ? "selected" : "" %>>
                         차량
@@ -69,9 +68,19 @@
 
         <!-- 회원 목록 테이블 -->
         <div class="table-responsive">
-            <table class="table table-hover table-bordered align-middle text-center mb-0" id="memberTableBody">
-                <%@ include file="member_list.jsp" %>
-            </table>
+            <%@ include file="member_list.jsp" %>
+            <%--            &lt;%&ndash; 페이징 링크 생성 &ndash;%&gt;--%>
+            <% for (int i = 1; i <= totalPage; i++) { %>
+            <a href="member.jsp?pageNum=<%=i%>
+                <% if (isSearch) { %>
+                    &searchType=<%=searchType%>&keyword=<%=keyword%>
+                <% } else if (status != null) { %>
+                    &status=<%=status%>
+                <% } %>"
+               class="<%= (i == pageNum ? "active" : "") %>">
+                <%= i %>
+            </a>
+            <% } %>
         </div>
     </div>
 </div>
@@ -107,7 +116,7 @@
                                    onchange="setEndDateByOneMonth('newStartDate', 'newExpireDate')">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">만료일 (필수)</label>
+                            <label class="form-label">만료일</label>
                             <input type="date" name="endDate" class="form-control" id="newExpireDate" readonly>
                         </div>
                     </div>
@@ -266,11 +275,11 @@
                     </div>
                     <div class="row g-2">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">시작일 (필수)</label>
+                            <label class="form-label">시작일</label>
                             <input type="date" name="startDate" class="form-control" id="editStartDate" readonly>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">만료일 (필수)</label>
+                            <label class="form-label">만료일</label>
                             <input type="date" name="endDate" class="form-control" id="editExpireDate" readonly>
                         </div>
                     </div>
