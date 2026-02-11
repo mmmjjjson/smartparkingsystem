@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>관리자 로그인</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="css/styles.css" rel="stylesheet"/>
+    <link href="/web/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="/web/js/login.js"></script>
 
     <%-- 템플릿 수정 css --%>
     <style>
@@ -186,242 +187,152 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
 
-    // Step 2로 이동
-    function goStep2() {
-        console.log("✅ Step 2로 이동");
-        document.getElementById("step1").classList.add("d-none");
-        document.getElementById("step2").classList.remove("d-none");
-        document.getElementById("step1Circle").classList.remove("active");
-        document.getElementById("step2Circle").classList.add("active");
-        document.getElementById("email").focus();
-    }
+<%--<script>--%>
 
-    // Step 3로 이동
-    function goStep3() {
-        console.log("✅ Step 3로 이동");
-        document.getElementById("step2").classList.add("d-none");
-        document.getElementById("step3").classList.remove("d-none");
-        document.getElementById("step2Circle").classList.remove("active");
-        document.getElementById("step3Circle").classList.add("active");
-        document.getElementById("otpCode").focus();
-    }
+<%--   // Step 2로 이동--%>
+<%--   function goStep2() {--%>
+<%--       console.log("✅ Step 2로 이동");--%>
+<%--       document.getElementById("step1").classList.add("d-none");--%>
+<%--       document.getElementById("step2").classList.remove("d-none");--%>
+<%--       document.getElementById("step1Circle").classList.remove("active");--%>
+<%--       document.getElementById("step2Circle").classList.add("active");--%>
+<%--       document.getElementById("email").focus();--%>
+<%--   }--%>
 
-    // Step 1로 돌아가기
-    function goBackToStep1() {
-        console.log("⬅️ Step 1로 돌아가기");
-        document.getElementById("step2").classList.add("d-none");
-        document.getElementById("step1").classList.remove("d-none");
-        document.getElementById("step2Circle").classList.remove("active");
-        document.getElementById("step1Circle").classList.add("active");
-        document.getElementById("email").value = '';
-    }
+<%--   // Step 3로 이동--%>
+<%--   function goStep3() {--%>
+<%--       console.log("✅ Step 3로 이동");--%>
+<%--       document.getElementById("step2").classList.add("d-none");--%>
+<%--       document.getElementById("step3").classList.remove("d-none");--%>
+<%--       document.getElementById("step2Circle").classList.remove("active");--%>
+<%--       document.getElementById("step3Circle").classList.add("active");--%>
+<%--       document.getElementById("otpCode").focus();--%>
+<%--   }--%>
 
-    // Step 2로 돌아가기
-    function goBackToStep2() {
-        console.log("⬅️ Step 2로 돌아가기");
-        document.getElementById("step3").classList.add("d-none");
-        document.getElementById("step2").classList.remove("d-none");
-        document.getElementById("step3Circle").classList.remove("active");
-        document.getElementById("step2Circle").classList.add("active");
-        document.getElementById("otpCode").value = '';
-    }
+<%--   // Step 1로 돌아가기--%>
+<%--   function goBackToStep1() {--%>
+<%--       console.log("⬅️ Step 1로 돌아가기");--%>
+<%--       document.getElementById("step2").classList.add("d-none");--%>
+<%--       document.getElementById("step1").classList.remove("d-none");--%>
+<%--       document.getElementById("step2Circle").classList.remove("active");--%>
+<%--       document.getElementById("step1Circle").classList.add("active");--%>
+<%--       document.getElementById("email").value = '';--%>
+<%--   }--%>
 
-    // Step 1 제출 (아이디/비밀번호)
-    function submitStep1(event) {
-        event.preventDefault(); // 새로고침 방지
+<%--   // Step 2로 돌아가기--%>
+<%--   function goBackToStep2() {--%>
+<%--       console.log("⬅️ Step 2로 돌아가기");--%>
+<%--       document.getElementById("step3").classList.add("d-none");--%>
+<%--       document.getElementById("step2").classList.remove("d-none");--%>
+<%--       document.getElementById("step3Circle").classList.remove("active");--%>
+<%--       document.getElementById("step2Circle").classList.add("active");--%>
+<%--       document.getElementById("otpCode").value = '';--%>
+<%--   }--%>
 
-        const adminId = document.getElementById('adminId').value;
-        const password = document.getElementById('password').value;
+<%--   // Step 1 제출 (아이디/비밀번호)--%>
+<%--   function submitStep1(event) {--%>
+<%--       event.preventDefault(); // 새로고침 방지--%>
 
-        if (!adminId || !password) {
-            alert("아이디와 비밀번호를 입력해주세요.");
-            return;
-        }
+<%--       const adminId = document.getElementById('adminId').value;--%>
+<%--       const password = document.getElementById('password').value;--%>
 
-        // Servlet 연동
-        fetch("/login", {
-            method: "POST",
-            credentials: "same-origin",
-            headers: { // form값이 전송하는 파라미터를 받기위해 설정
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "step=1&adminId=" + adminId + "&password=" + password
-        })
-            .then(res => {
-                if (res.status === 403) {
-                    alert("활동이 중지된 계정입니다.")
-                    return;
-                } else if (res.status === 401) {
-                    alert("아이디 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.")
-                    return;
-                }
-                goStep2();
-            })
-    }
+<%--       if (!adminId || !password) {--%>
+<%--           alert("아이디와 비밀번호를 입력해주세요.");--%>
+<%--           return;--%>
+<%--       }--%>
 
-    // Step 2 제출 (이메일 확인) - 테스트용
-    function submitEmailStep(event) {
-        event.preventDefault();
+<%--       // Servlet 연동--%>
+<%--       fetch("/login", {--%>
+<%--           method: "POST",--%>
+<%--           credentials: "same-origin",--%>
+<%--           headers: { // form값이 전송하는 파라미터를 받기위해 설정--%>
+<%--               "Content-Type": "application/x-www-form-urlencoded"--%>
+<%--           },--%>
+<%--           body: "step=1&adminId=" + adminId + "&password=" + password--%>
+<%--       })--%>
+<%--           .then(res => {--%>
+<%--               if (res.status === 403) {--%>
+<%--                   alert("활동이 중지된 계정입니다.")--%>
+<%--                   return;--%>
+<%--               } else if (res.status === 401) {--%>
+<%--                   alert("아이디 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.")--%>
+<%--                   return;--%>
+<%--               }--%>
+<%--               goStep2();--%>
+<%--           })--%>
+<%--   }--%>
 
-        const email = document.getElementById('email').value;
-        if (!email) {
-            alert("이메일을 입력해주세요.");
-            return;
-        }
+<%--   // Step 2 제출 (이메일 확인) - 테스트용--%>
+<%--   function submitEmailStep(event) {--%>
+<%--       event.preventDefault();--%>
 
-        fetch("/login", {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "step=2&email=" + email
-        })
-            .then(res => {
-                if (res.status === 200) {
-                    goStep3();
-                } else {
-                    alert('등록된 이메일과 일치하지 않습니다.')
-                }
-            })
-    }
+<%--       const email = document.getElementById('email').value;--%>
+<%--       if (!email) {--%>
+<%--           alert("이메일을 입력해주세요.");--%>
+<%--           return;--%>
+<%--       }--%>
 
-    // Step 3 제출 (OTP 인증) - 테스트용
-    function submitStep3(event) {
-        event.preventDefault();
+<%--       fetch("/login", {--%>
+<%--           method: "POST",--%>
+<%--           credentials: "same-origin",--%>
+<%--           headers: {--%>
+<%--               "Content-Type": "application/x-www-form-urlencoded"--%>
+<%--           },--%>
+<%--           body: "step=2&email=" + email--%>
+<%--       })--%>
+<%--           .then(res => {--%>
+<%--               if (res.status === 200) {--%>
+<%--                   goStep3();--%>
+<%--               } else {--%>
+<%--                   alert('등록된 이메일과 일치하지 않습니다.')--%>
+<%--               }--%>
+<%--           })--%>
+<%--   }--%>
 
-        const otpCode = document.getElementById('otpCode').value;
+<%--   // Step 3 제출 (OTP 인증) - 테스트용--%>
+<%--   function submitStep3(event) {--%>
+<%--       event.preventDefault();--%>
 
-        console.log("========== OTP 인증 요청 (테스트 모드) ==========");
-        console.log("OTP 입력:", otpCode);
+<%--       const otpCode = document.getElementById('otpCode').value;--%>
 
-        if (otpCode.length !== 6) {
-            alert("6자리 인증번호를 입력해주세요.");
-            return;
-        }
+<%--       console.log("========== OTP 인증 요청 (테스트 모드) ==========");--%>
+<%--       console.log("OTP 입력:", otpCode);--%>
 
-        fetch("/login", {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "step=3&otpCode=" + otpCode
-        })
-        .then(res => {
-            if (res.status === 200) {
-                alert("OTP 인증 성공")
-                window.location.href = "../../web/main/main.jsp";
-            } else {
-                alert("OTP Error 인증번호 오류")
-            }
-        })
+<%--       if (otpCode.length !== 6) {--%>
+<%--           alert("6자리 인증번호를 입력해주세요.");--%>
+<%--           return;--%>
+<%--       }--%>
 
-    }
+<%--       fetch("/login", {--%>
+<%--           method: "POST",--%>
+<%--           credentials: "same-origin",--%>
+<%--           headers: {--%>
+<%--               "Content-Type": "application/x-www-form-urlencoded"--%>
+<%--           },--%>
+<%--           body: "step=3&otpCode=" + otpCode--%>
+<%--       })--%>
+<%--       .then(res => {--%>
+<%--           if (res.status === 200) {--%>
+<%--               alert("OTP 인증 성공")--%>
+<%--               window.location.href = "../../web/main/main.jsp";--%>
+<%--           } else {--%>
+<%--               alert("OTP Error 인증번호 오류")--%>
+<%--           }--%>
+<%--       })--%>
 
-    // 숫자만 입력 (필터링)
-    document.addEventListener('DOMContentLoaded', function() {
-        const otpInput = document.getElementById('otpCode');
-        if (otpInput) {
-            otpInput.addEventListener('input', function(e) {  // 화살표 함수 대신 일반 function 사용
-                this.value = this.value.replace(/[^0-9]/g, '');
-            });
-        }
-    });
+<%--   }--%>
 
-    //============================= JS 하드코딩 =============================
-
-    <%--// 테스트용 계정 정보--%>
-    <%--const TEST_ACCOUNT = {--%>
-    <%--    username: 'admin',--%>
-    <%--    password: 'admin1234',--%>
-    <%--    email: 'admin@example.com',--%>
-    <%--    otp: '123456'--%>
-    <%--};--%>
-    <%--// Step 1 제출 (아이디/비밀번호) - 테스트용--%>
-    <%--function submitStep1(event) {--%>
-    <%--    event.preventDefault();--%>
-
-    <%--    const username = document.getElementById('username').value;--%>
-    <%--    const password = document.getElementById('password').value;--%>
-
-    <%--    console.log("========== 로그인 요청 시작 (테스트 모드) ==========");--%>
-
-    <%--    // 테스트용: 하드코딩된 값과 비교--%>
-    <%--    if (username === TEST_ACCOUNT.username && password === TEST_ACCOUNT.password) {--%>
-    <%--        console.log("✅ 인증 성공! Step 2로 이동");--%>
-    <%--        goStep2();--%>
-    <%--    } else {--%>
-    <%--        alert("아이디 또는 비밀번호가 일치하지 않습니다.");--%>
-    <%--        console.log("❌ 인증 실패!");--%>
-    <%--    }--%>
-
-    <%--    console.log("========== 요청 처리 완료 ==========");--%>
-    <%--}--%>
-
-    <%--// Step 2 제출 (이메일 확인) - 테스트용--%>
-    <%--function submitEmailStep(event) {--%>
-    <%--    event.preventDefault();--%>
-
-    <%--    const email = document.getElementById('email').value;--%>
-
-    <%--    console.log("========== 이메일 확인 요청 (테스트 모드) ==========");--%>
-    <%--    console.log("Email:", email);--%>
-
-    <%--    if (!email) {--%>
-    <%--        alert("이메일을 입력해주세요.");--%>
-    <%--        return;--%>
-    <%--    }--%>
-
-    <%--    // 테스트용: 하드코딩된 이메일과 비교--%>
-    <%--    if (email === TEST_ACCOUNT.email) {--%>
-    <%--        console.log("✅ 이메일 확인 완료");--%>
-    <%--        console.log("📧 OTP 전송됨 (테스트용):", TEST_ACCOUNT.otp);--%>
-    <%--        alert(`인증번호가 ${email}로 전송되었습니다.\n(테스트용 OTP: ${TEST_ACCOUNT.otp})`);--%>
-    <%--        goStep3();--%>
-    <%--    } else {--%>
-    <%--        alert("등록되지 않은 이메일입니다.");--%>
-    <%--        console.log("❌ 이메일 불일치");--%>
-    <%--    }--%>
-    <%--}--%>
-
-    <%--// Step 3 제출 (OTP 인증) - 테스트용--%>
-    <%--function submitStep3(event) {--%>
-    <%--    event.preventDefault();--%>
-
-    <%--    const otpCode = document.getElementById('otpCode').value;--%>
-
-    <%--    console.log("========== OTP 인증 요청 (테스트 모드) ==========");--%>
-    <%--    console.log("OTP 입력:", otpCode);--%>
-
-    <%--    if (otpCode.length !== 6) {--%>
-    <%--        alert("6자리 인증번호를 입력해주세요.");--%>
-    <%--        return;--%>
-    <%--    }--%>
-
-    <%--    // 테스트용: 하드코딩된 OTP와 비교--%>
-    <%--    if (otpCode === TEST_ACCOUNT.otp) {--%>
-    <%--        console.log("✅ OTP 인증 성공!");--%>
-    <%--        alert("로그인 성공!");--%>
-    <%--        window.location.href = '../web/main/main.jsp';--%>
-    <%--    } else {--%>
-    <%--        alert("인증번호가 일치하지 않습니다.");--%>
-    <%--        console.log("❌ OTP 불일치");--%>
-    <%--    }--%>
-    <%--}--%>
-
-    <%--// 숫자만 입력--%>
-    <%--document.addEventListener('DOMContentLoaded', function() {--%>
-    <%--    const otpInput = document.getElementById('otpCode');--%>
-    <%--    if (otpInput) {--%>
-    <%--        otpInput.addEventListener('input', function(e) {--%>
-    <%--            this.value = this.value.replace(/[^0-9]/g, '');--%>
-    <%--        });--%>
-    <%--    }--%>
-    <%--});--%>
-</script>
+<%--   // 숫자만 입력 (필터링)--%>
+<%--   document.addEventListener('DOMContentLoaded', function() {--%>
+<%--       const otpInput = document.getElementById('otpCode');--%>
+<%--       if (otpInput) {--%>
+<%--           otpInput.addEventListener('input', function(e) {  // 화살표 함수 대신 일반 function 사용--%>
+<%--               this.value = this.value.replace(/[^0-9]/g, '');--%>
+<%--           });--%>
+<%--       }--%>
+<%--   });--%>
+<%--</script>--%>
 
 </body>
 </html>

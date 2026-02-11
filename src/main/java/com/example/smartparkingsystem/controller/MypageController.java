@@ -1,5 +1,6 @@
 package com.example.smartparkingsystem.controller;
 
+import com.example.smartparkingsystem.dto.AdminDTO;
 import com.example.smartparkingsystem.service.AdminService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,7 +17,7 @@ import java.io.IOException;
 public class MypageController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/myPage.jsp").forward(req,resp);
+        req.getRequestDispatcher("/WEB-INF/login/myPage.jsp").forward(req,resp);
     }
 
     @Override
@@ -26,10 +27,12 @@ public class MypageController extends HttpServlet {
         String adminId = (String) session.getAttribute("adminId");
         String password = req.getParameter("password");
         String newPassword = req.getParameter("newPassword");
+        String email = adminService.getAdminById(adminId).getAdminEmail();
 
         log.info("Admin id : {}", adminId);
         log.info("Password : {}", password);
         log.info("New Password : {}", newPassword);
+        log.info("Email : {}", email);
 
         if (password == null || newPassword == null) { // 굳이 필요할까?
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -38,7 +41,13 @@ public class MypageController extends HttpServlet {
 
         if (adminService.getAdminById(adminId).getPassword().equals(password)) {
             // DB비밀번호와 일치함
-            adminService.changePassword(adminId, newPassword);
+            AdminDTO adminDTO = AdminDTO.builder()
+                    .adminId(adminId)
+                    .password(newPassword)
+                    .adminEmail(email)
+                    .isPasswordReset(false) // 변경
+                    .build();
+            adminService.modifyAdmin(adminDTO);
             resp.setStatus(HttpServletResponse.SC_OK);
         } else {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401

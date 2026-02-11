@@ -15,13 +15,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>Title</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="styles.css" rel="stylesheet"/>
+    <link href="/web/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="/web/js/myPage.js"></script>
 
     <style>
         #margin {
             margin-top: 30px;
         }
+
         .row {
             margin-top: 30px;
         }
@@ -47,21 +49,25 @@
                     <i class="fas fa-user me-1"></i>
                     기본 정보
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">아이디</label>
-                        <input type="text" class="form-control" value="<%=adminId%>" disabled>
+                <form class="card-body">
+                    <div>
+                        <div class="mb-3">
+                            <label class="form-label">아이디</label>
+                            <input type="text" class="form-control" value="<%=adminId%>" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">이름</label>
+                            <input type="text" class="form-control"
+                                   value="<%=adminService.getAdminById(adminId).getAdminName()%>" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">이메일</label>
+                            <input type="email" class="form-control"
+                                   value="<%=adminService.getAdminById(adminId).getAdminEmail()%>">
+                        </div>
+                        <button class="btn btn-primary">정보 수정</button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">이름</label>
-                        <input type="text" class="form-control" value="<%=adminService.getAdminById(adminId).getAdminName()%>" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">이메일</label>
-                        <input type="email" class="form-control" value="<%=adminService.getAdminById(adminId).getAdminEmail()%>">
-                    </div>
-                    <button class="btn btn-primary">정보 수정</button>
-                </div>
+                </form>
             </div>
         </div>
 
@@ -103,11 +109,13 @@
             <table class="table table-bordered">
                 <tr>
                     <th style="width:30%">최근 로그인</th>
-                    <td><%=adminService.getAdminById(adminId).getLastLogin().format(formatter)%></td>
+                    <td><%=adminService.getAdminById(adminId).getLastLogin().format(formatter)%>
+                    </td>
                 </tr>
                 <tr>
                     <th>최근 로그인 IP</th>
-                    <td><%=adminService.getAdminById(adminId).getLastLoginIp()%></td>
+                    <td><%=adminService.getAdminById(adminId).getLastLoginIp()%>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -136,7 +144,7 @@
             return;
         }
 
-        fetch ("/main/mypage", {
+        fetch("/main/mypage", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"

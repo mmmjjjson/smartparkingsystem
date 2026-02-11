@@ -61,6 +61,7 @@ public class LoginPasswordController extends HttpServlet {
         String email = req.getParameter("email");
         log.info("step2 adminId: {}", adminId);
         log.info("email: {}", email);
+        
         if (emailValid(adminId, email)) {
             session.setAttribute("logEmail", email);
             resp.setStatus(HttpServletResponse.SC_OK);
@@ -71,19 +72,23 @@ public class LoginPasswordController extends HttpServlet {
     public void step3(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(false);
         String adminId = (String) session.getAttribute("logAdminId");
+        String email = (String) session.getAttribute("logEmail");
         String otpCode = req.getParameter("otpCode");
         log.info("otpCode: {}", otpCode);
         if (optValid(otpCode)) {
 
             // 12자리 랜덤 UUID 생성
             String newPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-            adminService.changePassword(adminId, newPassword);
+//            adminService.changePassword(adminId, newPassword);
 
-            /* TODO 비밀번호 랜덤키로 변경후 로그인 다음 페이지는 바로 비밀번호 변경페이지로 이동
-                비밀번호 변경 페이지 만들면 연결만 하면 될거같음
-             */
-            // TODO 랜덤키 변경후 최초 로그인 변경
-//            adminService.modifyAdmin(adminService.getAdminById(adminId).isPasswordReset());
+            // TODO 랜덤키 변경후 최초 로그인 변경 - 테스트 해야함
+            AdminDTO adminDTO = AdminDTO.builder()
+                    .adminId(adminId)
+                    .password(newPassword)
+                    .adminEmail(email)
+                    .isPasswordReset(true) // 변경
+                    .build();
+            adminService.modifyAdmin(adminDTO);
 
             session.removeAttribute("logAdminId");
             session.removeAttribute("logEmail");

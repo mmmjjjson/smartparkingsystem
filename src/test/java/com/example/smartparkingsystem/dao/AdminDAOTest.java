@@ -45,17 +45,22 @@ class AdminDAOTest {
     }
 
     @Test
+    public void test() {
+        AdminVO adminVO = AdminVO.builder()
+                .adminId("test1")
+                .password("test1")
+                .adminEmail("test1@nate.com")
+                .isPasswordReset(true)
+                .build();
+        log.info(adminVO);
+        adminDAO.updateAdmin(adminVO);
+    }
+
+    @Test
     public void LogUpdate() {
         String adminId = "test1";
         String lastLoginIp = "192.168.0.1";
         adminDAO.updateLog(adminId, lastLoginIp);
-    }
-
-    @Test
-    public void PwdUpdate() {
-        String adminId = "test1";
-        String password = "1111";
-        adminDAO.updatePassword(password, adminId);
     }
 
     @Test

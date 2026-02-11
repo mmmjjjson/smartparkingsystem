@@ -55,9 +55,9 @@ public enum AdminService {
     }
 
     // 비밀번호 변경
-    public void changePassword(String adminId, String password) {
-        adminDAO.updatePassword(password, adminId);
-    }
+//    public void changePassword(String adminId, String password) {
+//        adminDAO.updatePassword(password, adminId);
+//    }
 
     // 계정 정보 수정
     public void modifyAdmin(AdminDTO adminDTO) {

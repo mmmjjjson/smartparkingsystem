@@ -86,14 +86,21 @@ public class LoginProcessController extends HttpServlet {
         // OTP 완료시 임시 세션 변경
         if (otpDB(otpCode)) {
             HttpSession session = req.getSession();
-            String adminId = (String) session.getAttribute("tempAdminId"); // 임시 세션 불러오고
+            String tempAdminId = (String) session.getAttribute("tempAdminId"); // 임시 세션 불러오고
             // adminId로 변경
-            session.setAttribute("adminId", adminId); // 최종 로그인 세션 적용
+            session.setAttribute("adminId", tempAdminId); // 최종 로그인 세션 적용
             session.removeAttribute("tempAdminId"); // 임시 세션 제거
-            adminService.renewalLog(adminId, req.getRemoteAddr()); // 로그인 날짜, IP
+            adminService.renewalLog(tempAdminId, req.getRemoteAddr()); // 로그인 날짜, IP
+            String adminId = (String) session.getAttribute("adminId");
 
-            System.out.println("adminId 세션 생성 완료: " + session.getId());
-            System.out.println("adminId 값 " + session.getAttribute("adminId"));
+            System.out.println("Controller step3 adminId 세션 생성 완료: " + session.getId());
+            System.out.println("Controller step3 adminId 값 " + adminId);
+
+            /* TODO 비밀번호 랜덤키로 변경후 로그인 다음 페이지는 바로 비밀번호 변경페이지로 이동
+                비밀번호 변경 페이지 만들면 연결만 하면 될거같음 */
+            if (adminService.getAdminById(adminId).isPasswordReset()) { // 테스트
+                resp.sendRedirect("/main/mypage");
+            }
             resp.setStatus(HttpServletResponse.SC_OK);
         } else {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

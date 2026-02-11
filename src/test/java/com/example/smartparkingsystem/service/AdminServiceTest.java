@@ -38,7 +38,6 @@ class AdminServiceTest {
         AdminDTO adminDTO = AdminDTO.builder()
                 .adminId("test1")
                 .password("test1")
-                .adminName("test2")
                 .adminEmail("test2@gmail.com")
                 .isActive(false)
                 .isPasswordReset(false)
@@ -54,12 +53,12 @@ class AdminServiceTest {
         adminService.renewalLog(adminId, lastLoginIp);
     }
 
-    @Test
-    public void adminPw() {
-        String adminId = "test";
-        String password = "test";
-        adminService.changePassword(adminId, password);
-    }
+//    @Test
+//    public void adminPw() {
+//        String adminId = "test";
+//        String password = "test";
+//        adminService.changePassword(adminId, password);
+//    }
 
     @Test
     public void adminServiceDelete() {
