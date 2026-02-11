@@ -15,7 +15,7 @@ public class PaymentHistoryVO {
     private String carNum; // 차량번호
     private LocalDateTime entryTime; // 입차 시간
     private LocalDateTime exitTime; // 출차 시간
-    private int totalMinutes; // 총 주차 시간
+    private long totalMinutes; // 총 주차 시간
     private int totalCharge; // 총 요금
     private long mno; // 회원 번호
     private long pno; // 요금 정책 번호

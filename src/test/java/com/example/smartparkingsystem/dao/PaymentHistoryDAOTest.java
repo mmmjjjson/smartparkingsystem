@@ -17,23 +17,24 @@ class PaymentHistoryDAOTest {
         paymentHistoryDAO = PaymentHistoryDAO.getInstance();
     }
 
-//    @Test
-//    public void insertPaymentHistory() {
-//        PaymentHistoryVO paymentHistoryVO = PaymentHistoryVO.builder()
-//                .payNo(1)
-//                .parkingArea("A20")
-//                .carNum("23나1234")
-//                .entryTime(LocalDateTime.now())
-//                .exitTime(LocalDateTime.now())
-//                .totalMinutes()
-//                .totalCharge()
-//                .mno()
-//                .pno()
-//                .parkNo()
-//                .discountAmount()
-//                .finalCharge()
-//                .isPaid()
-//                .build();
-//    }
+    @Test
+    public void insertPaymentHistory() {
+        PaymentHistoryVO paymentHistoryVO = PaymentHistoryVO.builder()
+                .payNo(1)
+                .parkingArea("A20")
+                .carNum("23나1234")
+                .entryTime(LocalDateTime.now())
+                .exitTime(LocalDateTime.now())
+                .totalMinutes(2026021112)
+                .totalCharge(10000)
+                .mno(2)
+                .pno(5)
+                .parkNo(2)
+                .discountAmount(2000)
+                .finalCharge(8000)
+                .isPaid(true)
+                .build();
+        paymentHistoryDAO.insertPaymentHistory(paymentHistoryVO);
+    }
 
 }
