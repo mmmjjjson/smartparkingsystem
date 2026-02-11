@@ -1,6 +1,8 @@
 CREATE DATABASE IF NOT EXISTS `smart_parking_system`;
-
 USE `smart_parking_system`;
+
+CREATE USER 'system_user'@'%' IDENTIFIED BY '0220';
+GRANT ALL PRIVILEGES ON smart_parking_system.* TO 'system_user'@'%';
 
 CREATE TABLE IF NOT EXISTS `admin`
 (
