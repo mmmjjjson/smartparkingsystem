@@ -28,6 +28,6 @@ public class MainboardController extends HttpServlet {
         req.setAttribute("occupiedList", occupiedList);
 
         // 3. main.jsp로 이동
-        req.getRequestDispatcher("/WEB-INF/views/main/main.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/main/main.jsp").forward(req, resp);
     }
 }

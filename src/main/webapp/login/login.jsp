@@ -310,7 +310,7 @@
         .then(res => {
             if (res.status === 200) {
                 alert("OTP 인증 성공")
-                window.location.href = "../web/main/main.jsp";
+                window.location.href = "/main"; // **** main.jsp WEB-INF로 이동
             } else {
                 alert("OTP Error 인증번호 오류")
             }
