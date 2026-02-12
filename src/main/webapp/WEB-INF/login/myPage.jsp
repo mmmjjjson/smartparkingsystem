@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <title>Title</title>
+    <title>반월당 스마트 주차 관리 시스템 - 마이페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/web/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -30,8 +30,9 @@
     </style>
 </head>
 <body>
+<%@include file="/web/common/header_other.jsp"%>
 <div class="container-fluid px-4">
-    <%-- TODO 조건문 --%>
+    <h3>마이페이지</h3>
     <%
         if (adminService.getAdminById(adminId).isPasswordReset()) {
     %>
@@ -49,7 +50,7 @@
                     <i class="fas fa-user me-1"></i>
                     기본 정보
                 </div>
-                <form class="card-body">
+                <form class="card-body" onsubmit="submitUpdateEmail(event); return false;">
                     <div>
                         <div class="mb-3">
                             <label class="form-label">아이디</label>
@@ -62,10 +63,13 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">이메일</label>
-                            <input type="email" class="form-control"
+                            <div class="input-group">
+                            <input type="email" class="form-control" id="email"
                                    value="<%=adminService.getAdminById(adminId).getAdminEmail()%>">
+                            <button type="button" class="btn btn-outline-primary" onclick="openEmailVerification()"> 인증하기 </button>
+                            </div>
                         </div>
-                        <button class="btn btn-primary">정보 수정</button>
+                        <button type="submit" id="updateEmail" class="btn btn-primary" disabled>정보 수정</button>
                     </div>
                 </form>
             </div>
@@ -123,41 +127,3 @@
 </div>
 </body>
 </html>
-<script>
-    function updatePassword(event) {
-        event.preventDefault(); // 새로고침 방지
-
-        const password = document.getElementById("password").value;
-        const newPassword = document.getElementById("newPassword").value;
-        const newPasswordCheck = document.getElementById("newPasswordCheck").value;
-
-        if (!password) {
-            alert('현재 비밀번호를 입력해주세요.')
-            return;
-        }
-        if (!newPassword || !newPasswordCheck) {
-            alert('변경하실 비밀번호를 입력해주세요.')
-            return;
-        }
-        if (newPassword !== newPasswordCheck) {
-            alert('비밀번호가 일치하지 않습니다.')
-            return;
-        }
-
-        fetch("/main/mypage", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "password=" + password + "&newPassword=" + newPassword + "&newPasswordCheck=" + newPasswordCheck
-        })
-            .then(res => {
-                if (res.status === 200) {
-                    alert("정보 수정 완료")
-                    window.location.href = "../../web/main/main.jsp"
-                } else {
-                    alert("정보가 일치 하지 않습니다.")
-                }
-            })
-    }
-</script>

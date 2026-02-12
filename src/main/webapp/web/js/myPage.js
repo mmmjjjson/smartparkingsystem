@@ -1,3 +1,4 @@
+// 비밀번호 변경칸
 function updatePassword(event) {
     event.preventDefault(); // 새로고침 방지
 
@@ -10,15 +11,19 @@ function updatePassword(event) {
         return;
     }
     if (!newPassword || !newPasswordCheck) {
-        alert('변경하실 비밀번호를 입력해주세요.')
+        alert('변경할 비밀번호를 입력해주세요.')
         return;
     }
     if (newPassword !== newPasswordCheck) {
-        alert('비밀번호가 일치하지 않습니다.')
+        alert('새 비밀번호가 일치하지 않습니다.')
         return;
     }
+    if (password === newPassword) {
+        alert('현재 비밀번호와 동일합니다. 다른 비밀번호를 입력해주세요.')
+        return;
+    }
+    fetch("/main/mypage", {
 
-    fetch ("/main/mypage", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -28,9 +33,62 @@ function updatePassword(event) {
         .then(res => {
             if (res.status === 200) {
                 alert("정보 수정 완료")
-                window.location.href = "../../web/main/main.jsp"
+                window.location.href = "../../web/main/main.jsp" // 변경시 수정
             } else {
                 alert("정보가 일치 하지 않습니다.")
             }
         })
+}
+
+// TODO 사실상 이메일만 변경이라 버튼이름을 정보수정 말고 이메일변경으로 할까 고민중
+// 이메일 변경칸 (OTP 인증)
+function openEmailVerification() {
+    const newEmail = document.getElementById("email").value;
+    const url = "/web/emailVerification.jsp?email=" + newEmail; // 파라미터 전달
+
+    // 유효성 검사
+    if (!newEmail || !newEmail.includes('@')) {
+        alert('올바른 형식으로 입력해주세요.')
+        return;
+    }
+
+    // 팝업창 띄우기
+    window.open(url, "emailPopup", "width=450,height=380");
+}
+
+
+// 이메일 수정
+function submitUpdateEmail(event) {
+    console.log("진입")
+    event.preventDefault(); // 새로고침 방지
+
+    const newEmail = document.getElementById("email").value;
+
+    fetch("/main/mypage", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        } ,
+        body: "box=1&newEmail=" + newEmail
+    })
+        .then(res => {
+            if (res.status === 200) {
+                alert('이메일 변경완료')
+                document.getElementById('updateEmail').disabled = true; // 변경후 다시 비활성화
+                document.getElementById('email').disabled = false;
+            } else {
+                alert('Error 알 수 없는 에러')
+            }
+        })
+}
+
+// 인증 성공시 정보 수정 버튼 활성화
+function onEmailVerified() {
+    const btn = document.getElementById("updateEmail")
+
+    alert('이메일 인증이 완료되었습니다.')
+    document.getElementById('email').disabled = true;
+    btn.disabled = false;
+    btn.classList.remove("btn-primary");
+    btn.classList.add("btn-success");
 }

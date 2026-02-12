@@ -2,6 +2,8 @@ CREATE DATABASE IF NOT EXISTS `smart-_parking_system`;
 
 USE `smart-_parking_system`;
 
+
+
 CREATE TABLE IF NOT EXISTS `admin`
 (
     admin_id      VARCHAR(20) PRIMARY KEY COMMENT '관리자 아이디',
@@ -101,3 +103,13 @@ CREATE TABLE IF NOT EXISTS `payment_history`
     CONSTRAINT `fk_pno` FOREIGN KEY (`pno`) REFERENCES payment_info (`pno`),
     CONSTRAINT `fk_park_no` FOREIGN KEY (`park_no`) REFERENCES parking_history (`park_no`)
 ) COMMENT '주차 요금';
+
+CREATE TABLE IF NOT EXISTS `validation`
+(
+    `no` int auto_increment primary key,
+    `admin_id` varchar(20) not null,
+    `otp_code` char(6) not null,
+    `admin_email` varchar(50) not null,
+    `expired_time` datetime not null comment '만료시간',
+    CONSTRAINT `fk_admin_id_otp` FOREIGN KEY (`admin_id`) REFERENCES admin (`admin_id`)
+);

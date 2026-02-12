@@ -24,11 +24,19 @@ public class AuthFilter implements Filter {
         String passwordPath = "/password";
         String mypagePath = "/main/mypage";
 
+        // 속성 파일 필터 제외
         if (uri.endsWith(".css") || uri.endsWith(".js") ||
                 uri.endsWith(".png") || uri.endsWith(".jpg") ||
                 uri.endsWith(".ico")) {
             chain.doFilter(request, response);
             return;
+        }
+
+        // 세션없이 뒤로가기 금지(캐시 저장금지, 재검증) = JS, CSS는 캐시해도 괜찮고 성능향상하기 때문에 제외
+        if (!uri.startsWith("/login") && !uri.startsWith("/password") && !uri.endsWith(".css") && !uri.endsWith(".js")) {
+            resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            resp.setHeader("Pragma", "no-cache");
+            resp.setHeader("Expires", "0");
         }
 
         // 제외 폴더 지정
@@ -48,6 +56,7 @@ public class AuthFilter implements Filter {
         String adminId = (String) session.getAttribute("adminId");
         if (adminService.getAdminById(adminId).isPasswordReset()) {
             if (!uri.startsWith(mypagePath)) {
+                log.info("비밀번호 재설정후 최초 로그인 이동제한");
                 resp.sendRedirect(mypagePath);
                 return;
             }

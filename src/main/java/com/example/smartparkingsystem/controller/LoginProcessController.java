@@ -96,9 +96,7 @@ public class LoginProcessController extends HttpServlet {
             System.out.println("Controller step3 adminId 세션 생성 완료: " + session.getId());
             System.out.println("Controller step3 adminId 값 " + adminId);
 
-            /* TODO 비밀번호 랜덤키로 변경후 로그인 다음 페이지는 바로 비밀번호 변경페이지로 이동
-                비밀번호 변경 페이지 만들면 연결만 하면 될거같음 */
-            if (adminService.getAdminById(adminId).isPasswordReset()) { // 테스트
+            if (adminService.getAdminById(adminId).isPasswordReset()) {
                 resp.sendRedirect("/main/mypage");
             }
             resp.setStatus(HttpServletResponse.SC_OK);
