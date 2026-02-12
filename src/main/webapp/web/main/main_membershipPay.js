@@ -35,22 +35,50 @@ btnMembershipPayRemote.addEventListener('click', () => {
 document.getElementById('btn-check-member').addEventListener('click', () => {
     const carNum = document.getElementById('mem-carNum').value.trim();
 
-    let member;
-    for (let i = 0; i < mockMembers.length; i++) {
-        if (mockMembers[i].carNum === carNum) {
-            member = mockMembers[i];
-            break;
-        }
-    }
+    // let member;
+    // for (let i = 0; i < mockMembers.length; i++) {
+    //     if (mockMembers[i].carNum === carNum) {
+    //         member = mockMembers[i];
+    //         break;
+    //     }
+    // }
+    // if (member) {
+    //     alert('등록된 회원 정보가 있습니다. 기존 정보로 입력을 진행합니다.')
+    //     document.getElementById('mem-name').value = member.name;
+    //     document.getElementById('mem-phone').value = member.phone;
+    // } else {
+    //     alert("등록된 정보가 없습니다. 신규 회원 정보를 입력해주세요.");
+    //     document.getElementById('mem-name').focus();
+    // }
 
-    if (member) {
-        alert('등록된 회원 정보가 있습니다. 기존 정보로 입력을 진행합니다.')
-        document.getElementById('mem-name').value = member.name;
-        document.getElementById('mem-phone').value = member.phone;
-    } else {
-        alert("등록된 정보가 없습니다. 신규 회원 정보를 입력해주세요.");
-        document.getElementById('mem-name').focus();
-    }
+    axios.get('/member_check.do', {
+        params: { carNum: carNum }
+    })
+        .then(response => {
+            const data = response.data;
+
+            if (!data.success) {
+                alert(data.message || "조회 중 오류가 발생했습니다.");
+                return;
+            }
+
+            if (data.exists) {
+                // 등록된 회원
+                alert('등록된 회원 정보가 있습니다. 기존 정보로 입력을 진행합니다.');
+                document.getElementById('mem-name').value = data.name;
+                document.getElementById('mem-phone').value = data.phone;
+            } else {
+                // 신규 회원
+                alert("등록된 정보가 없습니다. 신규 회원 정보를 입력해주세요.");
+                document.getElementById('mem-name').value = "";
+                document.getElementById('mem-phone').value = "";
+                document.getElementById('mem-name').focus();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('회원 조회 중 오류가 발생했습니다.');
+        });
 });
 
 // 결제하기 버튼 로직
@@ -67,18 +95,32 @@ btnMembershipSubmit.addEventListener('click', () => {
         return;
     }
 
-    // 1. 데이터 매핑
-    document.getElementById('res-car').innerText = carNum;
-    document.getElementById('res-user').innerText = name + " / " + phone;
-    document.getElementById('res-period').innerText = start + " ~ " + end;
-    document.getElementById('res-price').innerText = price;
+    const parkNo = window.currentCard.dataset.parkNo;
 
-    // 2. 화면 전환
-    document.getElementById('mem-input-section').style.display = 'none';
-    document.getElementById('mem-receipt-section').style.display = 'block';
-    document.getElementById('mem-footer').style.display = 'none';
+    fetch('/parking/exit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}, // 데이터 형식 지정
+        body: `parkNo=${parkNo}`
+    })
+        .then(res => res.json()) // 서버의 응답을 JSON으로 변환
+        .then(data => { // 서버가 보낸 응답 객체
+            if (!data.success) {
+                alert('출차 처리 실패' + data.message);
+                return;
+            }
+            // 1. 데이터 매핑
+            document.getElementById('res-car').innerText = carNum;
+            document.getElementById('res-user').innerText = name + " / " + phone;
+            document.getElementById('res-period').innerText = start + " ~ " + end;
+            document.getElementById('res-price').innerText = price;
 
-    alert("결제가 완료되었습니다!");
+            // 2. 화면 전환
+            document.getElementById('mem-input-section').style.display = 'none';
+            document.getElementById('mem-receipt-section').style.display = 'block';
+            document.getElementById('mem-footer').style.display = 'none';
+
+            alert("결제가 완료되었습니다!");
+        })
 });
 
 // 페이지 로드 후 이벤트 등록 (맨 아래 추가)
@@ -86,6 +128,7 @@ membershipPayModalElement.addEventListener('click', function (e) {
     if (e.target?.id === 'btn-receipt-close-final') {
 
         const card = window.currentCard;
+
         if (card) {
             card.dataset.status = 'available';
             card.dataset.carNum = "";
@@ -99,6 +142,7 @@ membershipPayModalElement.addEventListener('click', function (e) {
             membershipPayModal.hide();
             alert('회원권 결제 및 출차가 완료되었습니다.');
         }
+
     }
 });
 

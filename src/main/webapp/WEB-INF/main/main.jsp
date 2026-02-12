@@ -3,6 +3,9 @@
 <%@ page import="com.example.smartparkingsystem.service.ParkingHistoryService" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="com.example.smartparkingsystem.service.MembersService" %>
+<%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
+<%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     ParkingHistoryService parkingHistoryService = ParkingHistoryService.INSTANCE;
@@ -254,6 +257,9 @@
         </div>
     </div>
 </div>
+
+<!-- Axios 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <!-- 주차 상태 처리 모달 -->
 <%@ include file="/web/main/parking_modal.jsp"%>

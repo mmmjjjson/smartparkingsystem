@@ -83,14 +83,13 @@ function handleEntry() {
     const parkingArea = currentCard.dataset.id;
     const selectedCarType = document.querySelector('input[name="carType"]:checked');
     const carType = selectedCarType.value;
-    const carNum = inputCarNum.value.trim();
+    const carNum = inputCarNum.value.replace(/\s/g, '');
 
     if (!carNum) {
         alert("차량 번호를 입력해 주세요");
         return;
     }
     if (!validateCarFullNumber(carNum)) {
-        alert('올바른 형식의 차량번호를 입력하세요.')
         inputCarNum.focus();
         return;
     }
@@ -128,13 +127,14 @@ function handleEntry() {
             currentCard.dataset.status = 'occupied';
             currentCard.dataset.parkNo = data.parkNo;
             currentCard.dataset.carNum = carNum;
-            const formattedCarNum = carNum.replace(/([가-힣])(\d)/, '$1\n$2');
             currentCard.dataset.carType = carType;
             currentCard.dataset.inFullTime = data.entryTime;
 
             // UI 업데이트
+            const isCenter = currentCard.closest('.center-row') !== null;
             currentCard.classList.replace('available', 'occupied'); // 배경색 변경
-            currentCard.querySelector('.box-car').innerText = formattedCarNum;
+            currentCard.querySelector('.box-car').innerText =
+                isCenter ? carNum.replace(/([가-힣])(\d)/, '$1\n$2') : carNum;
             currentCard.querySelector('.box-time').innerText = "00:00";
 
             alert(`${carNum} 차량 입차 완료!`)
@@ -200,13 +200,11 @@ document.getElementById('btn-close-final').addEventListener('click', () => {
 
     const parkNo = currentCard.dataset.parkNo;
 
-    fetch('/parking/exit', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'}, // 데이터 형식 지정
-        body: `parkNo=${parkNo}`
+    axios.post('/parking/exit', `parkNo=${parkNo}`, {
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     })
-        .then(res => res.json()) // 서버의 응답을 JSON으로 변환
-        .then(data => { // 서버가 보낸 응답 객체
+        .then(response => {
+            const data = response.data;
             if (!data.success) {
                 alert('출차 처리 실패' + data.message);
                 return;
@@ -231,6 +229,16 @@ document.getElementById('btn-close-final').addEventListener('click', () => {
             alert("정산이 완료되어 출차 처리되었습니다.");
         })
         .catch(err => alert('오류 발생! 관리자에게 문의하세요.' + err));
+
+
+    // fetch('/parking/exit', {
+    //     method: 'POST',
+    //     headers: {'Content-Type': 'application/x-www-form-urlencoded'}, // 데이터 형식 지정
+    //     body: `parkNo=${parkNo}`
+    // })
+    //     .then(res => res.json()) // 서버의 응답을 JSON으로 변환
+    //     .then(data => { // 서버가 보낸 응답 객체
+
 });
 
 function updateElapsedTime() {
@@ -245,7 +253,7 @@ function updateElapsedTime() {
             return;
         }
 
-        // 2. 중앙구역 차량번호 줄바꿈 유지
+        // 2. 중앙구역 차량번호, '사용가능' 줄바꿈 유지
         const centerOccupied = document.querySelectorAll('.center-row .parking-card.occupied');
         centerOccupied.forEach(card => {
             const boxCar = card.querySelector('.box-car');
