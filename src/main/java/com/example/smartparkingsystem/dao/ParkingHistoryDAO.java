@@ -6,10 +6,7 @@ import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -165,6 +162,27 @@ public class ParkingHistoryDAO {
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, totalMinutes);
             preparedStatement.setLong(2, parkingHistoryVO.getParkNo());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /***** 테스트 데이터 입력용 insert *****/
+    public void insertTestData(ParkingHistoryVO parkingHistoryVO) {
+        String sql = "INSERT INTO parking_history (parking_area, car_num, car_type, is_member, entry_time, exit_time, total_minutes) " +
+                "VALUES (?, ?, ?, EXISTS(SELECT 1 FROM members WHERE car_num = ?) , ?, ?, ?)";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, parkingHistoryVO.getParkingArea());
+            preparedStatement.setString(2, parkingHistoryVO.getCarNum());
+            preparedStatement.setString(3, parkingHistoryVO.getCarType());
+            preparedStatement.setString(4, parkingHistoryVO.getCarNum());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(parkingHistoryVO.getEntryTime()));
+            preparedStatement.setTimestamp(6, Timestamp.valueOf(parkingHistoryVO.getExitTime()));
+            preparedStatement.setInt(7, parkingHistoryVO.getTotalMinutes());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
