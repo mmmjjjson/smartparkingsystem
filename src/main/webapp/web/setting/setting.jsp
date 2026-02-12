@@ -15,7 +15,7 @@
 
 </head>
 <body>
-<%@ include file="../web/common/header_other.jsp" %>
+<%@ include file="/web/common/header_other.jsp" %>
 
 <div class="container">
     <form name="setting" action="/setting" method="post">
