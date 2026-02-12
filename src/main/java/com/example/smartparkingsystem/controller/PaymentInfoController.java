@@ -24,7 +24,7 @@ public class PaymentInfoController extends HttpServlet {
 
         req.setAttribute("paymentInfoDTO", paymentInfoDTO);
 
-        req.getRequestDispatcher("/web/setting.jsp").forward(req, resp);
+        req.getRequestDispatcher("/web/@setting.jsp").forward(req, resp);
     }
 
     @Override
