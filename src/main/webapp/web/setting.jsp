@@ -223,40 +223,6 @@
     function saveSetting() {
         alert('설정이 성공적으로 변경되었습니다.')
     }
-
-
-    // function formatNumber(val) {
-    //     if (!val) return "";
-    //     let num = val.toString().replace(/[^0-9.]/g, '');
-    //     return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    // }
-    //
-    // function formatFeeInputs() { //
-    //     const feeIds = ['in-base-fee', 'in-addInfo-fee', 'in-monthly-fee', 'in-day-max-fee'];
-    //     feeIds.forEach(id => {
-    //         let input = document.getElementById(id);
-    //         if(input) input.value = formatNumber(input.value);
-    //     });
-    // }
-    //
-    // function saveSettings() {
-    //     const data = {
-    //         baseFee: document.getElementById('in-base-fee').value.replace(/,/g, ''),
-    //         baseTime: document.getElementById('in-base-time').value,
-    //         dayMaxFee: document.getElementById('in-day-max-fee').value.replace(/,/g, ''),
-    //         addFee: document.getElementById('in-addInfo-fee').value.replace(/,/g, ''),
-    //         addTime: document.getElementById('in-addInfo-time').value,
-    //         freeTime: document.getElementById('in-free-time').value,
-    //         lightDis: document.getElementById('in-light-dis').value,
-    //         disabledDis: document.getElementById('in-disabled-dis').value,
-    //         monthlyFee: document.getElementById('in-monthly-fee').value.replace(/,/g, '')
-    //     };
-    //
-    //     console.log("저장될 데이터:", data);
-    //     alert('설정이 성공적으로 변경되었습니다.');
-    // }
-    //
-    // window.onload = formatFeeInputs;
 </script>
 
 </body>
