@@ -11,8 +11,7 @@
     int totalPage = pageResponseDTO.getTotalPage();
 
     int limit = 10; // 한 페이지 당 나올 개수
-    int n = (pageNum - 1) * limit + 1;
-    // int n = totalCount - ((pageNum - 1) * limit); // 역순 (DESC 사용 시)
+    int n = (pageNum - 1) * limit + 1; // 데이터의 인덱스
 
     String searchType = request.getParameter("searchType") == null ? "" : request.getParameter("searchType");
     String keyword = request.getParameter("keyword") == null ? "" : request.getParameter("keyword");
@@ -41,6 +40,7 @@
             padding-top: 0.6rem;
             padding-bottom: 0.6rem;
         }
+
         .custom-table tbody td {
             padding-top: 0.9rem;
             padding-bottom: 0.9rem;
@@ -48,6 +48,7 @@
     </style>
 </head>
 <body class="bg-light">
+<!-- 헤드 -->
 <%@ include file="../../web/common/header_other.jsp" %>
 <div class="container-fluid mt-4">
     <!-- 콘텐츠 -->
@@ -60,10 +61,11 @@
         </div>
 
         <!-- 회원 정보 검색 -->
-        <form method="get" action="./member_list.do" class="row g-2 mb-3 align-items-center">
+        <form method="get" action="/member_list.do" class="row g-2 mb-3 align-items-center">
             <input type="hidden" name="status"
                    value="<%= request.getParameter("status") == null ? "" : request.getParameter("status") %>">
             <div class="col-auto">
+                <!-- 검색 타입 -->
                 <select id="searchType" name="searchType" class="form-select">
                     <option value="carNum" <%= "carNum".equals(request.getParameter("searchType")) ? "selected" : "" %>>
                         차량
@@ -78,11 +80,13 @@
                 </select>
             </div>
             <div class="col-auto flex-grow-1">
+                <!-- 검색어 입력 창 -->
                 <input type="text" name="keyword" id="keyword" class="form-control"
                        value="<%= request.getParameter("keyword") == null ? "" : request.getParameter("keyword") %>"
                        placeholder="검색어를 입력하세요">
             </div>
             <div class="col-auto">
+                <!-- 검색 버튼 -->
                 <button type="submit" class="btn btn-dark">검색</button>
             </div>
         </form>
@@ -90,15 +94,15 @@
         <!-- 회원 / 만료 회원 버튼 -->
         <div class="mb-3">
             <a href="./member_list.do"
-            class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
+               class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
             <a href="./member_list.do?status=expired"
-               class="btn btn-outline-secondary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료 회원</a>
+               class="btn btn-outline-secondary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료
+                회원</a>
         </div>
 
         <!-- 회원 목록 테이블 -->
         <div class="table-responsive rounded-4 shadow-sm my-6" style="overflow: hidden;">
             <table class="table table-hover mb-3 text-center align-middle custom-table">
-                <!-- 회원 목록 -->
                 <!-- 테이블 제목 -->
                 <thead class="table-secondary">
                 <tr>
@@ -112,6 +116,7 @@
                 </thead>
                 <tbody>
                 <%
+                    // 등록된 회원이 없으면
                     if (membersDTOList.isEmpty()) {
                 %>
                 <tr>
@@ -131,7 +136,8 @@
                         `<%= member.getStartDate() %>`,
                         `<%= member.getEndDate() %>`
                         )">
-                    <td><%=n++%></td>
+                    <td><%=n++%>
+                    </td>
                     <td><%=member.getCarNum()%>
                     </td>
                     <td><%=member.getMemberName()%>
@@ -153,9 +159,8 @@
             <!-- 페이지 목록 -->
             <div align="center">
                 <%
-                    int pagePerBlock = 5; // 한 블럭에 나올 페이지 개수
-                    // 전체 블럭 수
-//                    int totalBlock = totalPage % pagePerBlock == 0 ? totalPage / pagePerBlock : totalPage / pagePerBlock + 1;
+                    // 한 블럭에 나올 페이지 개수
+                    int pagePerBlock = 5;
 
                     // 현재 블럭
                     int thisBlock = (pageNum - 1) / pagePerBlock;
@@ -167,13 +172,13 @@
                     int lastPage = firstPage + pagePerBlock - 1;
 
                     // 마지막 블럭의 마지막 페이지
-//                lastPage = (lastPage  > totalPage) ? totalPage : lastPage;
                     lastPage = Math.min(lastPage, totalPage);
                 %>
                 <%
                     if (firstPage > 1) { // 화면의 첫 번째 페이지 번호가 1보다 크면
                 %>
-                <a href="./member_list.do?pageNum=<%=(firstPage - 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">[ 이전 ]</a>
+                <a href="./member_list.do?pageNum=<%=(firstPage - 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">[
+                    이전 ]</a>
                 <%
                     }
                 %>
@@ -199,7 +204,8 @@
                 <%
                     if (lastPage < totalPage) { // 화면의 마지막 페이지 번호가 총 페이지 수보다 작으면
                 %>
-                <a href="./member_list.do?pageNum=<%=(lastPage + 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">[ 다음 ]</a>
+                <a href="./member_list.do?pageNum=<%=(lastPage + 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">[
+                    다음 ]</a>
                 <%
                     }
                 %>
@@ -240,6 +246,7 @@
                             <input type="date" name="startDate" class="form-control" id="newStartDate"
                                    onchange="setEndDateByOneMonth('newStartDate', 'newExpireDate')">
                         </div>
+                        <!-- '만료일'은 '시작일'에 따라 자동으로 1개월 설정 -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label">만료일</label>
                             <input type="date" name="endDate" class="form-control" id="newExpireDate" readonly>
@@ -288,7 +295,6 @@
             </div>
             <div class="modal-footer d-flex justify-content-between">
                 <button class="btn btn-primary" onclick="openEditModal()">수정</button>
-<%--                <button class="btn btn-danger" onclick="handleDelete()">삭제</button>--%>
                 <button class="btn btn-success" id="btnMembershipPay">회원권 결제</button>
                 <button class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
             </div>
@@ -305,6 +311,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <!-- '회원권 결제' 버튼 클릭 시 모달 -->
                 <div id="mem-input-section">
                     <input type="hidden" name="mno" id="memMno">
 
@@ -341,6 +348,7 @@
                     </div>
                 </div>
 
+                <!-- '결제하기' 버튼 클릭 시 모달 -->
                 <div id="mem-receipt-section" style="display: none;">
                     <div class="p-4 border border-2 border-dark rounded bg-light">
                         <h4 class="text-center fw-bold mb-4">회원권 결제 영수증</h4>
@@ -402,6 +410,7 @@
                         <input type="tel" name="memberPhone" class="form-control" maxlength="13"
                                oninput="autoHyphenPhone(this)" id="editPhone">
                     </div>
+                    <!-- '시작일'과 '만료일'은 변경할 수 없음 -->
                     <div class="row g-2">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">시작일</label>
@@ -422,29 +431,7 @@
     </div>
 </div>
 
-<%--<!-- ===================== 회원 삭제 모달 ===================== -->--%>
-<%--<div class="modal fade" id="deleteConfirmModal" tabindex="-1">--%>
-<%--    <div class="modal-dialog modal-md modal-dialog-centered">--%>
-<%--        <div class="modal-content">--%>
-<%--            <form action="/member_delete.do" method="post">--%>
-<%--                <input type="hidden" id="deleteMno" name="mno">--%>
-<%--                <div class="modal-header">--%>
-<%--                    <h5 class="modal-title fw-bold">회원 삭제</h5>--%>
-<%--                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>--%>
-<%--                </div>--%>
-<%--                <div class="modal-body">--%>
-<%--                    <p class="fw-bold text-center">정말 삭제 하시겠습니까?</p>--%>
-<%--                </div>--%>
-<%--                <div class="modal-footer d-flex justify-content-between">--%>
-<%--                    <button type="submit" class="btn btn-danger">삭제</button>--%>
-<%--                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>--%>
-<%--                </div>--%>
-<%--            </form>--%>
-<%--        </div>--%>
-<%--    </div>--%>
-<%--</div>--%>
-
-<!-- 결과 안내 모달 -->
+<!-- ===================== 결과 안내 모달 ===================== -->
 <%
     String flashMsg = (String) session.getAttribute("flashMsg");
     if (flashMsg != null) {

@@ -20,8 +20,8 @@ public class MembersVO {
     private LocalDate endDate;      // 이용 만료일
 
     // 회원 여부 확인 메서드
-    public boolean isMember() {
-        if (this.endDate == null) return false;
-        return !this.endDate.isBefore(LocalDate.now());
-    }
+//    public boolean isMember() {
+//        if (this.endDate == null) return false;
+//        return !this.endDate.isBefore(LocalDate.now());
+//    }
 }

@@ -21,7 +21,6 @@ import java.time.LocalDate;
 public class MembersController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        req.getRequestDispatcher("/WEB-INF/members/member_list.jsp").forward(req, resp);
         doPost(req, resp);
     }
 
@@ -38,17 +37,17 @@ public class MembersController extends HttpServlet {
 
         // 세션에서 로그인 여부 가져오기
         HttpSession session = req.getSession();
-        String tempAdminId = (String) session.getAttribute("tempAdminId");
+        String adminId = (String) session.getAttribute("adminId");
 
         switch (command) {
             case "/member_list.do" -> { // 회원 관리 메인 목록
                 log.info("회원 메인 목록");
 
                 // 로그인을 안 했을 시
-//                if (tempAdminId == null || tempAdminId.trim().isEmpty()) {
-//                    resp.sendRedirect("/login.do");
-//                    return;
-//                }
+                if (adminId == null || adminId.trim().isEmpty()) {
+                    resp.sendRedirect("/login");
+                    return;
+                }
 
                 String searchType = req.getParameter("searchType");
                 String keyword = req.getParameter("keyword");

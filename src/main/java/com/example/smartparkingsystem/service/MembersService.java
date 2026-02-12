@@ -67,7 +67,7 @@ public enum MembersService {
         int count = membersVOList.size();
 
         // 하나의 페이지에 출력할 데이터 자르기
-        int fromIndex = (pageNum - 1) * limit; // List의 시작 인덱스
+        int fromIndex = (pageNum - 1) * limit; // 시작 인덱스 (하나의 페이지에 출력되는 첫 번째 인덱스)
         // Math.min(value1, value2): 두 값 중 더 작은 값을 반환
         int toIndex = Math.min(fromIndex + limit, count); // 마지막 인덱스 (조회할 데이터의 개수 + 1)
 
@@ -93,7 +93,6 @@ public enum MembersService {
                 .build();
     }
 
-
     // 신규 회원 등록
     public void addMember(MembersDTO membersDTO) {
         MembersVO membersVO = modelMapper.map(membersDTO, MembersVO.class);
@@ -108,16 +107,5 @@ public enum MembersService {
     // 회원 삭제
 //    public void removeMember(Long mno) {
 //        membersDAO.deleteMember(mno);
-//    }
-
-    // 회원 검색 조회
-//    public List<MembersDTO> getMembers(int pageNum, int limit, String searchType, String keyword, String status) {
-//        List<MembersVO> membersVOList = membersDAO.selectMembers(pageNum, limit, searchType, keyword, status);
-//
-//        List<MembersDTO> membersDTOList = membersVOList.stream()
-//                .map(membersVO -> modelMapper.map(membersVO, MembersDTO.class))
-//                .toList();
-//
-//        return membersDTOList;
 //    }
 }
