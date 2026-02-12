@@ -50,7 +50,7 @@
 <body class="bg-light">
 <!-- 헤드 -->
 <%@ include file="../../web/common/header_other.jsp" %>
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4 px-5">
     <!-- 콘텐츠 -->
     <div class="content">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -102,7 +102,7 @@
 
         <!-- 회원 목록 테이블 -->
         <div class="table-responsive rounded-4 shadow-sm my-6" style="overflow: hidden;">
-            <table class="table table-hover mb-3 text-center align-middle custom-table">
+            <table class="table table-hover mb-2 text-center align-middle custom-table">
                 <!-- 테이블 제목 -->
                 <thead class="table-secondary">
                 <tr>
@@ -157,7 +157,7 @@
             </table>
 
             <!-- 페이지 목록 -->
-            <div align="center">
+            <div class="text-center mb-2">
                 <%
                     // 한 블럭에 나올 페이지 개수
                     int pagePerBlock = 5;
@@ -177,7 +177,9 @@
                 <%
                     if (firstPage > 1) { // 화면의 첫 번째 페이지 번호가 1보다 크면
                 %>
-                <a href="./member_list.do?pageNum=<%=(firstPage - 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">[
+                <a href="./member_list.do?pageNum=<%=(firstPage - 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>"
+                   class="text-decoration-none fs-6 fw-semibold px-2"
+                   style="color:#1e3a8a;">[
                     이전 ]</a>
                 <%
                     }
@@ -185,15 +187,18 @@
                 <%
                     for (int i = firstPage; i <= lastPage; i++) {
                 %>
-                <a href="./member_list.do?pageNum=<%=i%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">
+                <a href="./member_list.do?pageNum=<%=i%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>"
+                   class="text-decoration-none fs-6 fw-semibold text-success px-2">
                     <%
                         if (pageNum == i) {
                     %>
-                    <font color='4C5317'><b> [<%= i %>] </b></font>
+                    <font color='4C5317'><b><%= i %>
+                    </b></font>
                     <%
                     } else {
                     %>
-                    <font color='4C5317'> [<%= i %>] </font>
+                    <font color='4C5317'><%= i %>
+                    </font>
                     <%
                         }
                     %>
@@ -204,7 +209,9 @@
                 <%
                     if (lastPage < totalPage) { // 화면의 마지막 페이지 번호가 총 페이지 수보다 작으면
                 %>
-                <a href="./member_list.do?pageNum=<%=(lastPage + 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">[
+                <a href="./member_list.do?pageNum=<%=(lastPage + 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>"
+                   class="text-decoration-none fs-6 fw-semibold px-2"
+                   style="color:#1e3a8a;">[
                     다음 ]</a>
                 <%
                     }
@@ -226,29 +233,29 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">차량 번호 (필수)</label>
+                        <label class="form-label fw-bold">차량 번호 (필수)</label>
                         <input type="text" name="carNum" placeholder="예: 12가3456" maxlength="8" class="form-control"
                                id="newCarNumber">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">이름 (필수)</label>
+                        <label class="form-label fw-bold">이름 (필수)</label>
                         <input type="text" name="memberName" placeholder="이름을 입력하세요" class="form-control"
                                id="newName">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">연락처 (필수)</label>
+                        <label class="form-label fw-bold">연락처 (필수)</label>
                         <input type="tel" name="memberPhone" placeholder="예: 010-1234-5678" maxlength="13"
                                oninput="autoHyphenPhone(this)" class="form-control" id="newPhone">
                     </div>
                     <div class="row g-2">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">시작일 (필수)</label>
+                            <label class="form-label fw-bold">시작일 (필수)</label>
                             <input type="date" name="startDate" class="form-control" id="newStartDate"
                                    onchange="setEndDateByOneMonth('newStartDate', 'newExpireDate')">
                         </div>
                         <!-- '만료일'은 '시작일'에 따라 자동으로 1개월 설정 -->
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">만료일</label>
+                            <label class="form-label fw-bold">만료일</label>
                             <input type="date" name="endDate" class="form-control" id="newExpireDate" readonly>
                         </div>
                     </div>
@@ -271,32 +278,53 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="mno">
-                <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">차량 번호:</label>
-                    <div class="col-sm-9 form-control-plaintext" id="viewCarNumber"></div>
+                <div class="modal-body">
+                    <input type="hidden" id="mno">
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 fw-bold">차량 번호</label>
+                        <div class="col-sm-9">
+                            <div id="viewCarNumber"
+                                 class="form-control-plaintext border rounded px-2 py-1 bg-light"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 fw-bold">이름</label>
+                        <div class="col-sm-9">
+                            <div id="viewName" class="form-control-plaintext border rounded px-2 py-1 bg-light"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 fw-bold">연락처</label>
+                        <div class="col-sm-9">
+                            <div id="viewPhone" class="form-control-plaintext border rounded px-2 py-1 bg-light"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 fw-bold">시작일</label>
+                        <div class="col-sm-9">
+                            <div id="viewStartDate"
+                                 class="form-control-plaintext border rounded px-2 py-1 bg-light"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 fw-bold">만료일</label>
+                        <div class="col-sm-9">
+                            <div id="viewExpireDate"
+                                 class="form-control-plaintext border rounded px-2 py-1 bg-light"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">이름:</label>
-                    <div class="col-sm-9 form-control-plaintext" id="viewName"></div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">연락처:</label>
-                    <div class="col-sm-9 form-control-plaintext" id="viewPhone"></div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">시작일:</label>
-                    <div class="col-sm-9 form-control-plaintext" id="viewStartDate"></div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label">만료일:</label>
-                    <div class="col-sm-9 form-control-plaintext" id="viewExpireDate"></div>
-                </div>
+
             </div>
-            <div class="modal-footer d-flex justify-content-between">
-                <button class="btn btn-primary" onclick="openEditModal()">수정</button>
-                <button class="btn btn-success" id="btnMembershipPay">회원권 결제</button>
-                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
+            <div class="modal-footer justify-content-center">
+                <button class="btn btn-primary px-4 py-2 me-3" onclick="openEditModal()">수정</button>
+                <button class="btn btn-success px-4 py-2 me-3" id="btnMembershipPay">회원권 결제</button>
+                <button class="btn btn-outline-secondary  px-4 py-2 me-3" data-bs-dismiss="modal">닫기</button>
             </div>
         </div>
     </div>
@@ -398,26 +426,26 @@
                 <div class="modal-body">
                     <input type="hidden" id="editMno" name="mno">
                     <div class="mb-3">
-                        <label class="form-label">차량 번호 (필수)</label>
+                        <label class="form-label fw-bold">차량 번호 (필수)</label>
                         <input type="text" name="carNum" class="form-control" id="editCarNumber">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">이름 (필수)</label>
+                        <label class="form-label fw-bold">이름 (필수)</label>
                         <input type="text" name="memberName" class="form-control" id="editName">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">연락처 (필수)</label>
+                        <label class="form-label fw-bold">연락처 (필수)</label>
                         <input type="tel" name="memberPhone" class="form-control" maxlength="13"
                                oninput="autoHyphenPhone(this)" id="editPhone">
                     </div>
                     <!-- '시작일'과 '만료일'은 변경할 수 없음 -->
                     <div class="row g-2">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">시작일</label>
+                            <label class="form-label fw-bold">시작일</label>
                             <input type="date" name="startDate" class="form-control" id="editStartDate" readonly>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">만료일</label>
+                            <label class="form-label fw-bold">만료일</label>
                             <input type="date" name="endDate" class="form-control" id="editExpireDate" readonly>
                         </div>
                     </div>
