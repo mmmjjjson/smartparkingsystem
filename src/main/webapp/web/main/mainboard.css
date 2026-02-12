@@ -80,7 +80,6 @@ body {
     display: flex !important;
     justify-content: center !important;
 
-    /* 여기서부터 중요 */
     background-color: #ffffff !important;
     border: 1px solid #6a6a6a !important;
     border-radius: 20px !important;
@@ -88,7 +87,7 @@ body {
     padding: 60px !important;
     width: 100% !important;
     min-width: 1000px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1) !important;
 }
 
 /* 주차장 전체 레이아웃 (도면용) */
@@ -102,7 +101,7 @@ body {
 .column { height:100%; display:flex; flex-direction:column; justify-content:space-between; }
 
 /* 주차장 좌/우 구역 주차 공간 */
-.column .parking-card { width:160px; height:80px; cursor:pointer; }
+.column .parking-card { width:160px; height:90px; cursor:pointer; }
 
 /* 주차장 중앙 구역 레이아웃 */
 .center-wrapper { width: auto; }
@@ -112,7 +111,7 @@ body {
 .center-row { display:flex; gap:25px; }
 
 /* 주차장 중앙 구역 주차 공간 */
-.central-column .parking-card { width:80px; height:160px; flex-shrink: 0; cursor:pointer; }
+.central-column .parking-card { width:90px; height:160px; flex-shrink: 0; cursor:pointer; }
 
 /* 공통 (parking_card.jsp) */
 .parking-card { position:relative; border:2px solid #333; border-radius:8px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; align-items:center; }

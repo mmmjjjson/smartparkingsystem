@@ -8,7 +8,7 @@ public class DBConnection {
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Connection connection = null;
         String url = "jdbc:mariadb://localhost:3306/smart_parking_system";
-        String user = "spsUser";
+        String user = "systemUser";
         String pass = "0220";
 
         Class.forName("org.mariadb.jdbc.Driver");

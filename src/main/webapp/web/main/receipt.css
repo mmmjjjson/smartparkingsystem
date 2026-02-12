@@ -1,73 +1,72 @@
-/* 공통 출력 설정 */
 @media print {
-    @page { margin: 0; }
+    @page { margin: 10mm; }
 
     body {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        background: #fff !important;
     }
 
-    /* 화면의 모든 요소를 아예 제거 (공간도 차지하지 않음) */
+    /* [중요] 모든 요소를 숨기되, 출력할 모달들만 예외 처리 */
     body > * { display: none !important; }
 
-    /* 공통 숨김 요소 */
-    .modal-header, .modal-footer, .btn, .btn-close, .d-print-none {
-        display: none !important;
+    /* 두 모달을 출력 대상으로 지정 */
+    #parkingModal,
+    #membershipPayModal {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        visibility: visible !important;
     }
 
-    /* 레이아웃 깨짐 방지 */
-    .d-flex { display: flex !important; }
-}
-
-/* 일반 영수증 출력 화면 */
-@media print {
-    /* 모달창과 영수증 영역만 강제로 살려내기 */
-    #parkingModal,
-    #parkingModal .modal-dialog,
-    #parkingModal .modal-content,
-    #parkingModal .modal-body,
-    #section-receipt,
-    #receipt-print-area {
+    /* 모달 내부의 영수증 섹션 및 하위 요소 강제 표시 */
+    .modal-dialog, .modal-content, .modal-body,
+    #section-receipt, #section-receipt *,
+    #mem-receipt-section, #mem-receipt-section *,
+    #receipt-print-area, #receipt-print-area * {
         display: block !important;
         visibility: visible !important;
-        position: static !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
         border: none !important;
         box-shadow: none !important;
     }
 
-    /* 영수증 내부의 텍스트와 라인들만 보이게 */
-    #receipt-print-area * {
-        display: inline-block; /* 레이아웃 유지 */
-        visibility: visible !important;
-    }
-}
+    /* 레이아웃 복구 (영수증 내부 정렬용) */
+    .d-flex { display: flex !important; }
+    .justify-content-between { justify-content: space-between !important; }
+    .fw-bold { font-weight: bold !important; }
+    .text-primary { color: #0d6efd !important; }
+    .text-danger { color: #dc3545 !important; }
 
-/* 회원권 영수증 출력 화면 */
-@media print {
-    #membershipPayModal,
-    #membershipPayModal .modal-dialog,
-    #membershipPayModal .modal-content,
-    #membershipPayModal .modal-body,
-    #mem-receipt-section {
-        display: block !important;
-        visibility: visible !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        margin: 0 !important;
+    /* [핵심] 출력 시 버튼, 헤더, 푸터 절대 숨김 */
+    .modal-header,
+    .modal-footer,
+    .btn,
+    .btn-close,
+    .d-print-none,
+    #mem-footer {
+        display: none !important;
+        height: 0 !important;
         padding: 0 !important;
+        margin: 0 !important;
     }
 
-    .receipt-box {
-        width: 90% !important;
-        max-width: 600px !important;
-        margin: 20px auto !important;
-        padding: 40px !important;
-        border: 2px solid #333 !important;
-        background-color: #fff !important;
+    /* 출력용 영수증 박스 보정 */
+    #receipt-print-area,
+    #mem-receipt-section .p-4.border {
+        width: 95% !important;
+        max-width: 500px !important;
+        margin: 0 auto !important;
+        border: 2px solid #000 !important; /* 출력 시에는 명확한 실선 */
+        padding: 30px !important;
+    }
+
+    /* 영수증 내 hr 실선 복구 */
+    hr {
+        display: block !important;
+        border-top: 1px solid #000 !important;
+        opacity: 1 !important;
+        margin: 15px 0 !important;
     }
 }

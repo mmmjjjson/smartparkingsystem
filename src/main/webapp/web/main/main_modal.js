@@ -128,12 +128,13 @@ function handleEntry() {
             currentCard.dataset.status = 'occupied';
             currentCard.dataset.parkNo = data.parkNo;
             currentCard.dataset.carNum = carNum;
+            const formattedCarNum = carNum.replace(/([가-힣])(\d)/, '$1\n$2');
             currentCard.dataset.carType = carType;
             currentCard.dataset.inFullTime = data.entryTime;
 
             // UI 업데이트
             currentCard.classList.replace('available', 'occupied'); // 배경색 변경
-            currentCard.querySelector('.box-car').innerText = carNum;
+            currentCard.querySelector('.box-car').innerText = formattedCarNum;
             currentCard.querySelector('.box-time').innerText = "00:00";
 
             alert(`${carNum} 차량 입차 완료!`)
@@ -244,12 +245,19 @@ function updateElapsedTime() {
             return;
         }
 
+        // 2. 중앙구역 차량번호 줄바꿈 유지
+        const centerOccupied = document.querySelectorAll('.center-row .parking-card.occupied');
+        centerOccupied.forEach(card => {
+            const boxCar = card.querySelector('.box-car');
+            const carNum = card.dataset.carNum;
+
+            if (carNum && boxCar && !boxCar.innerText.includes('\n')) {
+                boxCar.innerText = carNum.replace(/([가-힣])(\d)/, '$1\n$2');
+            }
+        })
+
         const inFullTime = card.dataset.inFullTime;
         if (!inFullTime || isNaN(new Date(inFullTime).getTime())) {
-            // 입차 직후 데이터가 잠시 없을 경우 00:00 유지
-            if (card.classList.contains('occupied') && timeDisplay.innerText === "") {
-                timeDisplay.innerText = "00:00";
-            }
             return;
         }
 
