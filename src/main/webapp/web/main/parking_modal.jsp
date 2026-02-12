@@ -1,11 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<div class="modal fade" id="parkingModal" tabindex="-1">
+<div class="modal fade" id="parkingModal" tabindex="-1" role="dialog" data-bs-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <!-- 모달 헤더 -->
             <div class="modal-header">
                 <h5 class="modal-title">주차 처리</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <!-- 모달 본문 -->

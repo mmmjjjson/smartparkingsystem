@@ -137,6 +137,9 @@ function handleEntry() {
             currentCard.querySelector('.box-time').innerText = "00:00";
 
             alert(`${carNum} 차량 입차 완료!`)
+
+            document.getElementById('parkingModal').querySelector('.btn-close').blur();
+            document.body.focus(); //**
             modal.hide();
             updateParkingCount();
             inputCarNum.value = ""; // 입력창 초기화
@@ -154,9 +157,9 @@ function handlePayment() {
     const effectiveType = (currentCard.dataset.isMember === "true") ? "월정액" : carType;
     const chargeResult = calculateParkingCharge(inFullTime, outFullTime, effectiveType);
 
-    console.log("effectiveType:", effectiveType);
-    console.log("isMember:", currentCard.dataset.isMember);
-    console.log("chargeResult:", chargeResult); // ← 여기 추가
+    // console.log("effectiveType:", effectiveType);
+    // console.log("isMember:", currentCard.dataset.isMember);
+    // console.log("chargeResult:", chargeResult);
 
 
     // 영수증 데이터 매핑
@@ -180,6 +183,9 @@ function handlePayment() {
     // UI 전환
     document.getElementById('section-exit').style.display = 'none';
     document.getElementById('section-receipt').style.display = 'block';
+
+    document.querySelector('#section-receipt h5').tabIndex = -1;
+    document.querySelector('#section-receipt h5').focus();
 
     // 하단 버튼 숨기기
     btnMembershipPay.style.display = 'none';
@@ -217,6 +223,8 @@ document.getElementById('btn-close-final').addEventListener('click', () => {
             currentCard.querySelector('.box-time').innerText = "";
 
             // 3. 모달 닫기
+            document.getElementById('parkingModal').querySelector('.btn-close').blur();
+            document.body.focus();
             modal.hide();
             updateParkingCount();
             alert("정산이 완료되어 출차 처리되었습니다.");
@@ -265,7 +273,8 @@ function updateElapsedTime() {
 }
 
 /* 창 닫힐 때 섹션 리셋 */
-document.getElementById('parkingModal').addEventListener('hidden.bs.modal', () => {
+const parkingModal = document.getElementById('parkingModal');
+parkingModal.addEventListener('hidden.bs.modal', () => {
     sectionReceipt.style.display = 'none';
     modalAction.style.display = 'block';
     footerCloseBtn.style.display = 'block';

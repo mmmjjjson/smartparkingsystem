@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
@@ -29,7 +30,15 @@ public class ParkingController extends HttpServlet {
         }
     }
 
-    private void handleEntry(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleEntry(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession();
+        String adminId = (String) session.getAttribute("adminId");
+
+        if (adminId == null || adminId.trim().isEmpty()) {
+            resp.sendRedirect("/login");
+            return;
+        }
+
         String parkingArea = req.getParameter("parkingArea");
         String carNum = req.getParameter("carNum");
         String carType = req.getParameter("carType");
@@ -74,7 +83,15 @@ public class ParkingController extends HttpServlet {
         }
     }
 
-    private void handleExit(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleExit(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession();
+        String adminId = (String) session.getAttribute("adminId");
+
+        if (adminId == null || adminId.trim().isEmpty()) {
+            resp.sendRedirect("/login");
+            return;
+        }
+
         // 1. main_modal.js에서 넘어온 값
         long parkNo = Long.parseLong(req.getParameter("parkNo"));
 
