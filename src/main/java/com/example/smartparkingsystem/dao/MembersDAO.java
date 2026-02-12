@@ -75,7 +75,6 @@ public class MembersDAO {
                         .startDate(resultSet.getDate("start_date").toLocalDate())
                         .endDate(resultSet.getDate("end_date").toLocalDate())
                         .build();
-
                 return membersVO;
             }
         } catch (SQLException e) {

@@ -19,7 +19,7 @@ public class PaymentHistoryDTO {
     private LocalDateTime exitTime; // 출차 시간
     private long totalMinutes; // 총 주차 시간
     private int totalCharge; // 총 요금
-    private long mno; // 회원 번호
+    private Long mno; // 회원 번호
     private long pno; // 요금 정책 번호
     private long parkNo; // 주차 기록 번호
     private int discountAmount; // 할인 금액

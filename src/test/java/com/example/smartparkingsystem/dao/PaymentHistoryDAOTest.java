@@ -27,7 +27,7 @@ class PaymentHistoryDAOTest {
                 .exitTime(LocalDateTime.now())
                 .totalMinutes(2026021112)
                 .totalCharge(10000)
-                .mno(2)
+                .mno(2L)
                 .pno(5)
                 .parkNo(1)
                 .discountAmount(2000)

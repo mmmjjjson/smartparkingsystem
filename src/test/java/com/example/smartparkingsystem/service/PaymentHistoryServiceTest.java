@@ -15,8 +15,8 @@ class PaymentHistoryServiceTest {
         paymentHistoryService = PaymentHistoryService.getInstance();
     }
 
-//    @Test
-//    public void paymentTest() {
-//        paymentHistoryService.calculateParkingCharge("33가3009");
-//    }
+    @Test
+    public void calculateFinalChargeTest() {
+         paymentHistoryService.calculateFinalCharge("11가1001");
+    }
 }
