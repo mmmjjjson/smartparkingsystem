@@ -60,8 +60,8 @@ class AdminServiceTest {
 //        adminService.changePassword(adminId, password);
 //    }
 
-    @Test
-    public void adminServiceDelete() {
-        adminService.removeAdmin("test1");
-    }
+//    @Test
+//    public void adminServiceDelete() {
+//        adminService.removeAdmin("test1");
+//    }
 }

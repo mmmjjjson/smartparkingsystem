@@ -66,7 +66,7 @@ public enum AdminService {
     }
 
     // 계정 삭제
-    public void removeAdmin(String admin_id) {
-        adminDAO.deleteAdmin(admin_id);
-    }
+//    public void removeAdmin(String admin_id) {
+//        adminDAO.deleteAdmin(admin_id);
+//    }
 }

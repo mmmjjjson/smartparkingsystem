@@ -1,6 +1,7 @@
 package com.example.smartparkingsystem.dao;
 
 import com.example.smartparkingsystem.vo.AdminVO;
+import com.example.smartparkingsystem.vo.ValidationVO;
 import lombok.Cleanup;
 
 import java.sql.Connection;
@@ -115,15 +116,15 @@ public class AdminDAO {
     }
 
     // 계정 삭제
-    public void deleteAdmin(String admin_id) {
-        String sql = "DELETE FROM admin WHERE admin_id = ?";
-        try {
-            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
-            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, admin_id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public void deleteAdmin(String admin_id) {
+//        String sql = "DELETE FROM admin WHERE admin_id = ?";
+//        try {
+//            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+//            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setString(1, admin_id);
+//            preparedStatement.executeUpdate();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

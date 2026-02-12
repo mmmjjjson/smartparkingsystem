@@ -27,7 +27,7 @@ public class MailService {
     private String user;
     private String pass;
 
-    // 구동시 기본 값들을 가져오기.
+    //구동시 기본 값들을 가져오기.
     private MailService() {
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("mail.properties")) {
             Properties prop = new Properties();
@@ -71,10 +71,6 @@ public class MailService {
         });
 
 
-        String otp = "";
-        for (int i = 0; i < 6; i++) {
-            otp += (int) Math.random() * 10;
-        }
         String subject = "[스마트 주차시스템] 인증 메일";
         String content = "OTP 인증번호 : " + otpCode;
 

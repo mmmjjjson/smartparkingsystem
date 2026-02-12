@@ -2,6 +2,7 @@ package com.example.smartparkingsystem.controller;
 
 import com.example.smartparkingsystem.dto.AdminDTO;
 import com.example.smartparkingsystem.service.AdminService;
+import com.example.smartparkingsystem.service.MailService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -59,6 +60,7 @@ public class LoginProcessController extends HttpServlet {
 
     // Step2 등록된 이메일 확인
     private void step2(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         String email = req.getParameter("email");
 
         HttpSession session = req.getSession();
@@ -116,6 +118,14 @@ public class LoginProcessController extends HttpServlet {
 
     // TODO: OTP연동만 하면 끝
     private boolean otpDB(String otpCode) {
-        return "123456".equals(otpCode);
+        MailService mailService = MailService.getINSTANCE();
+
+        String otp = "";
+        for (int i = 0; i < 6; i++) {
+            otp += (int)(Math.random() * 10);
+        }
+
+        mailService.sendAuthEmail("vcg258@naver.com", otp);
+        return otp.equals(otpCode);
     }
 }

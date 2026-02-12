@@ -1,6 +1,7 @@
 package com.example.smartparkingsystem.dao;
 
 import com.example.smartparkingsystem.vo.AdminVO;
+import com.example.smartparkingsystem.vo.ValidationVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,8 +64,8 @@ class AdminDAOTest {
         adminDAO.updateLog(adminId, lastLoginIp);
     }
 
-    @Test
-    public void AdminDelete() {
-        adminDAO.deleteAdmin("test1");
-    }
+//    @Test
+//    public void AdminDelete() {
+//        adminDAO.deleteAdmin("test1");
+//    }
 }
