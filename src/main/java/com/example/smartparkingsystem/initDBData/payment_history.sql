@@ -53,3 +53,10 @@ SELECT
 FROM parking_history ph
          LEFT JOIN members m ON ph.car_num = m.car_num
     AND ph.entry_time BETWEEN m.start_date AND m.end_date;
+
+DELETE FROM payment_history
+WHERE entry_time >= '2024-01-01 00:00:00'
+  AND entry_time <  '2025-01-01 00:00:00'
+  AND pno = 2;
+
+
