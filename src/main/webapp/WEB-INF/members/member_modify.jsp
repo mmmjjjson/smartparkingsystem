@@ -4,20 +4,15 @@
 <%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
 <%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
 <%@ page import="com.example.smartparkingsystem.vo.MembersVO" %>
-<%-- 회원 정보 수정 --%>
+<%@ page import="com.example.smartparkingsystem.service.MembersService" %>
 <%
-    MembersVO membersVO = MembersVO.builder()
+    MembersDTO membersDTO = MembersDTO.builder()
             .mno(Long.parseLong(request.getParameter("mno")))
             .carNum(request.getParameter("carNum"))
             .memberName(request.getParameter("memberName"))
             .memberPhone(request.getParameter("memberPhone"))
             .build();
 
-    MembersDAO membersDAO = new MembersDAO();
-    membersDAO.updateMember(membersVO);
-
-    // 회원 정보 수정 완료 메시지
-    session.setAttribute("flashMsg", "회원 정보가 수정되었습니다.");
-
-    response.sendRedirect("member.jsp");
+    MembersService membersService = MembersService.INSTANCE;
+    membersService.modifyMember(membersDTO);
 %>

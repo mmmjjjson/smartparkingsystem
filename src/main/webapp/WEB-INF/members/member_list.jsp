@@ -1,8 +1,25 @@
+<%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.time.LocalDate" %>
-<%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="com.example.smartparkingsystem.vo.MembersVO" %>
+<%@ page import="com.example.smartparkingsystem.dto.PageResponseDTO" %>
+<%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    PageResponseDTO pageResponseDTO = (PageResponseDTO) request.getAttribute("pageResponseDTO");
+    List<MembersDTO> membersDTOList = pageResponseDTO.getMembersDTOList();
+    int pageNum = pageResponseDTO.getPageNum();
+    int totalPage = pageResponseDTO.getTotalPage();
+
+    int limit = 10; // 한 페이지 당 나올 개수
+    int n = (pageNum - 1) * limit + 1;
+    // int n = totalCount - ((pageNum - 1) * limit); // 역순 (DESC 사용 시)
+
+    String searchType = request.getParameter("searchType") == null ? "" : request.getParameter("searchType");
+    String keyword = request.getParameter("keyword") == null ? "" : request.getParameter("keyword");
+    String status = request.getParameter("status") == null ? "" : request.getParameter("status");
+%>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,11 +33,22 @@
     <%--    <link rel="stylesheet" href="css/member.css">--%>
     <%--    <link rel="stylesheet" href="../../login/css/styles.css">--%>
 
-    <script src="js/member.js" defer></script>
-    <script src="../main/main_membershipPay.js" defer></script>
+    <script src="../../web/member/js/member.js" defer></script>
+    <script src="../../web/main/main_membershipPay.js" defer></script>
+
+    <style>
+        .custom-table thead th {
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+        }
+        .custom-table tbody td {
+            padding-top: 0.9rem;
+            padding-bottom: 0.9rem;
+        }
+    </style>
 </head>
 <body class="bg-light">
-<%@ include file="../common/header_member.jsp" %>
+<%@ include file="../../web/common/header_other.jsp" %>
 <div class="container-fluid mt-4">
     <!-- 콘텐츠 -->
     <div class="content">
@@ -32,7 +60,7 @@
         </div>
 
         <!-- 회원 정보 검색 -->
-        <form method="get" action="member.jsp" class="row g-2 mb-3 align-items-center">
+        <form method="get" action="./member_list.do" class="row g-2 mb-3 align-items-center">
             <input type="hidden" name="status"
                    value="<%= request.getParameter("status") == null ? "" : request.getParameter("status") %>">
             <div class="col-auto">
@@ -41,7 +69,8 @@
                         차량
                         번호
                     </option>
-                    <option value="name" <%= "name".equals(request.getParameter("searchType")) ? "selected" : "" %>>이름
+                    <option value="name" <%= "name".equals(request.getParameter("searchType")) ? "selected" : "" %>>
+                        이름
                     </option>
                     <option value="phone" <%= "phone".equals(request.getParameter("searchType")) ? "selected" : "" %>>
                         연락처
@@ -58,38 +87,133 @@
             </div>
         </form>
 
-        <!-- 비회원 / 회원 버튼 -->
+        <!-- 회원 / 만료 회원 버튼 -->
         <div class="mb-3">
-            <a href="member.jsp?status=expired"
-               class="btn btn-outline-secondary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">비회원</a>
-            <a href="member.jsp"
-               class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
+            <a href="./member_list.do"
+            class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
+            <a href="./member_list.do?status=expired"
+               class="btn btn-outline-secondary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료 회원</a>
         </div>
 
         <!-- 회원 목록 테이블 -->
-        <div class="table-responsive">
-            <%@ include file="member_list.jsp" %>
-            <%--            &lt;%&ndash; 페이징 링크 생성 &ndash;%&gt;--%>
-            <% for (int i = 1; i <= totalPage; i++) { %>
-            <a href="member.jsp?pageNum=<%=i%>
-                <% if (isSearch) { %>
-                    &searchType=<%=searchType%>&keyword=<%=keyword%>
-                <% } else if (status != null) { %>
-                    &status=<%=status%>
-                <% } %>"
-               class="<%= (i == pageNum ? "active" : "") %>">
-                <%= i %>
-            </a>
-            <% } %>
+        <div class="table-responsive rounded-4 shadow-sm my-6" style="overflow: hidden;">
+            <table class="table table-hover mb-3 text-center align-middle custom-table">
+                <!-- 회원 목록 -->
+                <!-- 테이블 제목 -->
+                <thead class="table-secondary">
+                <tr>
+                    <th>번호</th>
+                    <th>차량 번호</th>
+                    <th>이름</th>
+                    <th>연락처</th>
+                    <th>시작일</th>
+                    <th>만료일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <%
+                    if (membersDTOList.isEmpty()) {
+                %>
+                <tr>
+                    <td colspan="6" style="text-align: center;">
+                        등록된 회원이 없습니다
+                    </td>
+                </tr>
+                <%
+                } else {
+                    for (MembersDTO member : membersDTOList) {
+                %>
+                <tr onclick="openViewModal(
+                    <%= member.getMno() %>,
+                        `<%= member.getCarNum() %>`,
+                        `<%= member.getMemberName() %>`,
+                        `<%= member.getMemberPhone() %>`,
+                        `<%= member.getStartDate() %>`,
+                        `<%= member.getEndDate() %>`
+                        )">
+                    <td><%=n++%></td>
+                    <td><%=member.getCarNum()%>
+                    </td>
+                    <td><%=member.getMemberName()%>
+                    </td>
+                    <td><%=member.getMemberPhone()%>
+                    </td>
+                    <td><%=member.getStartDate()%>
+                    </td>
+                    <td><%=member.getEndDate()%>
+                    </td>
+                </tr>
+                <%
+                        }
+                    }
+                %>
+                </tbody>
+            </table>
+
+            <!-- 페이지 목록 -->
+            <div align="center">
+                <%
+                    int pagePerBlock = 5; // 한 블럭에 나올 페이지 개수
+                    // 전체 블럭 수
+//                    int totalBlock = totalPage % pagePerBlock == 0 ? totalPage / pagePerBlock : totalPage / pagePerBlock + 1;
+
+                    // 현재 블럭
+                    int thisBlock = (pageNum - 1) / pagePerBlock;
+
+                    // 현재 블럭의 첫 페이지
+                    int firstPage = thisBlock * pagePerBlock + 1;
+
+                    // 현재 블럭의 마지막 페이지
+                    int lastPage = firstPage + pagePerBlock - 1;
+
+                    // 마지막 블럭의 마지막 페이지
+//                lastPage = (lastPage  > totalPage) ? totalPage : lastPage;
+                    lastPage = Math.min(lastPage, totalPage);
+                %>
+                <%
+                    if (firstPage > 1) { // 화면의 첫 번째 페이지 번호가 1보다 크면
+                %>
+                <a href="./member_list.do?pageNum=<%=(firstPage - 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">[ 이전 ]</a>
+                <%
+                    }
+                %>
+                <%
+                    for (int i = firstPage; i <= lastPage; i++) {
+                %>
+                <a href="./member_list.do?pageNum=<%=i%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">
+                    <%
+                        if (pageNum == i) {
+                    %>
+                    <font color='4C5317'><b> [<%= i %>] </b></font>
+                    <%
+                    } else {
+                    %>
+                    <font color='4C5317'> [<%= i %>] </font>
+                    <%
+                        }
+                    %>
+                </a>
+                <%
+                    }
+                %>
+                <%
+                    if (lastPage < totalPage) { // 화면의 마지막 페이지 번호가 총 페이지 수보다 작으면
+                %>
+                <a href="./member_list.do?pageNum=<%=(lastPage + 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>">[ 다음 ]</a>
+                <%
+                    }
+                %>
+            </div>
         </div>
     </div>
 </div>
+
 
 <!-- ===================== 신규 회원 등록 모달 ===================== -->
 <div class="modal fade" id="newMemberModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <form action="member_insert.jsp" method="post" onsubmit="return handleNewMemberSubmit()">
+            <form action="/member_add.do" method="post" onsubmit="return handleNewMemberSubmit()">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">회원 정보 입력</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -102,7 +226,8 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">이름 (필수)</label>
-                        <input type="text" name="memberName" placeholder="이름을 입력하세요" class="form-control" id="newName">
+                        <input type="text" name="memberName" placeholder="이름을 입력하세요" class="form-control"
+                               id="newName">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">연락처 (필수)</label>
@@ -163,7 +288,7 @@
             </div>
             <div class="modal-footer d-flex justify-content-between">
                 <button class="btn btn-primary" onclick="openEditModal()">수정</button>
-                <button class="btn btn-danger" onclick="handleDelete()">삭제</button>
+<%--                <button class="btn btn-danger" onclick="handleDelete()">삭제</button>--%>
                 <button class="btn btn-success" id="btnMembershipPay">회원권 결제</button>
                 <button class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
             </div>
@@ -222,21 +347,25 @@
                         <div class="d-flex justify-content-between mb-2"><span>차량번호:</span><span id="res-car"
                                                                                                  class="fw-bold"></span>
                         </div>
-                        <div class="d-flex justify-content-between mb-2"><span>성함/연락처:</span><span id="res-user"></span>
+                        <div class="d-flex justify-content-between mb-2"><span>성함/연락처:</span><span
+                                id="res-user"></span>
                         </div>
                         <hr>
-                        <div class="d-flex justify-content-between mb-2"><span>권종:</span><span>정기 정액권 (30일)</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>권종:</span><span>정기 정액권 (30일)</span>
+                        </div>
                         <div class="d-flex justify-content-between mb-2"><span>유효기간:</span><span id="res-period"
                                                                                                  class="text-primary"></span>
                         </div>
                         <hr>
-                        <div class="d-flex justify-content-between fs-5 fw-bold"><span>결제금액:</span><span id="res-price"
-                                                                                                         class="text-danger"></span>
+                        <div class="d-flex justify-content-between fs-5 fw-bold"><span>결제금액:</span><span
+                                id="res-price"
+                                class="text-danger"></span>
                         </div>
                     </div>
                     <div class="mt-3 d-grid gap-2">
                         <button class="btn btn-dark w-100" onclick="window.print()">영수증 출력</button>
-                        <button type="button" id="btn-receipt-close-final" class="btn btn-secondary w-100">닫기</button>
+                        <button type="button" id="btn-receipt-close-final" class="btn btn-secondary w-100">닫기
+                        </button>
                     </div>
                 </div>
 
@@ -253,7 +382,7 @@
 <div class="modal fade" id="editMemberModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <form action="member_update.jsp" method="post" onsubmit="return handleEditSubmit()">
+            <form action="/member_modify.do" method="post" onsubmit="return handleEditSubmit()">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">회원 정보 수정</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -293,27 +422,27 @@
     </div>
 </div>
 
-<!-- ===================== 회원 삭제 모달 ===================== -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
-    <div class="modal-dialog modal-md modal-dialog-centered">
-        <div class="modal-content">
-            <form action="member_delete.jsp" method="post">
-                <input type="hidden" id="deleteMno" name="mno">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold">회원 삭제</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="fw-bold text-center">정말 삭제 하시겠습니까?</p>
-                </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="submit" class="btn btn-danger">삭제</button>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<%--<!-- ===================== 회원 삭제 모달 ===================== -->--%>
+<%--<div class="modal fade" id="deleteConfirmModal" tabindex="-1">--%>
+<%--    <div class="modal-dialog modal-md modal-dialog-centered">--%>
+<%--        <div class="modal-content">--%>
+<%--            <form action="/member_delete.do" method="post">--%>
+<%--                <input type="hidden" id="deleteMno" name="mno">--%>
+<%--                <div class="modal-header">--%>
+<%--                    <h5 class="modal-title fw-bold">회원 삭제</h5>--%>
+<%--                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>--%>
+<%--                </div>--%>
+<%--                <div class="modal-body">--%>
+<%--                    <p class="fw-bold text-center">정말 삭제 하시겠습니까?</p>--%>
+<%--                </div>--%>
+<%--                <div class="modal-footer d-flex justify-content-between">--%>
+<%--                    <button type="submit" class="btn btn-danger">삭제</button>--%>
+<%--                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>--%>
+<%--                </div>--%>
+<%--            </form>--%>
+<%--        </div>--%>
+<%--    </div>--%>
+<%--</div>--%>
 
 <!-- 결과 안내 모달 -->
 <%
@@ -326,6 +455,6 @@
     }
 %>
 
-<%@ include file="../common/footer.jsp" %>
+<%@ include file="../../web/common/footer.jsp" %>
 </body>
 </html>

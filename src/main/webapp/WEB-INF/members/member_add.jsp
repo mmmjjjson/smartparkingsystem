@@ -29,9 +29,5 @@
     MembersDAO membersDAO = new MembersDAO();
     membersDAO.insertMember(member);
 
-    // 회원 등록 성공 메시지
-    session.setAttribute("flashMsg", "회원이 등록되었습니다.");
-
-    response.sendRedirect("member.jsp");
     return;
 %>

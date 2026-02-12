@@ -14,7 +14,7 @@ public enum ConnectionUtil {
     ConnectionUtil() {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.mariadb.jdbc.Driver");
-        config.setJdbcUrl("jdbc:mariadb://localhost:3308/smart-_parking_system");
+        config.setJdbcUrl("jdbc:mariadb://localhost:3306/smart-_parking_system");
         config.setUsername("root");
         config.setPassword("8590");
 

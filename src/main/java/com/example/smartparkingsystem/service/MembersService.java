@@ -28,21 +28,63 @@ public enum MembersService {
 
     // 회원 목록 페이징
     public PageResponseDTO getMemberList(PageRequestDTO pageRequestDTO) {
+        int pageNum = pageRequestDTO.getPageNum();
         int limit = pagePerCount;
 
-        int count = membersDAO.selectMemberCount(pageRequestDTO.getSearchType(), pageRequestDTO.getKeyword(), pageRequestDTO.getStatus());
-        List<MembersVO> membersVOList = membersDAO.selectMembers(pageRequestDTO.getPageNum(), limit, pageRequestDTO.getSearchType(), pageRequestDTO.getKeyword(), pageRequestDTO.getStatus());
+        String searchType = pageRequestDTO.getSearchType();
+        String keyword = pageRequestDTO.getKeyword();
+        String status = pageRequestDTO.getStatus();
+
+        // 검색 여부 판단
+        boolean isSearch = keyword != null && !keyword.isEmpty() && searchType != null && !searchType.isEmpty();
+
+        List<MembersVO> membersVOList;
+
+        if (isSearch) { // 검색 키워드가 있을 시 회원 + 만료 회원 전체 조회
+            membersVOList = membersDAO.selectAllMembers();
+
+            membersVOList = membersVOList.stream()
+                    .filter(vo -> {
+                        switch (searchType) {
+                            case "carNum":
+                                return vo.getCarNum().contains(keyword);
+                            case "name":
+                                return vo.getMemberName().contains(keyword);
+                            case "phone":
+                                return vo.getMemberPhone().contains(keyword);
+                            default:
+                                return false;
+                        }
+                    }).toList();
+        } else { // 검색 키워드가 없을 시 회원 or 만료 회원 따로 조회
+            if ("expired".equals(status)) {
+                membersVOList = membersDAO.selectIsNotMembers();
+            } else {
+                membersVOList = membersDAO.selectIsMembers();
+            }
+        }
+
+        int count = membersVOList.size();
+
+        // 하나의 페이지에 출력할 데이터 자르기
+        int fromIndex = (pageNum - 1) * limit; // List의 시작 인덱스
+        // Math.min(value1, value2): 두 값 중 더 작은 값을 반환
+        int toIndex = Math.min(fromIndex + limit, count); // 마지막 인덱스 (조회할 데이터의 개수 + 1)
+
+        if (fromIndex < count) {
+            membersVOList = membersVOList.subList(fromIndex, toIndex);
+        }
 
         List<MembersDTO> membersDTOList = membersVOList.stream().map(membersVO -> modelMapper.map(membersVO, MembersDTO.class)).toList();
-        
+
+        // 페이지 계산
         int totalPage;
-        
-        if (count % limit == 0) {
+        if (count % limit == 0) { // 전체 게시글 개수가 페이지 당 게시글 수로 나누어 떨어질 때
             totalPage = count / limit;
-        } else {
+        } else { // 나누어 떨어지지 않을 때
             totalPage = count / limit + 1;
         }
-        
+
         return PageResponseDTO.builder()
                 .membersDTOList(membersDTOList)
                 .pageNum(pageRequestDTO.getPageNum())
@@ -64,18 +106,18 @@ public enum MembersService {
     }
 
     // 회원 삭제
-    public void removeMember(Long mno) {
-        membersDAO.deleteMember(mno);
-    }
+//    public void removeMember(Long mno) {
+//        membersDAO.deleteMember(mno);
+//    }
 
     // 회원 검색 조회
-    public List<MembersDTO> getMembers(int pageNum, int limit, String searchType, String keyword, String status) {
-        List<MembersVO> membersVOList = membersDAO.selectMembers(pageNum, limit, searchType, keyword, status);
-
-        List<MembersDTO> membersDTOList = membersVOList.stream()
-                .map(membersVO -> modelMapper.map(membersVO, MembersDTO.class))
-                .toList();
-
-        return membersDTOList;
-    }
+//    public List<MembersDTO> getMembers(int pageNum, int limit, String searchType, String keyword, String status) {
+//        List<MembersVO> membersVOList = membersDAO.selectMembers(pageNum, limit, searchType, keyword, status);
+//
+//        List<MembersDTO> membersDTOList = membersVOList.stream()
+//                .map(membersVO -> modelMapper.map(membersVO, MembersDTO.class))
+//                .toList();
+//
+//        return membersDTOList;
+//    }
 }

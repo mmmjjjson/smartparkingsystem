@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 신규 회원 등록
+    // 신규 회원 등록 버튼
     const newMemberBtn = document.getElementById('newMemberBtn');
     if (newMemberBtn) {
         newMemberBtn.addEventListener('click', () => {
@@ -22,8 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 회원권 결제 영수증 닫기 버튼
     const receiptCloseBtn = document.getElementById("btn-receipt-close-final");
+
+    // 회원권 결제 모달
     const membershipModal = new bootstrap.Modal(document.getElementById("membershipPayModal"));
 
+    // 회원권 결제 후 닫기 버튼
     receiptCloseBtn.addEventListener("click", function() {
         // 1. 알림
         alert("회원권 결제가 완료되었습니다");
@@ -37,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("mem-footer").style.display = "flex"; // 기존 버튼 다시 보여주기
     });
 
-    // Flash 메시지 표시
+    // 결과 메시지 표시
     const flash = document.getElementById('flashMessage');
     if (flash) {
         const msg = flash.dataset.msg;
@@ -118,13 +121,13 @@ function clearNewMemberInputs() {
     const startEl = document.getElementById('newStartDate');
     const endEl = document.getElementById('newExpireDate');
 
-    if(startEl) startEl.value = today;           // 시작일 오늘 날짜
+    if(startEl) startEl.value = today; // 시작일 오늘 날짜
     if(endEl && startEl) {
         setEndDateByOneMonth('newStartDate', 'newExpireDate'); // 만료일 자동 계산
     }
 }
 
-/* ===================== 회원 정보 수정 / 삭제 ===================== */
+/* ===================== 회원 정보 수정 버튼 ===================== */
 function openEditModal() {
     const viewModalEl = document.getElementById('viewMemberModal');
     const editModalEl = document.getElementById('editMemberModal');
@@ -143,12 +146,13 @@ function openEditModal() {
     new bootstrap.Modal(editModalEl).show();
 }
 
-function handleDelete() {
-    const viewModalEl = document.getElementById('viewMemberModal');
-    const deleteModalEl = document.getElementById('deleteConfirmModal');
-    deleteModalEl.querySelector('#deleteMno').value = viewModalEl.querySelector('#mno').value;
-    new bootstrap.Modal(deleteModalEl).show();
-}
+/* ===================== 회원 삭제 모달 ===================== */
+// function handleDelete() {
+//     const viewModalEl = document.getElementById('viewMemberModal');
+//     const deleteModalEl = document.getElementById('deleteConfirmModal');
+//     deleteModalEl.querySelector('#deleteMno').value = viewModalEl.querySelector('#mno').value;
+//     new bootstrap.Modal(deleteModalEl).show();
+// }
 
 /* ===================== 자동 하이픈 ===================== */
 function autoHyphenPhone(input) {
@@ -194,6 +198,7 @@ function handleNewMemberSubmit() {
     return true;
 }
 
+/* ===================== 회원 정보 수정 ===================== */
 function handleEditSubmit() {
     const msg = validateMember(
         document.getElementById('editCarNumber').value.trim(),
