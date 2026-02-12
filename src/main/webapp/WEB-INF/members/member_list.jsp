@@ -37,8 +37,8 @@
 
     <style>
         .custom-table thead th {
-            padding-top: 0.6rem;
-            padding-bottom: 0.6rem;
+            padding-top: 0.8rem;
+            padding-bottom: 0.8rem;
         }
 
         .custom-table tbody td {
@@ -53,20 +53,14 @@
 <div class="container-fluid mt-4 px-5">
     <!-- 콘텐츠 -->
     <div class="content">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-end">
             <h4 class="fw-bold">회원 관리 - 월정액 회원 정보 관리</h4>
-            <div class="d-flex gap-2">
-                <button class="btn btn-primary" id="newMemberBtn">신규 회원 등록</button>
-            </div>
-        </div>
-
-        <!-- 회원 정보 검색 -->
-        <form method="get" action="/member_list.do" class="row g-2 mb-3 align-items-center">
-            <input type="hidden" name="status"
-                   value="<%= request.getParameter("status") == null ? "" : request.getParameter("status") %>">
-            <div class="col-auto">
+            <!-- 회원 정보 검색 -->
+            <form method="get" action="/member_list.do" class="d-flex justify-content-end mb-3 align-items-center">
+                <input type="hidden" name="status"
+                       value="<%= request.getParameter("status") == null ? "" : request.getParameter("status") %>">
                 <!-- 검색 타입 -->
-                <select id="searchType" name="searchType" class="form-select">
+                <select id="searchType" name="searchType" class="form-select flex-shrink-0 me-2" style="width: 150px;">
                     <option value="carNum" <%= "carNum".equals(request.getParameter("searchType")) ? "selected" : "" %>>
                         차량
                         번호
@@ -78,26 +72,29 @@
                         연락처
                     </option>
                 </select>
-            </div>
-            <div class="col-auto flex-grow-1">
                 <!-- 검색어 입력 창 -->
-                <input type="text" name="keyword" id="keyword" class="form-control"
+                <input type="text" name="keyword" id="keyword" class="form-control me-2" style="width: 500px"
                        value="<%= request.getParameter("keyword") == null ? "" : request.getParameter("keyword") %>"
                        placeholder="검색어를 입력하세요">
-            </div>
-            <div class="col-auto">
                 <!-- 검색 버튼 -->
-                <button type="submit" class="btn btn-dark">검색</button>
-            </div>
-        </form>
+                <button type="submit" class="btn btn-dark flex-shrink-0">검색</button>
+            </form>
+        </div>
 
-        <!-- 회원 / 만료 회원 버튼 -->
-        <div class="mb-3">
-            <a href="./member_list.do"
-               class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
-            <a href="./member_list.do?status=expired"
-               class="btn btn-outline-secondary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료
-                회원</a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <!-- 회원 / 만료 회원 버튼 -->
+            <div>
+                <a href="./member_list.do"
+                   class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
+                <a href="./member_list.do?status=expired"
+                   class="btn btn-outline-secondary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료
+                    회원</a>
+            </div>
+
+            <!-- 신규 회원 등록 버튼 -->
+            <div>
+                <button class="btn btn-primary" id="newMemberBtn">신규 회원 등록</button>
+            </div>
         </div>
 
         <!-- 회원 목록 테이블 -->
