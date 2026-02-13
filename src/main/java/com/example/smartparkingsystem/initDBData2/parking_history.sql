@@ -67,7 +67,7 @@ ORDER BY entry_time;
 
 
 
--- 출차기록 없는 데이터. payment_history는 생성 안됨
+-- 출차기록 없는 데이터. payment_history에는 생성 안됨 (출차기록이 없으니까?)
 INSERT INTO parking_history
 (parking_area, car_num, car_type, is_member, entry_time, exit_time, total_minutes)
 VALUES

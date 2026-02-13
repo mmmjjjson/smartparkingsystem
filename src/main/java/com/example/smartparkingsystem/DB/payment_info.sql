@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `payment_info`
     `is_active`          BOOLEAN  DEFAULT TRUE COMMENT '정책 활성화 여부 True (현재) / False (이전)',
     `admin_id`           VARCHAR(20) COMMENT '정책 수정한 관리자 아이디',
     `updated_at`         DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '관리자 정책 수정일',
+    `member_charge`      INT COMMENT '회원권 가격',
     CONSTRAINT `chk_free_time` CHECK (`free_time` >= 0),
     CONSTRAINT `chk_basic_time` CHECK (`basic_time` >= 0),
     CONSTRAINT `chk_extra_time` CHECK (`extra_time` >= 0),

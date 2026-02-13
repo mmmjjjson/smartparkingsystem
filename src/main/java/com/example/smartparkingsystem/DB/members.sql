@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS `members`
     `member_phone` VARCHAR(15) NOT NULL COMMENT '연락처',
     `start_date`   DATE        NOT NULL COMMENT '이용 시작일',
     `end_date`     DATE        NOT NULL COMMENT '이용 만료일',
-    INDEX idx_date (`start_date`, `end_date`)
+    `member_charge`      INT COMMENT '회원권 가격',
+        INDEX idx_date (`start_date`, `end_date`)
 ) COMMENT '회원';

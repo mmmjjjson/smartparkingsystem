@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <title>통계 | 스마트 주차 관리 시스템</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/web/statistic/statistic3.css">
+  <link rel="stylesheet" href="statistic3.css">
 
   <!-- Highcharts 라이브러리 -->
   <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -15,7 +15,7 @@
 <body>
 
 <div class="container">
-<%--  <%@ include file="../common/header_other.jsp" %>--%>
+  <%@ include file="../common/header_other.jsp" %>
 
   <div class="content">
     <div class="info-box">
@@ -150,53 +150,66 @@
         break;
     }
   }
-  document.getElementById('year')
-  document.getElementById('month')
-  document.getElementById('includeMembership')
+
   // ========================================
   // 1. 월별 매출 통계
   // ========================================
-  function loadMonthlySales(year, month, includeMembership) {
-    const monthParam = month === 'all' ? '' : month;
-    const url = (CONTEXT_PATH === '' ? '' : CONTEXT_PATH) +
-            '/statistic/api/monthly-sales?year=' + year +
-            '&month=' + monthParam +
-            '&includeMembership=' + includeMembership;
+  <%--function loadMonthlySales(year, month, includeMembership) {--%>
+  <%--  const monthParam = month === 'all' ? '' : month;--%>
+  <%--  const url = (CONTEXT_PATH === '' ? '' : CONTEXT_PATH) + `/statistic/api/monthly-sales?year=${year}&month=${monthParam}&includeMembership=${includeMembership}`;--%>
 
-    console.log('API 호출:', url);
-    console.log('파라미터:', {year, month, monthParam, includeMembership});
+  <%--  console.log('API 호출:', url);--%>
+
+  <%--  fetch(url)--%>
+  <%--          .then(response => {--%>
+  <%--            console.log('응답 상태:', response.status);--%>
+  <%--            if (!response.ok) {--%>
+  <%--              throw new Error('HTTP error! status: ' + response.status);--%>
+  <%--            }--%>
+  <%--            return response.json();--%>
+  <%--          })--%>
+  <%--          .then(data => {--%>
+  <%--            console.log('월별 매출 데이터:', data);--%>
+  <%--            drawMonthlySalesChart(data);--%>
+  <%--          })--%>
+  <%--          .catch(error => {--%>
+  <%--            console.error('월별 매출 로드 실패:', error);--%>
+  <%--            showError('월별 매출 데이터를 불러오는데 실패했습니다. ' + error.message);--%>
+  <%--          });--%>
+  <%--}--%>
+
+  function loadMonthlySales(year, month, includeMembership) {
+    // API 호출 대신 임시 데이터로 테스트
+    const testData = {
+      categories: ['1월', '2월', '3월', '4월', '5월', '6월'],
+      normalSales: [1500000, 2300000, 1800000, 2500000, 2100000, 2800000],
+      memberSales: [500000, 600000, 550000, 700000, 650000, 750000],
+      includeMembership: includeMembership
+    };
+
+    console.log('임시 데이터로 테스트:', testData);
+    drawMonthlySalesChart(testData);
+
+    /*
+    // 실제 API 호출 코드 (나중에 사용)
+    const monthParam = month === 'all' ? '' : month;
+    const url = (CONTEXT_PATH === '' ? '' : CONTEXT_PATH) + `/statistic/api/monthly-sales?year=${year}&month=${monthParam}&includeMembership=${includeMembership}`;
 
     fetch(url)
-            .then(response => {
-              console.log('응답 상태:', response.status);
-              if (!response.ok) {
-                throw new Error('HTTP error! status: ' + response.status);
-              }
-              return response.json();
-            })
-            .then(data => {
-              console.log('월별 매출 데이터:', data);
-              drawMonthlySalesChart(data);
-            })
-            .catch(error => {
-              console.error('월별 매출 로드 실패:', error);
-              showError('월별 매출 데이터를 불러오는데 실패했습니다. ' + error.message);
-            });
+        .then(response => response.json())
+        .then(data => {
+            console.log('월별 매출 데이터:', data);
+            drawMonthlySalesChart(data);
+        })
+        .catch(error => {
+            console.error('월별 매출 로드 실패:', error);
+            showError('월별 매출 데이터를 불러오는데 실패했습니다.');
+        });
+    */
   }
   function drawMonthlySalesChart(data) {
-    console.log("받은 데이터:", data);
-    if (data.error) {
-      showError('서버 오류: ' + data.message + ' (' + data.cause + ')');
-      return;
-    }
-    // 데이터 없음 체크
     if (!data.categories || data.categories.length === 0) {
       showError('해당 기간의 데이터가 없습니다.');
-      return;
-    }
-    // normalSales가 없거나 빈 배열인 경우
-    if (!data.normalSales || data.normalSales.length === 0) {
-      showError('매출 데이터가 없습니다.');
       return;
     }
 
@@ -210,7 +223,7 @@
     });
 
     // 회원권 매출 (포함된 경우)
-    if (data.includeMembership) {
+    if (data.includeMembership && data.memberSales) {
       series.push({
         name: '회원권 매출',
         data: data.memberSales,
@@ -235,7 +248,8 @@
         }
       },
       tooltip: {
-        pointFormat: '<b>{point.y:,.0f}원</b>'
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y:,.0f}원</b><br/>',
+        shared: true
       },
       plotOptions: {
         column: {
@@ -251,8 +265,7 @@
   // ========================================
   function loadCumulativeSales(year, month, includeMembership) {
     const monthParam = month === 'all' ? '' : month;
-    const url = CONTEXT_PATH + '/statistic/api/cumulative-sales?year=' + year +
-            '&month=' + monthParam + '&includeMembership=' + includeMembership;
+    const url = `${CONTEXT_PATH}/statistic/api/cumulative-sales?year=${year}&month=${monthParam}&includeMembership=${includeMembership}`;
 
     console.log('API 호출:', url);
 
@@ -297,7 +310,7 @@
 
     Highcharts.chart('chart_container', {
       chart: {
-        type: 'column'
+        type: 'line'
       },
       title: {
         text: data.title || '누적 매출 현황'
@@ -323,8 +336,7 @@
   // ========================================
   function loadCarTypePie(year, month) {
     const monthParam = month === 'all' ? '' : month;
-    const url = CONTEXT_PATH + '/statistic/api/car-type-stats?year=' + year +
-            '&month=' + monthParam;
+    const url = `${CONTEXT_PATH}/statistic/api/car-type-stats?year=${year}&month=${monthParam}`;
 
     console.log('API 호출:', url);
 
@@ -381,7 +393,7 @@
   // 4. 피크 시간대 분석
   // ========================================
   function loadPeakTime() {
-    const url = CONTEXT_PATH + '/statistic/api/peak-time';
+    const url = `${CONTEXT_PATH}/statistic/api/peak-time`;
 
     console.log('API 호출:', url);
 
@@ -432,7 +444,7 @@
   // 5. 회원 통계
   // ========================================
   function loadMemberStats() {
-    const url = CONTEXT_PATH + '/statistic/api/member-stats';
+    const url = `${CONTEXT_PATH}/statistic/api/member-stats`;
 
     console.log('API 호출:', url);
 
@@ -517,7 +529,7 @@
 
   // 오늘 요약 갱신 (옵션)
   function refreshTodaySummary() {
-    fetch(CONTEXT_PATH + '/statistic/api/today-summary')
+    fetch(`${CONTEXT_PATH}/statistic/api/today-summary`)
             .then(response => response.json())
             .then(data => {
               document.getElementById('dailySales').textContent = data.dailySales.toLocaleString();

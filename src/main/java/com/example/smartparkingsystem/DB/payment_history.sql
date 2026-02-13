@@ -22,3 +22,5 @@ CREATE TABLE IF NOT EXISTS `payment_history`
     CONSTRAINT `fk_pno` FOREIGN KEY (`pno`) REFERENCES payment_info (`pno`),
     CONSTRAINT `fk_park_no` FOREIGN KEY (`park_no`) REFERENCES parking_history (`park_no`)
 ) COMMENT '주차 요금';
+
+
