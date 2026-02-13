@@ -9,7 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Slf4j
 public class PaymentHistoryDAO {
@@ -53,5 +56,40 @@ public class PaymentHistoryDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public PaymentHistoryVO selectRecentPayment(String carNum) {
+        PaymentHistoryVO paymentHistoryVO = null;
+        String sql = "SELECT * FROM payment_history WHERE car_num = ? AND exit_time IS NULL " +
+                "ORDER BY entry_time DESC LIMIT 1";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, carNum);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                paymentHistoryVO = PaymentHistoryVO.builder()
+                        .parkNo(resultSet.getLong("pay_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .totalCharge(resultSet.getInt("total_charge"))
+                        .mno(resultSet.getLong("mno"))
+                        .pno(resultSet.getLong("pno"))
+                        .parkNo(resultSet.getLong("park_no"))
+                        .discountAmount(resultSet.getInt("discount_amount"))
+                        .finalCharge(resultSet.getInt("final_charge"))
+                        .isPaid(resultSet.getBoolean("is_paid"))
+                        .paymentTime(resultSet.getObject("payment_time", LocalDateTime.class))
+                        .build();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return paymentHistoryVO;
     }
 }

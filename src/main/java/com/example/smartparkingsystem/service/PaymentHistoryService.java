@@ -148,4 +148,12 @@ public class PaymentHistoryService {
             totalCharge = dayCount > 0 ? restTimeCharge + (dayCount * maxCharge) : restTimeCharge;
         }
     }
+
+    public PaymentHistoryDTO getRecentPayment(String carNum) {
+        PaymentHistoryVO paymentHistoryVO = paymentHistoryDAO.selectRecentPayment(carNum);
+        if (paymentHistoryVO == null) {
+            return null;
+        }
+        return modelMapper.map(paymentHistoryVO, PaymentHistoryDTO.class);
+    }
 }

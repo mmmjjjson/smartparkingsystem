@@ -107,6 +107,7 @@
 
 <!-- bootstrap JS (모달 동작용) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <!-- 함수(날짜 형식, 주차 현황 숫자) 로직 JS -->
 <script src="main_function.js"></script>

@@ -139,22 +139,34 @@ modalAction.addEventListener('click', () => {
 document.getElementById('btn-close-final').addEventListener('click', () => {
     if (!currentCard) return;
 
-    // 1. 데이터 초기화
-    currentCard.dataset.status = 'available';
-    currentCard.dataset.carNum = "";
-    currentCard.dataset.inFullTime = "";
-    currentCard.dataset.carType = "";
-    currentCard.dataset.time = "";
+    const parkNo = currentCard.dataset.parkNo;
 
-    // 2. UI 초기화
-    currentCard.classList.replace('occupied', 'available');
-    currentCard.querySelector('.box-car').innerText = "사용 가능";
-    currentCard.querySelector('.box-time').innerText = "";
+     axios.post('/payment', `parkNo=${parkNo}`, {
+         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+     })
+         .then(response => {
+             const data = response.data;
+             if(!data.success) {
+                 alert('출차 처리 실패' + data.message);
+                 return;
+             }
+             // 1. 데이터 초기화
+             currentCard.dataset.status = 'available';
+             currentCard.dataset.carNum = "";
+             currentCard.dataset.inFullTime = "";
+             currentCard.dataset.carType = "";
+             currentCard.dataset.time = "";
 
-    // 3. 모달 닫기
-    modal.hide();
-    updateParkingCount();
-    alert("정산이 완료되어 출차 처리되었습니다.");
+             // 2. UI 초기화
+             currentCard.classList.replace('occupied', 'available');
+             currentCard.querySelector('.box-car').innerText = "사용 가능";
+             currentCard.querySelector('.box-time').innerText = "";
+
+             // 3. 모달 닫기
+             modal.hide();
+             updateParkingCount();
+             alert("정산이 완료되어 출차 처리되었습니다.");
+         })
 });
 
 /* 창 닫힐 때 섹션 리셋 */
