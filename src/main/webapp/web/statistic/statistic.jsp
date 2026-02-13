@@ -2,383 +2,533 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <!-- Pretendard 폰트 -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-    <title>통계 | 스마트 주차 관리 시스템</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="statistic.css">
+  <meta charset="UTF-8">
+  <title>통계 | 스마트 주차 관리 시스템</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/web/statistic/statistic3.css">
+
+  <!-- Highcharts 라이브러리 -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
 </head>
-
-<script src="${pageContext.request.contextPath}/web/statistic/parkingData.js"></script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/annotations.js"></script>
-
 <body>
-<div class="page-wrap">
-    <%@ include file="../common/header_other.jsp" %>
 
-    <div class="content">
+<div class="container">
+<%--  <%@ include file="../common/header_other.jsp" %>--%>
 
-        <!-- 일별 매출 -->
-        <div class="info-box">
-            <div class="section-title1">일별 매출 선 그래프</div>
+  <div class="content">
+    <div class="info-box">
 
-            <div class="filter-box">
-                <select id="yearSelect"></select>
-                <select id="monthSelect"></select>
-            </div>
-
-            <div id="daily-sales" class="graph_placeholder">
-                <script>
-                    function spendingTime(entry, exit) {
-                        const start = new Date(entry.replace(' ', 'T'));
-                        const end = new Date(exit.replace(' ', 'T'));
-                        return Math.ceil((end - start) / (1000 * 60));
-                    }
-
-                    const paymentInfo = {
-                        basicTime: 60,
-                        extraTime: 30,
-                        basicCharge: 2000,
-                        extraCharge: 1000,
-                        maxCharge: 15000
-                    };
-                    const paymentDiscount = {smallCarDiscount: 0.3, disabledDiscount: 0.5};
-
-                    function populateDailySelects() {
-                        const yearSelect = document.getElementById('yearSelect');
-                        const monthSelect = document.getElementById('monthSelect');
-                        yearSelect.innerHTML = '';
-                        monthSelect.innerHTML = '';
-
-                        const years = Object.keys(parkingDataByYear).sort((a, b) => b - a);
-                        years.forEach(year => {
-                            const option = document.createElement('option');
-                            option.value = year;
-                            option.textContent = year + '년';
-                            yearSelect.appendChild(option);
-                        });
-
-                        for (let i = 1; i <= 12; i++) {
-                            const option = document.createElement('option');
-                            option.value = i;
-                            option.textContent = i + '월';
-                            monthSelect.appendChild(option);
-                        }
-                    }
-
-                    function drawDailyChart(year, month) {
-                        const yearData = parkingDataByYear[year];
-                        if (!yearData) {
-                            document.getElementById('daily-sales').innerHTML = '<p>선택한 연도의 데이터가 없습니다.</p>';
-                            return;
-                        }
-
-                        const monthData = yearData.find(m => m.month == month);
-                        if (!monthData) {
-                            document.getElementById('daily-sales').innerHTML = '<p>선택한 월의 데이터가 없습니다.</p>';
-                            return;
-                        }
-
-                        const dailySales = {};
-                        for (let rec of monthData.records) {
-                            const date = rec.entry_time.split(' ')[0];
-                            const day = date.split('-')[2];
-                            if (!dailySales[day]) dailySales[day] = 0;
-
-                            let charge = 0;
-                            if (rec.is_member !== 1) {
-                                const minutes = spendingTime(rec.entry_time, rec.exit_time);
-                                if (minutes > 10) {
-                                    charge = paymentInfo.basicCharge;
-                                    if (minutes > paymentInfo.basicTime) {
-                                        let extraUnits = Math.ceil((minutes - paymentInfo.basicTime) / paymentInfo.extraTime);
-                                        charge += extraUnits * paymentInfo.extraCharge;
-                                    }
-                                    if (rec.car_type === "경차") charge *= (1 - paymentDiscount.smallCarDiscount);
-                                    if (rec.car_type === "장애인") charge *= (1 - paymentDiscount.disabledDiscount);
-                                    if (charge > paymentInfo.maxCharge) charge = paymentInfo.maxCharge;
-                                    charge = Math.floor(charge);
-                                }
-                            }
-                            dailySales[day] += charge;
-                        }
-
-                        const daysInMonth = new Date(year, month, 0).getDate();
-                        const categories = [];
-                        const salesData = [];
-                        for (let day = 1; day <= daysInMonth; day++) {
-                            const dayStr = day.toString().padStart(2, '0');
-                            categories.push(day + '일');
-                            salesData.push(dailySales[dayStr] || 0);
-                        }
-
-                        Highcharts.chart('daily-sales', {
-                            accessibility: {enabled: false},
-                            chart: {type: 'line'},
-                            title: {text: ''},
-                            xAxis: {categories: categories},
-                            yAxis: {
-                                title: {text: '매출액 (원)'},
-                                labels: {formatter: function () { return this.value.toLocaleString() + '원'; }}
-                            },
-                            tooltip: {valueSuffix: ' 원'},
-                            credits: {enabled: false},
-                            legend: {enabled: false},
-                            series: [{name: '일별 매출', data: salesData, color: '#4a76c5'}]
-                        });
-                    }
-
-                    populateDailySelects();
-
-                    const now = new Date();
-                    const nowYear = now.getFullYear();
-                    const nowMonth = now.getMonth() + 1;
-                    let defaultYear, defaultMonth;
-
-                    if (parkingDataByYear[nowYear]) {
-                        const months = parkingDataByYear[nowYear].map(m => m.month);
-                        if (months.includes(nowMonth)) {
-                            defaultYear = nowYear;
-                            defaultMonth = nowMonth;
-                        } else {
-                            defaultYear = nowYear;
-                            defaultMonth = Math.max(...months);
-                        }
-                    } else {
-                        const years = Object.keys(parkingDataByYear).sort((a, b) => b - a);
-                        defaultYear = years[0];
-                        defaultMonth = Math.max(...parkingDataByYear[defaultYear].map(m => m.month));
-                    }
-
-                    document.getElementById('yearSelect').value = defaultYear;
-                    document.getElementById('monthSelect').value = defaultMonth;
-                    drawDailyChart(defaultYear, defaultMonth);
-
-                    document.getElementById('yearSelect').addEventListener('change', function () {
-                        drawDailyChart(this.value, document.getElementById('monthSelect').value);
-                    });
-                    document.getElementById('monthSelect').addEventListener('change', function () {
-                        drawDailyChart(document.getElementById('yearSelect').value, this.value);
-                    });
-                </script>
-            </div>
+      <!-- 필터 폼 (AJAX 방식으로 변경) -->
+      <div class="filter-container">
+        <div class="filter-row">
+          <label>통계 유형</label>
+          <select id="chartType">
+            <option value="monthly_sales">년도 / 월별 매출</option>
+            <option value="cumulative_sales">누적 매출</option>
+            <option value="car_type_pie">차종별 통계</option>
+            <option value="peak_time">피크 시간대</option>
+            <option value="member_stats">회원 통계</option>
+          </select>
         </div>
 
-        <!-- 월별 매출 -->
-        <div class="info-box">
-            <div class="section-title1">월별 매출 바 그래프</div>
-            <div class="filter-box">
-                <select id="yearSelect2"></select>
-            </div>
+        <div class="filter-row">
+          <label>상세 조건</label>
+          <select id="year">
+            <option value="2024">2024년</option>
+            <option value="2025" selected>2025년</option>
+            <option value="2026">2026년</option>
+          </select>
 
-            <div id="monthly_sales" class="graph_placeholder">
-                <script>
-                    function populateYearSelect() {
-                        const yearSelect = document.getElementById('yearSelect2');
-                        yearSelect.innerHTML = '';
-                        const years = Object.keys(parkingDataByYear).sort((a, b) => b - a);
-                        years.forEach(year => {
-                            const option = document.createElement('option');
-                            option.value = year;
-                            option.textContent = year + '년';
-                            yearSelect.appendChild(option);
-                        });
-                    }
+          <select id="month">
+            <option value="all" selected>전체</option>
+            <option value="1">1월</option>
+            <option value="2">2월</option>
+            <option value="3">3월</option>
+            <option value="4">4월</option>
+            <option value="5">5월</option>
+            <option value="6">6월</option>
+            <option value="7">7월</option>
+            <option value="8">8월</option>
+            <option value="9">9월</option>
+            <option value="10">10월</option>
+            <option value="11">11월</option>
+            <option value="12">12월</option>
+          </select>
 
-                    function drawChart(year) {
-                        const yearData = parkingDataByYear[year];
-                        if (!yearData) {
-                            document.getElementById('monthly_sales').innerHTML = '<p>선택한 연도의 데이터가 없습니다.</p>';
-                            return;
-                        }
+          <label>
+            <input type="checkbox" id="includeMembership">
+            회원권 매출 포함
+          </label>
 
-                        let monthlySales = [];
-                        for (let monthData of yearData) {
-                            let monthSum = 0;
-                            for (let rec of monthData.records) {
-                                let charge = 0;
-                                if (rec.is_member !== 1) {
-                                    const minutes = spendingTime(rec.entry_time, rec.exit_time);
-                                    if (minutes > 10) {
-                                        charge = paymentInfo.basicCharge;
-                                        if (minutes > paymentInfo.basicTime) {
-                                            let extraUnits = Math.ceil((minutes - paymentInfo.basicTime) / paymentInfo.extraTime);
-                                            charge += extraUnits * paymentInfo.extraCharge;
-                                        }
-                                        if (rec.car_type === "경차") charge *= (1 - paymentDiscount.smallCarDiscount);
-                                        if (rec.car_type === "장애인") charge *= (1 - paymentDiscount.disabledDiscount);
-                                        if (charge > paymentInfo.maxCharge) charge = paymentInfo.maxCharge;
-                                        charge = Math.floor(charge);
-                                    }
-                                }
-                                monthSum += charge;
-                            }
-                            monthlySales.push(monthSum);
-                        }
-
-                        let chartAllCharge = [];
-                        let sum = 0;
-                        for (let val of monthlySales) {
-                            sum += val;
-                            chartAllCharge.push(sum);
-                        }
-
-                        Highcharts.chart('monthly_sales', {
-                            chart: {zoomType: 'xy'},
-                            title: {text: ''},
-                            xAxis: {categories: yearData.map(d => d.month + '월')},
-                            yAxis: [
-                                {
-                                    title: {text: '월별 매출액 (원)'},
-                                    labels: {formatter: function () { return this.value.toLocaleString() + '원'; }}
-                                },
-                                {
-                                    title: {text: '누적 매출액 (원)'},
-                                    labels: {formatter: function () { return this.value.toLocaleString() + '원'; }},
-                                    opposite: true
-                                }
-                            ],
-                            tooltip: {shared: true, valueSuffix: ' 원'},
-                            credits: {enabled: false},
-                            legend: {enabled: false},
-                            series: [
-                                {type: 'line', name: '월별 매출', data: monthlySales, yAxis: 0, color: '#4a76c5', zIndex: 1},
-                                {type: 'column', name: '누적 매출', data: chartAllCharge, yAxis: 1, color: '#a8c0e8', opacity: 0.8, zIndex: 0}
-                            ]
-                        });
-                    }
-
-                    populateYearSelect();
-                    drawChart(document.getElementById('yearSelect2').value);
-
-                    document.getElementById('yearSelect2').addEventListener('change', function () {
-                        drawChart(this.value);
-                    });
-                </script>
-            </div>
+          <button class="btn btn-primary" onclick="loadChart()">조회</button>
         </div>
+      </div>
 
-        <!-- 차종 통계 -->
-        <div id="car-type" class="info-box">
-            <div class="section-title">차종 통계</div>
-            <div class="car-type-section">
-                <div id="pie_chart" class="graph-placeholder"></div>
-                <div class="right-section">통계 결과</div>
-            </div>
+      <!-- 차트 컨테이너 -->
+      <div id="chart_container" style="min-height: 400px;">
+        <div class="text-center p-5">
+          <p>조회 버튼을 클릭하여 통계를 확인하세요.</p>
         </div>
+      </div>
 
-        <!-- 요약 -->
-        <div class="info-box">
-            <div class="section-title">통계 요약</div>
-            <div class="summary">
-                <div class="summary-box">일일 총 매출액 (현재)</div>
-                <div class="summary-box">일일 입차 대수</div>
-                <div class="summary-box">누적 차량 대수</div>
-            </div>
-        </div>
     </div>
+
+    <div class="info-box2">
+      <div class="section-title">통계 요약</div>
+      <div class="summary">
+        <div class="summary-box">
+          일일 총 매출액: <span id="dailySales">${todaySummary.dailySales}</span>원
+        </div>
+        <div class="summary-box">
+          일일 입차 대수: <span id="dailyCount">${todaySummary.dailyCount}</span>대
+        </div>
+        <div class="summary-box">
+          누적 차량 대수: <span id="totalCount">${todaySummary.totalCount}</span>대
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-    function getAllRecords() {
-        const allRecords = [];
-        for (const year in parkingDataByYear) {
-            parkingDataByYear[year].forEach(monthData => {
-                allRecords.push(...monthData.records);
+  // ========================================
+  // 전역 변수
+  // ========================================
+  const CONTEXT_PATH = '<%= request.getContextPath() %>';
+  let currentChartType = 'monthly_sales';
+
+  // ========================================
+  // 페이지 로드 시 초기화
+  // ========================================
+  window.onload = function() {
+    console.log(CONTEXT_PATH);
+    console.log('통계 페이지 로드 완료');
+    console.log('Context Path:', CONTEXT_PATH);
+
+    // 초기 차트 로드
+    loadChart();
+
+    // 이벤트 리스너 등록
+    document.getElementById('chartType').addEventListener('change', function() {
+      currentChartType = this.value;
+      loadChart();
+    });
+  };
+
+  // ========================================
+  // 차트 로드 메인 함수
+  // ========================================
+  function loadChart() {
+    const chartType = document.getElementById('chartType').value;
+    const year = parseInt(document.getElementById('year').value);
+    const month = document.getElementById('month').value;
+    const includeMembership = document.getElementById('includeMembership').checked;
+
+    console.log('차트 로드:', {chartType, year, month, includeMembership});
+
+    // 로딩 표시
+    showLoading();
+
+    // 차트 타입별 API 호출
+    switch(chartType) {
+      case 'monthly_sales':
+        loadMonthlySales(year, month, includeMembership);
+        break;
+      case 'cumulative_sales':
+        loadCumulativeSales(year, month, includeMembership);
+        break;
+      case 'car_type_pie':
+        loadCarTypePie(year, month);
+        break;
+      case 'peak_time':
+        loadPeakTime();
+        break;
+      case 'member_stats':
+        loadMemberStats();
+        break;
+    }
+  }
+  document.getElementById('year')
+  document.getElementById('month')
+  document.getElementById('includeMembership')
+  // ========================================
+  // 1. 월별 매출 통계
+  // ========================================
+  function loadMonthlySales(year, month, includeMembership) {
+    const monthParam = month === 'all' ? '' : month;
+    const url = (CONTEXT_PATH === '' ? '' : CONTEXT_PATH) +
+            '/statistic/api/monthly-sales?year=' + year +
+            '&month=' + monthParam +
+            '&includeMembership=' + includeMembership;
+
+    console.log('API 호출:', url);
+    console.log('파라미터:', {year, month, monthParam, includeMembership});
+
+    fetch(url)
+            .then(response => {
+              console.log('응답 상태:', response.status);
+              if (!response.ok) {
+                throw new Error('HTTP error! status: ' + response.status);
+              }
+              return response.json();
+            })
+            .then(data => {
+              console.log('월별 매출 데이터:', data);
+              drawMonthlySalesChart(data);
+            })
+            .catch(error => {
+              console.error('월별 매출 로드 실패:', error);
+              showError('월별 매출 데이터를 불러오는데 실패했습니다. ' + error.message);
             });
+  }
+  function drawMonthlySalesChart(data) {
+    console.log("받은 데이터:", data);
+    if (data.error) {
+      showError('서버 오류: ' + data.message + ' (' + data.cause + ')');
+      return;
+    }
+    // 데이터 없음 체크
+    if (!data.categories || data.categories.length === 0) {
+      showError('해당 기간의 데이터가 없습니다.');
+      return;
+    }
+    // normalSales가 없거나 빈 배열인 경우
+    if (!data.normalSales || data.normalSales.length === 0) {
+      showError('매출 데이터가 없습니다.');
+      return;
+    }
+
+    const series = [];
+
+    // 일반 매출
+    series.push({
+      name: '일반 매출',
+      data: data.normalSales,
+      color: '#4472C4'
+    });
+
+    // 회원권 매출 (포함된 경우)
+    if (data.includeMembership) {
+      series.push({
+        name: '회원권 매출',
+        data: data.memberSales,
+        color: '#70AD47'
+      });
+    }
+
+    Highcharts.chart('chart_container', {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: data.categories.length > 12 ? '일별 매출 현황' : '월별 매출 현황'
+      },
+      xAxis: {
+        categories: data.categories
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: '매출액 (원)'
         }
-        return allRecords;
+      },
+      tooltip: {
+        pointFormat: '<b>{point.y:,.0f}원</b>'
+      },
+      plotOptions: {
+        column: {
+          stacking: 'normal'
+        }
+      },
+      series: series
+    });
+  }
+
+  // ========================================
+  // 2. 누적 매출 통계
+  // ========================================
+  function loadCumulativeSales(year, month, includeMembership) {
+    const monthParam = month === 'all' ? '' : month;
+    const url = CONTEXT_PATH + '/statistic/api/cumulative-sales?year=' + year +
+            '&month=' + monthParam + '&includeMembership=' + includeMembership;
+
+    console.log('API 호출:', url);
+
+    fetch(url)
+            .then(response => {
+              if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+              return response.json();
+            })
+            .then(data => {
+              console.log('누적 매출 데이터:', data);
+              drawCumulativeSalesChart(data);
+            })
+            .catch(error => {
+              console.error('누적 매출 로드 실패:', error);
+              showError('누적 매출 데이터를 불러오는데 실패했습니다. ' + error.message);
+            });
+  }
+
+  function drawCumulativeSalesChart(data) {
+    if (!data.categories || data.categories.length === 0) {
+      showError('해당 기간의 데이터가 없습니다.');
+      return;
     }
 
-    function getCarTypeCountAll() {
-        const records = getAllRecords();
-        const result = {};
-        records.forEach(r => {
-            const type = r.car_type;
-            result[type] = (result[type] || 0) + 1;
-        });
-        return result;
+    const series = [];
+
+    // 일반 누적 매출
+    series.push({
+      name: '일반 누적',
+      data: data.cumulativeNormal,
+      color: '#4472C4'
+    });
+
+    // 회원 누적 매출 (포함된 경우)
+    if (data.includeMembership) {
+      series.push({
+        name: '회원 누적',
+        data: data.cumulativeMember,
+        color: '#70AD47'
+      });
     }
 
-    function drawCarTypePieAll() {
-        const countMap = getCarTypeCountAll();
-        const seriesData = Object.entries(countMap).map(([name, y]) => ({name, y}));
-        Highcharts.chart('pie_chart', {
-            chart: {type: 'pie'},
-            title: {text: ''},
-            tooltip: {pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y}대)'},
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {enabled: true, format: '{point.name}: {point.y}'}
-                }
-            },
-            credits: {enabled: false},
-            series: [{name: '차종', data: seriesData}]
-        });
+    Highcharts.chart('chart_container', {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: data.title || '누적 매출 현황'
+      },
+      xAxis: {
+        categories: data.categories
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: '누적 매출액 (원)'
+        }
+      },
+      tooltip: {
+        pointFormat: '<b>{point.y:,.0f}원</b>'
+      },
+      series: series
+    });
+  }
+
+  // ========================================
+  // 3. 차종별 통계 (파이 차트)
+  // ========================================
+  function loadCarTypePie(year, month) {
+    const monthParam = month === 'all' ? '' : month;
+    const url = CONTEXT_PATH + '/statistic/api/car-type-stats?year=' + year +
+            '&month=' + monthParam;
+
+    console.log('API 호출:', url);
+
+    fetch(url)
+            .then(response => {
+              if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+              return response.json();
+            })
+            .then(data => {
+              console.log('차종별 통계 데이터:', data);
+              drawCarTypePie(data);
+            })
+            .catch(error => {
+              console.error('차종별 통계 로드 실패:', error);
+              showError('차종별 통계 데이터를 불러오는데 실패했습니다. ' + error.message);
+            });
+  }
+
+  function drawCarTypePie(data) {
+    if (!data.data || data.data.length === 0) {
+      showError('해당 기간의 데이터가 없습니다.');
+      return;
     }
 
-    drawCarTypePieAll();
+    Highcharts.chart('chart_container', {
+      chart: {
+        type: 'pie'
+      },
+      title: {
+        text: '차종별 통계'
+      },
+      tooltip: {
+        pointFormat: '<b>{point.y}대 ({point.percentage:.1f}%)</b>'
+      },
+      plotOptions: {
+        pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b>: {point.percentage:.1f}%'
+          }
+        }
+      },
+      series: [{
+        name: '차종',
+        colorByPoint: true,
+        data: data.data
+      }]
+    });
+  }
+
+  // ========================================
+  // 4. 피크 시간대 분석
+  // ========================================
+  function loadPeakTime() {
+    const url = CONTEXT_PATH + '/statistic/api/peak-time';
+
+    console.log('API 호출:', url);
+
+    fetch(url)
+            .then(response => {
+              if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+              return response.json();
+            })
+            .then(data => {
+              console.log('피크 시간대 데이터:', data);
+              drawPeakTimeChart(data);
+            })
+            .catch(error => {
+              console.error('피크 시간대 로드 실패:', error);
+              showError('피크 시간대 데이터를 불러오는데 실패했습니다. ' + error.message);
+            });
+  }
+
+  function drawPeakTimeChart(data) {
+    Highcharts.chart('chart_container', {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: '시간대별 입차 현황'
+      },
+      xAxis: {
+        categories: data.categories
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: '입차 대수'
+        }
+      },
+      tooltip: {
+        pointFormat: '<b>{point.y}대</b>'
+      },
+      series: [{
+        name: '입차 대수',
+        data: data.hourlyCount,
+        color: '#ED7D31'
+      }]
+    });
+  }
+
+  // ========================================
+  // 5. 회원 통계
+  // ========================================
+  function loadMemberStats() {
+    const url = CONTEXT_PATH + '/statistic/api/member-stats';
+
+    console.log('API 호출:', url);
+
+    fetch(url)
+            .then(response => {
+              if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+              return response.json();
+            })
+            .then(data => {
+              console.log('회원 통계 데이터:', data);
+              drawMemberStatsChart(data);
+            })
+            .catch(error => {
+              console.error('회원 통계 로드 실패:', error);
+              showError('회원 통계 데이터를 불러오는데 실패했습니다. ' + error.message);
+            });
+  }
+
+  function drawMemberStatsChart(data) {
+    const pieData = [
+      {
+        name: '활성 회원',
+        y: data.activeCount,
+        color: '#70AD47'
+      },
+      {
+        name: '비활성 회원',
+        y: data.inactiveCount,
+        color: '#FFC000'
+      }
+    ];
+
+    Highcharts.chart('chart_container', {
+      chart: {
+        type: 'pie'
+      },
+      title: {
+        text: '회원 현황 (총 ' + data.totalCount + '명)'
+      },
+      tooltip: {
+        pointFormat: '<b>{point.y}명 ({point.percentage:.1f}%)</b>'
+      },
+      plotOptions: {
+        pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b>: {point.y}명 ({point.percentage:.1f}%)'
+          }
+        }
+      },
+      series: [{
+        name: '회원',
+        colorByPoint: true,
+        data: pieData
+      }]
+    });
+  }
+
+  // ========================================
+  // 유틸리티 함수
+  // ========================================
+  function showLoading() {
+    document.getElementById('chart_container').innerHTML = `
+        <div class="text-center p-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">로딩중...</span>
+            </div>
+            <p class="mt-3">데이터를 불러오는 중입니다...</p>
+        </div>
+    `;
+  }
+
+  function showError(message) {
+    document.getElementById('chart_container').innerHTML = `
+        <div class="alert alert-warning text-center p-5" role="alert">
+            ${message}
+        </div>
+    `;
+  }
+
+  // 오늘 요약 갱신 (옵션)
+  function refreshTodaySummary() {
+    fetch(CONTEXT_PATH + '/statistic/api/today-summary')
+            .then(response => response.json())
+            .then(data => {
+              document.getElementById('dailySales').textContent = data.dailySales.toLocaleString();
+              document.getElementById('dailyCount').textContent = data.dailyCount;
+              document.getElementById('totalCount').textContent = data.totalCount;
+            })
+            .catch(error => {
+              console.error('오늘 요약 갱신 실패:', error);
+            });
+  }
 </script>
 
-<script>
-    function updateSummary() {
-        const today = new Date();
-        const todayStr = today.toISOString().slice(0, 10);
-
-        let dailySales = 0;
-        let dailyCount = 0;
-        let totalCount = 0;
-
-        if (!parkingDataByYear) return;
-
-        for (let y of Object.keys(parkingDataByYear)) {
-            const yearData = parkingDataByYear[y];
-            for (let monthData of yearData) {
-                for (let rec of monthData.records) {
-                    totalCount++;
-                    if (rec.entry_time.startsWith(todayStr)) {
-                        dailyCount++;
-                        if (rec.is_member !== 1) {
-                            const minutes = spendingTime(rec.entry_time, rec.exit_time);
-                            if (minutes > 10) {
-                                let charge = paymentInfo.basicCharge;
-                                if (minutes > paymentInfo.basicTime) {
-                                    let extraUnits = Math.ceil((minutes - paymentInfo.basicTime) / paymentInfo.extraTime);
-                                    charge += extraUnits * paymentInfo.extraCharge;
-                                }
-                                if (rec.car_type === "경차") charge *= (1 - paymentDiscount.smallCarDiscount);
-                                if (rec.car_type === "장애인") charge *= (1 - paymentDiscount.disabledDiscount);
-                                if (charge > paymentInfo.maxCharge) charge = paymentInfo.maxCharge;
-                                charge = Math.floor(charge);
-                                dailySales += charge;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        const summaryBoxes = document.querySelectorAll('.summary-box');
-        if (summaryBoxes.length >= 3) {
-            summaryBoxes[0].textContent = '일일 총 매출액 (오늘): ' + dailySales.toLocaleString() + '원';
-            summaryBoxes[1].textContent = '일일 입차 대수 (오늘): ' + dailyCount + '대';
-            summaryBoxes[2].textContent = '누적 차량 대수: ' + totalCount + '대';
-        }
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateSummary);
-    } else {
-        updateSummary();
-    }
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

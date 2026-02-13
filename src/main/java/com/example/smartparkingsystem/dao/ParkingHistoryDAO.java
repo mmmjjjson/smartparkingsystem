@@ -1,16 +1,16 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.dto.ParkingHistoryDTO;
 import com.example.smartparkingsystem.util.ConnectionUtil;
 import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Log4j2
 public class ParkingHistoryDAO {
@@ -172,7 +172,6 @@ public class ParkingHistoryDAO {
     public void insertTestData(ParkingHistoryVO parkingHistoryVO) {
         String sql = "INSERT INTO parking_history (parking_area, car_num, car_type, is_member, entry_time, exit_time, total_minutes) " +
                 "VALUES (?, ?, ?, EXISTS(SELECT 1 FROM members WHERE car_num = ?) , ?, ?, ?)";
-
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -184,6 +183,56 @@ public class ParkingHistoryDAO {
             preparedStatement.setTimestamp(6, Timestamp.valueOf(parkingHistoryVO.getExitTime()));
             preparedStatement.setInt(7, parkingHistoryVO.getTotalMinutes());
             preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /*
+     * 전체 주차 기록 개수 조회
+     */
+    public int getTotalCount() {
+        String sql = "SELECT COUNT(*) as total FROM parking_history";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("total");
+            }
+
+            return 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<ParkingHistoryVO> selectByDate(LocalDate date) {
+        List<ParkingHistoryVO> ParkingHistoryVOList = new ArrayList<>();
+        String sql = "SELECT * FROM parking_history WHERE DATE(entry_time) = ?";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setDate(1, java.sql.Date.valueOf(date));
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                ParkingHistoryVO parkingHistoryVO = ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build();
+                ParkingHistoryVOList.add(parkingHistoryVO);
+            }
+            return ParkingHistoryVOList;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
