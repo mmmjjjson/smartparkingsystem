@@ -2,6 +2,7 @@ package com.example.smartparkingsystem.dao;
 
 import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import com.example.smartparkingsystem.vo.PaymentHistoryVO;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 class PaymentHistoryDAOTest {
     PaymentHistoryDAO paymentHistoryDAO;
 
@@ -36,5 +38,4 @@ class PaymentHistoryDAOTest {
                 .build();
         paymentHistoryDAO.insertPaymentHistory(paymentHistoryVO);
     }
-
 }

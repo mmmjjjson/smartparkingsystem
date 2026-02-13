@@ -71,7 +71,7 @@ public class PaymentHistoryDAO {
 
             if (resultSet.next()) {
                 paymentHistoryVO = PaymentHistoryVO.builder()
-                        .parkNo(resultSet.getLong("pay_no"))
+                        .payNo(resultSet.getLong("pay_no"))
                         .parkingArea(resultSet.getString("parking_area"))
                         .carNum(resultSet.getString("car_num"))
                         .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
