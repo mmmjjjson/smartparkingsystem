@@ -30,7 +30,7 @@
                 으로 인증번호를 전송했습니다.
             </p>
             <div class="text-center mb-3">
-                <span class="badge bg-info" id="timer">03:00</span>
+                <span class="badge bg-info" id="timer">04:00</span>
             </div>
 
             <form id="verifyForm" onsubmit="verifyOTP(event)">
@@ -60,7 +60,7 @@
 <script>
 
     // 타이머
-    let timeLeft = 180; // 3분
+    let timeLeft = 240; // 3분
 
     function startTimer() {
         const timerEl = document.getElementById("timer");
@@ -89,7 +89,7 @@
                 document.getElementById('verifyBtn').disabled = true;
             }
 
-        }, 1000 / 10);
+        }, 1000);
     }
 
     window.onload = startTimer;

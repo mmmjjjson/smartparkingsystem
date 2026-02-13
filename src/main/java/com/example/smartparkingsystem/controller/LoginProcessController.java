@@ -1,17 +1,21 @@
 package com.example.smartparkingsystem.controller;
 
 import com.example.smartparkingsystem.dto.AdminDTO;
+import com.example.smartparkingsystem.dto.ValidationDTO;
 import com.example.smartparkingsystem.service.AdminService;
 import com.example.smartparkingsystem.service.MailService;
+import com.example.smartparkingsystem.service.ValidationService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @WebServlet("/login")
 public class LoginProcessController extends HttpServlet {
     private final AdminService adminService = AdminService.INSTANCE;
+    private final ValidationService validationService = ValidationService.INSTANCE;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -60,11 +64,11 @@ public class LoginProcessController extends HttpServlet {
 
     // Step2 등록된 이메일 확인
     private void step2(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         String email = req.getParameter("email");
-
         HttpSession session = req.getSession();
         String tempAdminId = (String) session.getAttribute("tempAdminId");
+//        String otpCode = validationService.getOTP(tempAdminId).getOtpCode();
+
         // step1의 임시세션에 아이디 없으면 400에러
         if (tempAdminId == null) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
@@ -73,6 +77,13 @@ public class LoginProcessController extends HttpServlet {
 
         // 같은 레코드에 이메일인지 확인
         if (emailDB(tempAdminId, email)) {
+
+            // Step2에서 Step3로 넘어오려면 인증하기 버튼을 눌러야하기 때문에
+            // Step3로 들어갈때 바로 발송
+            validationService.otpShipment(tempAdminId);
+
+            // otp임시세션 생성 4분 유효기간
+//            session.setAttribute("otpExpired", System.currentTimeMillis() + (4 * 60 * 1000));
             resp.setStatus(HttpServletResponse.SC_OK);
         } else {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -81,14 +92,19 @@ public class LoginProcessController extends HttpServlet {
 
     // Step3 OTP 확인
     private void step3(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        String tempAdminId = (String) session.getAttribute("tempAdminId"); // 임시 세션
         String otpCode = req.getParameter("otpCode");
+//        String otpExpired = (String) session.getAttribute("otpExpired"); // 세션 고민중
 
-        System.out.println("otpCode: " + otpCode);
+        System.out.println("Step3 otpCode: " + otpCode);
+//        System.out.println("Step3 otpExpired: " + otpExpired); // 세션
+
+        String resultOTP = otpDB(tempAdminId, otpCode); // 문자열로 결과 받는 변수
 
         // OTP 완료시 임시 세션 변경
-        if (otpDB(otpCode)) {
-            HttpSession session = req.getSession();
-            String tempAdminId = (String) session.getAttribute("tempAdminId"); // 임시 세션 불러오고
+        if ("Success".equals(resultOTP)) {
+
             // adminId로 변경
             session.setAttribute("adminId", tempAdminId); // 최종 로그인 세션 적용
             session.removeAttribute("tempAdminId"); // 임시 세션 제거
@@ -102,8 +118,12 @@ public class LoginProcessController extends HttpServlet {
                 resp.sendRedirect("/main/mypage");
             }
             resp.setStatus(HttpServletResponse.SC_OK);
-        } else {
+        } else if ("Expired".equals(resultOTP)) {
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        } else if ("Fail".equals(resultOTP)) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
@@ -116,16 +136,20 @@ public class LoginProcessController extends HttpServlet {
         return admin != null && admin.getAdminEmail().equals(email);
     }
 
-    // TODO: OTP연동만 하면 끝
-    private boolean otpDB(String otpCode) {
-        MailService mailService = MailService.getINSTANCE();
+    // OTP 인증, 발송 헬퍼 메서드
+    private String otpDB(String adminId, String otpCode) {
+        ValidationDTO validationDTO = validationService.getOTP(adminId);
+        String otp = validationDTO.getOtpCode();
 
-        String otp = "";
-        for (int i = 0; i < 6; i++) {
-            otp += (int)(Math.random() * 10);
+        if (LocalDateTime.now().isAfter(validationDTO.getExpiredTime())) {
+            return "Expired"; // 만료
         }
 
-        mailService.sendAuthEmail("vcg258@naver.com", otp);
-        return otp.equals(otpCode);
+        // OTP 승인
+        if (validationDTO.getOtpCode().equals(otpCode)) {
+            return "Success";
+        } else { // 실패
+            return "Fail";
+        }
     }
 }

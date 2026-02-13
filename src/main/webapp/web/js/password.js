@@ -107,8 +107,12 @@ function submitStep3(event) {
         .then(res => {
             if (res.status === 200) {
                 ClearStep()
+            } else if (res.status === 401) {
+                alert("OTP가 일치하지 않음")
+            } else if (res.status === 403) {
+                alert("OTP 만료")
             } else {
-                alert('OTP Error 인증번호 오류')
+                alert("[Error] 알 수 없는 오류")
             }
         })
 }

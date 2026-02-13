@@ -2,6 +2,7 @@ package com.example.smartparkingsystem.controller;
 
 import com.example.smartparkingsystem.dto.AdminDTO;
 import com.example.smartparkingsystem.service.AdminService;
+import com.example.smartparkingsystem.service.ValidationService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,6 +17,7 @@ import java.io.IOException;
 @WebServlet("/main/mypage")
 public class MypageController extends HttpServlet {
     private final AdminService adminService = AdminService.INSTANCE;
+    private final ValidationService validationService = ValidationService.INSTANCE;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -50,12 +52,19 @@ public class MypageController extends HttpServlet {
         String otpCode = req.getParameter("otpCode");
         String newEmail = req.getParameter("newEmail");
 
-        log.info("Before New Email : {}", newEmail);
-        log.info("Before OTP Code : {}", otpCode);
+        log.info("Box1 New Email : {}", newEmail);
+        log.info("Box1 OTP Code : {}", otpCode);
+
+        // OTP발송 (인증하기 누르면 발송하도록 JS연결)
+        if ((newEmail == null || newEmail.trim().isEmpty()) && (otpCode == null || otpCode.trim().isEmpty())) {
+            validationService.otpShipment(adminId);
+            resp.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
 
         // OTP코드 인증 여부
         if (newEmail == null && otpCode != null) {
-            if (validateOtp(otpCode)) {
+            if (validateOtp(adminId, otpCode)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
             } else {
                 resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -63,8 +72,6 @@ public class MypageController extends HttpServlet {
             return;
         }
 
-        log.info("After New Email : {}", newEmail);
-        log.info("After OTP Code : {}", otpCode);
         // 이메일 변경
         if (newEmail != null && otpCode == null) {
             AdminDTO adminDTO = AdminDTO.builder()
@@ -90,10 +97,10 @@ public class MypageController extends HttpServlet {
 //        String newEmail = (String) session.getAttribute("email"); // 이거 왜 했지 세션
 
 
-        log.info("Admin id : {}", adminId);
-        log.info("Password : {}", password);
-        log.info("New Password : {}", newPassword);
-        log.info("Email : {}", email);
+        log.info("Box2 Admin id : {}", adminId);
+        log.info("Box2 Password : {}", password);
+        log.info("Box2 New Password : {}", newPassword);
+        log.info("Box2 Email : {}", email);
 
 
         if (password == null || newPassword == null) { // 굳이 필요할까?
@@ -116,8 +123,9 @@ public class MypageController extends HttpServlet {
         }
     }
 
-    // TODO OTP 임시 하드코딩 (수정 필요)
-    private boolean validateOtp(String otp) {
-        return "123456".equals(otp);
+    // TODO OTP (수정 필요)
+    private boolean validateOtp(String adminId, String otpCode) {
+        String otp = validationService.getOTP(adminId).getOtpCode();
+        return otp.equals(otpCode);
     }
 }

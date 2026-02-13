@@ -30,32 +30,32 @@ public class ValidationDAO {
         }
     }
 
-    // OTP 기록 조회
-    public List<ValidationVO> selectOTP() {
-        List<ValidationVO> validationVOList = new ArrayList<>();
-        String sql = "SELECT * FROM validation";
-
-        try {
-            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
-            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                ValidationVO validationVO = ValidationVO.builder()
-                        .otpCode(resultSet.getString("otp_code"))
-                        .adminId(resultSet.getString("admin_id"))
-                        .otpCode(resultSet.getString("otp_code"))
-                        .adminEmail(resultSet.getString("admin_email"))
-                        .expiredTime(resultSet.getObject("expired_time", LocalDateTime.class))
-                        .build();
-                validationVOList.add(validationVO);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } return validationVOList;
-    }
+//    // OTP 기록 조회
+//    public List<ValidationVO> selectOTP() {
+//        List<ValidationVO> validationVOList = new ArrayList<>();
+//        String sql = "SELECT * FROM validation";
+//
+//        try {
+//            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+//            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+//            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+//            while (resultSet.next()) {
+//                ValidationVO validationVO = ValidationVO.builder()
+//                        .otpCode(resultSet.getString("otp_code"))
+//                        .adminId(resultSet.getString("admin_id"))
+//                        .otpCode(resultSet.getString("otp_code"))
+//                        .adminEmail(resultSet.getString("admin_email"))
+//                        .expiredTime(resultSet.getObject("expired_time", LocalDateTime.class))
+//                        .build();
+//                validationVOList.add(validationVO);
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        } return validationVOList;
+//    }
 
     public ValidationVO selectOTPOne(String adminId) {
-        String sql = "SELECT * FROM validation WHERE admin_id = ?";
+        String sql = "SELECT * FROM validation WHERE admin_id = ? ORDER BY no DESC LIMIT 1";
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();

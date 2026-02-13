@@ -18,6 +18,8 @@ function updatePassword(event) {
         alert('새 비밀번호가 일치하지 않습니다.')
         return;
     }
+
+    // TODO 수정 필요 현재비밀번호가 일치하지 않아도 조건달성, 재설정후 최초 로그인시 로그아웃 불가능 버그 고쳐야함
     if (password === newPassword) {
         alert('현재 비밀번호와 동일합니다. 다른 비밀번호를 입력해주세요.')
         return;
@@ -28,7 +30,7 @@ function updatePassword(event) {
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: "password=" + password + "&newPassword=" + newPassword + "&newPasswordCheck=" + newPasswordCheck
+        body: "box=2&password=" + password + "&newPassword=" + newPassword + "&newPasswordCheck=" + newPasswordCheck
     })
         .then(res => {
             if (res.status === 200) {
@@ -52,8 +54,24 @@ function openEmailVerification() {
         return;
     }
 
-    // 팝업창 띄우기
-    window.open(url, "emailPopup", "width=450,height=380");
+    fetch("/main/mypage", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "box=1"
+    })
+        .then(res => {
+            if (res.status === 200) {
+                console.log('인증번호 발송');
+                // 팝업창 띄우기
+                window.open(url, "emailPopup", "width=450,height=380");
+            } else {
+                alert('Error 알 수 없는 에러 발생')
+            }
+        })
+
+
 }
 
 
@@ -68,7 +86,7 @@ function submitUpdateEmail(event) {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
-        } ,
+        },
         body: "box=1&newEmail=" + newEmail
     })
         .then(res => {
