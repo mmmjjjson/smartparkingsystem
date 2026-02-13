@@ -29,7 +29,6 @@ public class PaymentInfoController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         log.info("setting post");
         PaymentInfoDTO paymentInfoDTO = PaymentInfoDTO.builder()
                 .freeTime(Integer.parseInt(req.getParameter("free_time")))
