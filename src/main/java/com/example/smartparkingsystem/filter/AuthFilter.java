@@ -53,6 +53,7 @@ public class AuthFilter implements Filter {
             return;
         }
 
+        // BUG 발생 로그아웃 안됨
         String adminId = (String) session.getAttribute("adminId");
         if (adminService.getAdminById(adminId).isPasswordReset()) {
             if (!uri.startsWith(mypagePath)) {

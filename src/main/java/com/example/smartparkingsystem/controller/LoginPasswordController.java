@@ -77,7 +77,7 @@ public class LoginPasswordController extends HttpServlet {
     public void step3(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(false);
         String adminId = (String) session.getAttribute("logAdminId");
-        String email = (String) session.getAttribute("logEmail");
+//        String email = (String) session.getAttribute("logEmail");
         String otpCode = req.getParameter("otpCode");
         log.info("otpCode: {}", otpCode);
 
@@ -85,26 +85,25 @@ public class LoginPasswordController extends HttpServlet {
 
         if ("Success".equals(resultOTP)) {
 
-            // 12자리 랜덤 UUID 생성
-            String newPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-//            adminService.changePassword(adminId, newPassword);
-
-            // 랜덤키 변경후 최초 로그인 변경
-            AdminDTO adminDTO = AdminDTO.builder()
-                    .adminId(adminId)
-                    .password(newPassword)
-                    .adminEmail(email)
-                    .isPasswordReset(true) // 변경
-                    .build();
-            adminService.modifyAdmin(adminDTO);
+//            // 12자리 랜덤 UUID 생성
+//            String newPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+//
+//            // 랜덤키 변경후 최초 로그인 변경
+//            AdminDTO adminDTO = AdminDTO.builder()
+//                    .adminId(adminId)
+//                    .password(newPassword)
+//                    .adminEmail(email)
+//                    .isPasswordReset(true) // 변경
+//                    .build();
+//            adminService.modifyAdmin(adminDTO);
+            validationService.uuidPassword(adminId);
 
             session.removeAttribute("logAdminId");
             session.removeAttribute("logEmail");
             resp.setStatus(HttpServletResponse.SC_OK);
         } else if ("Fail".equals(resultOTP)) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        }
-        else {
+        } else {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

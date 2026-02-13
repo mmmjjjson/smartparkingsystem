@@ -1,6 +1,7 @@
 package com.example.smartparkingsystem.controller;
 
 import com.example.smartparkingsystem.dto.AdminDTO;
+import com.example.smartparkingsystem.dto.ValidationDTO;
 import com.example.smartparkingsystem.service.AdminService;
 import com.example.smartparkingsystem.service.ValidationService;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Log4j2
 @WebServlet("/main/mypage")
@@ -63,14 +65,20 @@ public class MypageController extends HttpServlet {
         }
 
         // OTP코드 인증 여부
+
         if (newEmail == null && otpCode != null) {
-            if (validateOtp(adminId, otpCode)) {
+            String resultOTP = validateOtp(adminId, otpCode);
+
+            if ("Success".equals(resultOTP)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
+            } else if ("Expired".equals(resultOTP)) {
+                resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             } else {
                 resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
             return;
         }
+
 
         // 이메일 변경
         if (newEmail != null && otpCode == null) {
@@ -123,9 +131,20 @@ public class MypageController extends HttpServlet {
         }
     }
 
-    // TODO OTP (수정 필요)
-    private boolean validateOtp(String adminId, String otpCode) {
-        String otp = validationService.getOTP(adminId).getOtpCode();
-        return otp.equals(otpCode);
+    // OTP 인증 헬퍼 메서드
+    private String validateOtp(String adminId, String otpCode) {
+        ValidationDTO validationDTO = validationService.getOTP(adminId);
+        String otp = validationDTO.getOtpCode();
+
+        if (LocalDateTime.now().isAfter(validationDTO.getExpiredTime())) {
+            return "Expired"; // 만료
+        }
+
+        // OTP 승인
+        if (validationDTO.getOtpCode().equals(otpCode)) {
+            return "Success";
+        } else { // 실패
+            return "Fail";
+        }
     }
 }

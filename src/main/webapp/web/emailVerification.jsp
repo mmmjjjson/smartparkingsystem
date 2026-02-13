@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>이메일 인증</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <script src="/web/js/myPage.js"></script>
+    <script src="/web/js/emailVerification.js"></script>
     <style>
         body {
             padding: 20px;
@@ -29,7 +29,7 @@
                 </strong><br>
                 으로 인증번호를 전송했습니다.
             </p>
-            <div class="text-center mb-3">
+            <div class="text-center mb-4">
                 <span class="badge bg-info" id="timer">04:00</span>
             </div>
 
@@ -57,72 +57,3 @@
 </div>
 </body>
 </html>
-<script>
-
-    // 타이머
-    let timeLeft = 240; // 3분
-
-    function startTimer() {
-        const timerEl = document.getElementById("timer");
-
-        const timer = setInterval(function () {
-
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-
-            timerEl.innerText =
-                "남은 시간: " + minutes + ":" +
-                (seconds < 10 ? "0" : "") + seconds;
-
-            timeLeft--;
-
-            // 1분 이하 빨간색으로 변경
-            if (timeLeft <= 60) {
-                document.getElementById('timer').classList.remove('bg-info');
-                document.getElementById('timer').classList.add('bg-danger');
-            }
-
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                alert("인증 시간이 만료되었습니다.");
-                document.getElementById('otpCode').disabled = true;
-                document.getElementById('verifyBtn').disabled = true;
-            }
-
-        }, 1000);
-    }
-
-    window.onload = startTimer;
-
-
-    // 이메일 팝업창
-    function verifyOTP(event) {
-        event.preventDefault();
-
-        const otpCode = document.getElementById("otpCode").value;
-
-        if (otpCode.length !== 6) {
-            alert('6자리 인증번호를 입력해주세요.')
-            return;
-        }
-
-        fetch("/main/mypage", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: 'box=1&otpCode=' + otpCode
-        })
-            .then(res => {
-                if (res.status === 200) {
-                    alert('인증이 완료되었습니다.')
-                    if (window.opener && window.opener.onEmailVerified) {
-                        window.opener.onEmailVerified();
-                    }
-                    window.close();
-                } else {
-                    alert('인증번호가 일치하지 않습니다.')
-                }
-            })
-    }
-</script>

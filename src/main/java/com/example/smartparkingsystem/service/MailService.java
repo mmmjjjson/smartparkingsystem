@@ -90,4 +90,45 @@ public class MailService {
         }
         return result;
     }
+
+    public boolean sendAuthPw(String to, String pw) {
+        boolean result = false;
+
+        Properties props = new Properties();
+
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        log.info("호스트 {}, 포트 {}, 유저 {}, 패스 {}", host, port, user, pass);
+
+        // 로드된 user와 pass를 사용해 인증 세션 생성
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(user, pass);
+            }
+        });
+
+
+        String subject = "[스마트 주차시스템] 인증 메일";
+        String content = "재설정 된 비밀번호 : " + pw;
+
+        //메일 발송을 시도.
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(user));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            message.setSubject(subject);
+            message.setContent(content, "text/html; charset=UTF-8");
+
+
+            Transport.send(message);
+            result = true;
+        } catch (MessagingException e) {
+            throw new RuntimeException("메일 발송 실패", e);
+        }
+        return result;
+    }
 }

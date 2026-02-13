@@ -10,6 +10,7 @@
     <link href="/web/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="/web/js/login.js"></script>
+    <script src="/web/js/emailVerification.js"></script>
 
     <%-- 템플릿 수정 css --%>
     <style>
@@ -144,6 +145,9 @@
                                         <p class="small text-muted">
                                             등록된 이메일로 전송된 인증번호를 입력하세요.
                                         </p>
+                                    </div>
+                                    <div class="text-center mb-4">
+                                        <span class="badge bg-info" id="timer">04:00</span>
                                     </div>
 
                                     <form id="otpForm" onsubmit="submitStep3(event); return false;">
