@@ -24,11 +24,12 @@ public class PaymentInfoController extends HttpServlet {
 
         req.setAttribute("paymentInfoDTO", paymentInfoDTO);
 
-        req.getRequestDispatcher("/web/@setting.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/setting/setting.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         log.info("setting post");
         PaymentInfoDTO paymentInfoDTO = PaymentInfoDTO.builder()
                 .freeTime(Integer.parseInt(req.getParameter("free_time")))

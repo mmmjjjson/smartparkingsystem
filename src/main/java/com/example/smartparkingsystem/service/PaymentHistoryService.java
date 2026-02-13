@@ -52,8 +52,11 @@ public class PaymentHistoryService {
 
     public void calculateFinalCharge(String carNum) { // PaymentHistoryVO에 넣는 메서드
         // 잘못된 차량번호 조회?
+        if (parkingHistoryDAO.selectRecentParking(carNum).getCarNum() == null) {
+            return;
+        }
 
-        // 총 요금에서 할인된 요금 계산 메서드 실행
+        // 총 요금에서 할인 계산 메서드 실행
         calculateDiscountAmount(carNum);
 
         ParkingHistoryVO parkingHistoryVO = parkingHistoryDAO.selectRecentParking(carNum);
