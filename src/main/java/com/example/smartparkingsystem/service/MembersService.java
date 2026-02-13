@@ -1,6 +1,7 @@
 package com.example.smartparkingsystem.service;
 
 import com.example.smartparkingsystem.dao.MembersDAO;
+import com.example.smartparkingsystem.dao.PaymentInfoDAO;
 import com.example.smartparkingsystem.dto.MembersDTO;
 import com.example.smartparkingsystem.dto.PageRequestDTO;
 import com.example.smartparkingsystem.dto.PageResponseDTO;
@@ -18,6 +19,7 @@ public enum MembersService {
     INSTANCE;
 
     private final MembersDAO membersDAO;
+    private final PaymentInfoDAO paymentInfoDAO = PaymentInfoDAO.getInstance();
     private final ModelMapper modelMapper;
     private final int pagePerCount = 10;
 
@@ -95,6 +97,8 @@ public enum MembersService {
 
     // 신규 회원 등록
     public void addMember(MembersDTO membersDTO) {
+        int memberCharge = paymentInfoDAO.selectInfo().getMemberCharge();
+        membersDTO.setMemberCharge(memberCharge);
         MembersVO membersVO = modelMapper.map(membersDTO, MembersVO.class);
         membersDAO.insertMember(membersVO);
     }

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="DataSourcePerFileMappings">
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/d331c231-bb10-4970-8678-b003f375a660/console.sql" value="d331c231-bb10-4970-8678-b003f375a660" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/dao/MembersDAO.java" value="d331c231-bb10-4970-8678-b003f375a660" />
-  </component>
-</project>

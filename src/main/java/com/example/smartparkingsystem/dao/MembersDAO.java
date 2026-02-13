@@ -11,7 +11,7 @@ import java.util.List;
 public class MembersDAO {
     // 신규 회원 등록
     public void insertMember(MembersVO membersVO) {
-        String sql = "INSERT INTO members (car_num, member_name, member_phone, start_date, end_date) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO members (car_num, member_name, member_phone, start_date, end_date, member_charge) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
@@ -21,6 +21,7 @@ public class MembersDAO {
             preparedStatement.setString(3, membersVO.getMemberPhone());
             preparedStatement.setDate(4, Date.valueOf(membersVO.getStartDate()));
             preparedStatement.setDate(5, Date.valueOf(membersVO.getEndDate()));
+            preparedStatement.setInt(6, membersVO.getMemberCharge());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

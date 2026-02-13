@@ -57,6 +57,7 @@ function openViewModal(mno, car, name, phone, start, end) {
     viewModalEl.querySelector('#viewPhone').textContent = phone;
     viewModalEl.querySelector('#viewStartDate').textContent = start;
     viewModalEl.querySelector('#viewExpireDate').textContent = end;
+    viewModalEl.querySelector('#viewCharge').textContent = charge;
 
     new bootstrap.Modal(viewModalEl).show();
 }
@@ -81,7 +82,7 @@ function openMembershipModal() {
     memModalEl.querySelector('#memPhone').value = viewModalEl.querySelector('#viewPhone').textContent;
     memModalEl.querySelector('#memStartDate').value = viewModalEl.querySelector('#viewStartDate').textContent;
     memModalEl.querySelector('#memEndDate').value = viewModalEl.querySelector('#viewExpireDate').textContent;
-    memModalEl.querySelector('#memPrice').value = '100,000원';
+    memModalEl.querySelector('#memPrice').value = viewModalEl.querySelector('#viewCharge').textContent;;
 
     new bootstrap.Modal(memModalEl).show();
 }
@@ -123,7 +124,7 @@ function clearNewMemberInputs() {
 
     if(startEl) startEl.value = today; // 시작일 오늘 날짜
     if(endEl && startEl) {
-        setEndDateByOneMonth('newStartDate', 'newExpireDate'); // 만료일 자동 계산
+        setEndDateBy30Days('newStartDate', 'newExpireDate'); // 만료일 자동 계산
     }
 }
 
@@ -166,13 +167,25 @@ function autoHyphenPhone(input) {
 }
 
 /* ===================== 만료일 자동 계산 ===================== */
-function setEndDateByOneMonth(startId, endId) {
-    const s = document.getElementById(startId).value;
+function setEndDateBy30Days(startId, endId) {
+    const startEl = document.getElementById(startId);
+    const endEl = document.getElementById(endId);
+    if (!startEl || !endEl) return;
+
+    // 시작일 값 가져오기
+    const s = startEl.value;
     if (!s) return;
-    const d = new Date(s);
-    d.setMonth(d.getMonth() + 1);
-    d.setDate(d.getDate() - 1);
-    document.getElementById(endId).value = d.toISOString().slice(0, 10);
+
+    // YYYY-MM-DD 문자열을 분리해서 Date 객체 생성
+    const parts = s.split('-'); // [YYYY, MM, DD]
+    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    d.setDate(d.getDate() + 30);
+
+    // 만료일에 반영
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    endEl.value = `${yyyy}-${mm}-${dd}`;
 }
 
 /* ===================== 회원 정보 입력 검증 ===================== */

@@ -31,6 +31,7 @@
     <!-- Custom CSS -->
     <%--    <link rel="stylesheet" href="css/member.css">--%>
     <%--    <link rel="stylesheet" href="../../login/css/styles.css">--%>
+    <link rel="stylesheet" href="../../web/main/mainboard.css">
 
     <script src="../../web/member/js/member.js" defer></script>
     <script src="../../web/main/main_membershipPay.js" defer></script>
@@ -53,8 +54,8 @@
 <div class="container-fluid mt-4 px-5">
     <!-- 콘텐츠 -->
     <div class="content">
-        <div class="d-flex justify-content-between align-items-end">
-            <h4 class="fw-bold">회원 관리 - 월정액 회원 정보 관리</h4>
+        <div class="section-header d-flex justify-content-between align-items-end">
+            <h3 class="section-title">회원 관리 - 월정액 회원 정보 관리</h3>
             <!-- 회원 정보 검색 -->
             <form method="get" action="/member_list.do" class="d-flex justify-content-end mb-3 align-items-center">
                 <input type="hidden" name="status"
@@ -73,11 +74,13 @@
                     </option>
                 </select>
                 <!-- 검색어 입력 창 -->
-                <input type="text" name="keyword" id="keyword" class="form-control me-2" style="width: 500px"
-                       value="<%= request.getParameter("keyword") == null ? "" : request.getParameter("keyword") %>"
-                       placeholder="검색어를 입력하세요">
-                <!-- 검색 버튼 -->
-                <button type="submit" class="btn btn-dark flex-shrink-0">검색</button>
+                <div class="d-flex" style="gap: 10px; margin-bottom: 5px;">
+                    <input type="text" name="keyword" id="keyword" class="form-control me-2" style="width: 500px"
+                           value="<%= request.getParameter("keyword") == null ? "" : request.getParameter("keyword") %>"
+                           placeholder="검색어를 입력하세요">
+                    <!-- 검색 버튼 -->
+                    <button type="submit" class="btn btn-dark flex-shrink-0">검색</button>
+                </div>
             </form>
         </div>
 
@@ -248,7 +251,7 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">시작일 (필수)</label>
                             <input type="date" name="startDate" class="form-control" id="newStartDate"
-                                   onchange="setEndDateByOneMonth('newStartDate', 'newExpireDate')">
+                                   onchange="setEndDateBy30Days('newStartDate', 'newExpireDate')">
                         </div>
                         <!-- '만료일'은 '시작일'에 따라 자동으로 1개월 설정 -->
                         <div class="col-md-6 mb-3">
