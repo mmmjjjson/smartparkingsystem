@@ -11,10 +11,13 @@ import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 
 @Log4j2
-@WebServlet(name = "paymentHistory", value = "/main")
+@WebServlet("/main/")
 public class PaymentHistoryController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json;charset=UTF-8"); // 응답 형식 JSON화 (js에서 읽을 수 있도록)
+
+
 
         req.setAttribute("", );
 
