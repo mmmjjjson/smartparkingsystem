@@ -8,20 +8,21 @@
 <head>
     <meta charset="UTF-8">
     <!-- Pretendard 폰트 -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link rel="stylesheet" as="style" crossorigin
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
     <title>스마트 주차 관리 시스템 - 설정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/setting/setting.css">
+    <link rel="stylesheet" href="/web/setting/setting.css">
 
 </head>
 <body>
 <%@ include file="/web/common/header_other.jsp" %>
 <div class="container">
     <form name="setting" action="/setting" method="post" class="setup-area">
-    <div class="title-bar">
-        설정 관리 - 요금 및 할인 정책
-        <button class="save-btn" type="submit" onclick="saveSetting()">저장하기</button>
-    </div>
+        <div class="title-bar">
+            설정 관리 - 요금 및 할인 정책
+            <button class="save-btn" type="submit" onclick="saveSetting()">저장하기</button>
+        </div>
 
         <div class="card">
             <span class="card-label">기본 요금 및 일일 최대 요금 설정</span>
