@@ -1,11 +1,13 @@
 package com.example.smartparkingsystem.service;
 
 import com.example.smartparkingsystem.dao.MembersDAO;
+import com.example.smartparkingsystem.dao.ParkingHistoryDAO;
 import com.example.smartparkingsystem.dao.PaymentHistoryDAO;
 import com.example.smartparkingsystem.dao.PaymentInfoDAO;
 import com.example.smartparkingsystem.dto.PaymentHistoryDTO;
 import com.example.smartparkingsystem.util.MapperUtil;
 import com.example.smartparkingsystem.vo.MembersVO;
+import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import com.example.smartparkingsystem.vo.PaymentHistoryVO;
 import com.example.smartparkingsystem.vo.PaymentInfoVO;
 import lombok.extern.log4j.Log4j2;
