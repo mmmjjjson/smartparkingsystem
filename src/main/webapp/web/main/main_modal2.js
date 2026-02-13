@@ -197,70 +197,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 // 출차 후 영수증 화면 -> '정산 완료' 버튼 클릭
-    document.getElementById('btn-close-final').addEventListener('click', async () => {
+    document.getElementById('btn-close-final').addEventListener('click', () => {
         if (!window.currentCard) return;
 
         const parkNo = window.currentCard.dataset.parkNo;
-        const btnFinal = document.getElementById('btn-close-final');
-        btnFinal.disabled = true;
-        btnFinal.innerText = '처리 중';
 
-        try {
-            console.log('결제 등록 시작')
-            const paymentResponse = await axios.post('/parking/payment', `parkNo=${parkNo}`, {
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            });
-            if (!paymentResponse.data.success) {
-                alert('결제 실패!' + paymentResponse.data.message);
-                return;
-            }
+        axios.post('/parking/exit', `parkNo=${parkNo}`, {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        })
+            .then(response => {
+                const data = response.data;
+                if (!data.success) {
+                    alert('출차 처리 실패' + data.message);
+                    return;
+                }
+                // 1. 데이터 초기화
+                window.currentCard.dataset.status = 'available';
+                window.currentCard.dataset.carNum = "";
+                window.currentCard.dataset.inFullTime = "";
+                window.currentCard.dataset.carType = "";
+                window.currentCard.dataset.parkNo = "";
 
-            console.log('결제 등록 완료');
-            console.log('출차 처리 시작');
-            const exitResponse = await axios.post('/parking/exit', `parkNo=${parkNo}`, {
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            });
-            if (!exitResponse.data.success) {
-                alert('출차 처리 실패!' + exitResponse.data.message);
-                return;
-            }
-            console.log('출차 처리 완료')
+                // 2. UI 초기화
+                window.currentCard.classList.replace('occupied', 'available');
+                window.currentCard.querySelector('.box-car').innerText = "사용 가능";
+                window.currentCard.querySelector('.box-time').innerText = "";
 
-            // 1. 데이터 초기화
-            window.currentCard.dataset.status = 'available';
-            window.currentCard.dataset.carNum = "";
-            window.currentCard.dataset.inFullTime = "";
-            window.currentCard.dataset.carType = "";
-            window.currentCard.dataset.parkNo = "";
-
-            // 2. UI 초기화
-            window.currentCard.classList.replace('occupied', 'available');
-            window.currentCard.querySelector('.box-car').innerText = "사용 가능";
-            window.currentCard.querySelector('.box-time').innerText = "";
-
-            // 3. 모달 닫기
-            document.getElementById('parkingModal').querySelector('.btn-close').blur();
-            document.body.focus();
-            modal.hide();
-            updateParkingCount();
-            alert("정산이 완료되어 출차 처리되었습니다.");
+                // 3. 모달 닫기
+                document.getElementById('parkingModal').querySelector('.btn-close').blur();
+                document.body.focus();
+                modal.hide();
+                updateParkingCount();
+                alert("정산이 완료되어 출차 처리되었습니다.");
+            })
+            .catch(err => alert('오류 발생! 관리자에게 문의하세요.' + err));
 
 
-            // fetch('/parking/exit', {
-            //     method: 'POST',
-            //     headers: {'Content-Type': 'application/x-www-form-urlencoded'}, // 데이터 형식 지정
-            //     body: `parkNo=${parkNo}`
-            // })
-            //     .then(res => res.json()) // 서버의 응답을 JSON으로 변환
-            //     .then(data => { // 서버가 보낸 응답 객체
-        } catch (err) {
-            console.log('오류 발생! ' + err);
-            alert('오류 발생! 관리자에게 문의하세요.')
-        } finally {
-            btnFinal.disabled = false;
-            btnFinal.innerText = '정산 완료'
-        }
-
+        // fetch('/parking/exit', {
+        //     method: 'POST',
+        //     headers: {'Content-Type': 'application/x-www-form-urlencoded'}, // 데이터 형식 지정
+        //     body: `parkNo=${parkNo}`
+        // })
+        //     .then(res => res.json()) // 서버의 응답을 JSON으로 변환
+        //     .then(data => { // 서버가 보낸 응답 객체
 
     });
 
