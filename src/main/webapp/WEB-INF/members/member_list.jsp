@@ -3,8 +3,10 @@
 <%@ page import="com.example.smartparkingsystem.vo.MembersVO" %>
 <%@ page import="com.example.smartparkingsystem.dto.PageResponseDTO" %>
 <%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
+<%@ page import="com.example.smartparkingsystem.dao.PaymentInfoDAO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
+    PaymentInfoDAO paymentInfoDAO = PaymentInfoDAO.getInstance();
     PageResponseDTO pageResponseDTO = (PageResponseDTO) request.getAttribute("pageResponseDTO");
     List<MembersDTO> membersDTOList = pageResponseDTO.getMembersDTOList();
     int pageNum = pageResponseDTO.getPageNum();
@@ -33,31 +35,31 @@
     <%--    <link rel="stylesheet" href="../../login/css/styles.css">--%>
     <link rel="stylesheet" href="../../web/main/mainboard.css">
 
-    <script src="../../web/member/js/member.js" defer></script>
+    <script src="<%=request.getContextPath()%>/web/member/js/member.js" defer></script>
     <script src="../../web/main/main_membershipPay.js" defer></script>
 
     <style>
         .custom-table thead th {
-            padding-top: 0.8rem;
-            padding-bottom: 0.8rem;
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
         }
 
         .custom-table tbody td {
-            padding-top: 0.9rem;
-            padding-bottom: 0.9rem;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
         }
     </style>
 </head>
 <body class="bg-light">
 <!-- 헤드 -->
 <%@ include file="../../web/common/header_other.jsp" %>
-<div class="container-fluid mt-4 px-5">
+<div class="container-fluid mt-4 pb-2">
     <!-- 콘텐츠 -->
     <div class="content">
-        <div class="section-header d-flex justify-content-between align-items-end">
-            <h3 class="section-title">회원 관리 - 월정액 회원 정보 관리</h3>
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h3 class="section-title mb-0">회원 관리 - 월정액 회원 정보 관리</h3>
             <!-- 회원 정보 검색 -->
-            <form method="get" action="/member_list.do" class="d-flex justify-content-end mb-3 align-items-center">
+            <form method="get" action="/member_list.do" class="d-flex justify-content-end align-items-center">
                 <input type="hidden" name="status"
                        value="<%= request.getParameter("status") == null ? "" : request.getParameter("status") %>">
                 <!-- 검색 타입 -->
@@ -74,24 +76,23 @@
                     </option>
                 </select>
                 <!-- 검색어 입력 창 -->
-                <div class="d-flex" style="gap: 10px; margin-bottom: 5px;">
+                <div class="d-flex" style="gap: 10px;">
                     <input type="text" name="keyword" id="keyword" class="form-control me-2" style="width: 500px"
                            value="<%= request.getParameter("keyword") == null ? "" : request.getParameter("keyword") %>"
                            placeholder="검색어를 입력하세요">
                     <!-- 검색 버튼 -->
-                    <button type="submit" class="btn btn-dark flex-shrink-0">검색</button>
+                    <button type="submit" class="btn btn-secondary flex-shrink-0" style="width: 80px">검색</button>
                 </div>
             </form>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <!-- 회원 / 만료 회원 버튼 -->
             <div>
                 <a href="./member_list.do"
                    class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
                 <a href="./member_list.do?status=expired"
-                   class="btn btn-outline-secondary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료
-                    회원</a>
+                   class="btn btn-outline-primary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료 회원</a>
             </div>
 
             <!-- 신규 회원 등록 버튼 -->
@@ -101,7 +102,7 @@
         </div>
 
         <!-- 회원 목록 테이블 -->
-        <div class="table-responsive rounded-4 shadow-sm my-6" style="overflow: hidden;">
+        <div class="table-responsive rounded-4 shadow-sm mb-0" style="overflow: hidden;">
             <table class="table table-hover mb-2 text-center align-middle custom-table">
                 <!-- 테이블 제목 -->
                 <thead class="table-secondary">
@@ -134,7 +135,8 @@
                         `<%= member.getMemberName() %>`,
                         `<%= member.getMemberPhone() %>`,
                         `<%= member.getStartDate() %>`,
-                        `<%= member.getEndDate() %>`
+                        `<%= member.getEndDate() %>`,
+                    <%= member.getMemberCharge() %>
                         )">
                     <td><%=n++%>
                     </td>
@@ -234,8 +236,11 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">차량 번호 (필수)</label>
-                        <input type="text" name="carNum" placeholder="예: 12가3456" maxlength="8" class="form-control"
-                               id="newCarNumber">
+                        <div class="input-group">
+                            <input type="text" name="carNum" placeholder="예: 12가3456" maxlength="8" class="form-control"
+                                   id="newCarNumber">
+                            <button type="button" id="btn-check-member" class="btn btn-outline-primary">회원 확인</button>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">이름 (필수)</label>
@@ -261,7 +266,7 @@
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">등록</button>
+                    <button type="button" class="btn btn-success px-4 py-2 me-3" id="btnMembershipPay">회원권 결제</button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
                 </div>
             </form>
@@ -280,6 +285,7 @@
             <div class="modal-body">
                 <div class="modal-body">
                     <input type="hidden" id="mno">
+                    <input type="hidden" id="viewCharge">
 
                     <div class="row mb-3">
                         <label class="col-sm-3 fw-bold">차량 번호</label>
@@ -323,7 +329,6 @@
             </div>
             <div class="modal-footer justify-content-center">
                 <button class="btn btn-primary px-4 py-2 me-3" onclick="openEditModal()">수정</button>
-                <button class="btn btn-success px-4 py-2 me-3" id="btnMembershipPay">회원권 결제</button>
                 <button class="btn btn-outline-secondary  px-4 py-2 me-3" data-bs-dismiss="modal">닫기</button>
             </div>
         </div>
@@ -371,8 +376,8 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">총 결제 요금</label>
-                        <input type="text" id="memPrice" class="form-control fw-bold text-primary" value="100,000원"
-                               readonly>
+                        <input type="text" id="memPrice" class="form-control fw-bold text-primary"
+                               value="<%=String.format("%,d원", paymentInfoDAO.selectInfo().getMemberCharge())%>" readonly>
                     </div>
                 </div>
 
@@ -407,7 +412,15 @@
 
                 <div class="modal-footer" id="mem-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-primary" id="btn-membership-submit">결제하기</button>
+                    <form id="newMemberForm" action="/member_add.do" method="post">
+                        <input type="hidden" name="carNum" id="newCarNumberHidden">
+                        <input type="hidden" name="memberName" id="newNameHidden">
+                        <input type="hidden" name="memberPhone" id="newPhoneHidden">
+                        <input type="hidden" name="startDate" id="newStartDateHidden">
+                        <input type="hidden" name="endDate" id="newExpireDateHidden">
+
+                        <button type="submit" class="btn btn-primary" id="btn-membership-submit">결제하기</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -469,7 +482,8 @@
         session.removeAttribute("flashMsg");
     }
 %>
-
-<%@ include file="../../web/common/footer.jsp" %>
+<footer>
+    <%@ include file="../../web/common/footer.jsp" %>
+</footer>
 </body>
 </html>

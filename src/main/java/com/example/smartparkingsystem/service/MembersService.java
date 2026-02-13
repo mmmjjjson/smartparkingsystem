@@ -107,9 +107,4 @@ public enum MembersService {
     public void modifyMember(MembersDTO membersDTO) {
         membersDAO.updateMember(modelMapper.map(membersDTO, MembersVO.class));
     }
-
-    // 회원 삭제
-//    public void removeMember(Long mno) {
-//        membersDAO.deleteMember(mno);
-//    }
 }

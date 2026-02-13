@@ -76,6 +76,7 @@ public class MembersDAO {
                         .memberPhone(resultSet.getString("member_phone"))
                         .startDate(resultSet.getDate("start_date").toLocalDate())
                         .endDate(resultSet.getDate("end_date").toLocalDate())
+                        .memberCharge(resultSet.getInt("member_charge"))
                         .build();
 
                 membersVOList.add(membersVO);
@@ -101,6 +102,7 @@ public class MembersDAO {
                         .memberPhone(resultSet.getString("member_phone"))
                         .startDate(resultSet.getDate("start_date").toLocalDate())
                         .endDate(resultSet.getDate("end_date").toLocalDate())
+                        .memberCharge(resultSet.getInt("member_charge"))
                         .build();
 
                 return membersVO;
@@ -127,6 +129,7 @@ public class MembersDAO {
                         .memberPhone(resultSet.getString("member_phone"))
                         .startDate(resultSet.getDate("start_date").toLocalDate())
                         .endDate(resultSet.getDate("end_date").toLocalDate())
+                        .memberCharge(resultSet.getInt("member_charge"))
                         .build();
 
                 membersVOList.add(membersVO);
@@ -153,6 +156,7 @@ public class MembersDAO {
                         .memberPhone(resultSet.getString("member_phone"))
                         .startDate(resultSet.getDate("start_date").toLocalDate())
                         .endDate(resultSet.getDate("end_date").toLocalDate())
+                        .memberCharge(resultSet.getInt("member_charge"))
                         .build();
 
                 membersVOList.add(membersVO);

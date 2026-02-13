@@ -5,29 +5,36 @@
 <%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
 <%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
 <%@ page import="com.example.smartparkingsystem.vo.MembersVO" %>
+<%@ page import="com.example.smartparkingsystem.service.MembersService" %>
 <%-- 신규 회원 등록 --%>
 <%
+    MembersService membersService = MembersService.INSTANCE;
+
     String carNum = request.getParameter("carNum");
     String memberName = request.getParameter("memberName");
     String memberPhone = request.getParameter("memberPhone");
     String startDate = request.getParameter("startDate");
     String endDate = request.getParameter("endDate");
 
+    // 시작일
     LocalDate start = (startDate != null && !startDate.isEmpty())
             ? LocalDate.parse(startDate) : LocalDate.now();
+    // 만료일 (시작일 기준 +30일 자동 설정)
     LocalDate end = (endDate != null && !endDate.isEmpty())
-            ? LocalDate.parse(endDate) : start.plusMonths(1).minusDays(1); // 기본 1개월
+            ? LocalDate.parse(endDate) : start.plusDays(30);
 
-    MembersVO member = MembersVO.builder()
+    MembersDTO member = MembersDTO.builder()
             .carNum(carNum)
             .memberName(memberName)
             .memberPhone(memberPhone)
-            .startDate(start)
-            .endDate(end)
+            .startDate(LocalDate.parse(startDate))
+            .endDate(LocalDate.parse(endDate))
             .build();
 
-    MembersDAO membersDAO = new MembersDAO();
-    membersDAO.insertMember(member);
+    membersService.addMember(member);
+
+    session.setAttribute("flashMsg", "회원이 정상적으로 등록되었습니다.");
+    response.sendRedirect("/member_list.do");
 
     return;
 %>

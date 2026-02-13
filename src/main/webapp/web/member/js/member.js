@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    /* ===================== 버튼 이벤트 ===================== */
     // 신규 회원 등록 버튼
     const newMemberBtn = document.getElementById('newMemberBtn');
     if (newMemberBtn) {
@@ -8,17 +9,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 기존 회원 여부 확인 버튼
+    const checkMemberBtn = document.getElementById('btn-check-member');
+    if (checkMemberBtn) checkMemberBtn.addEventListener('click', checkExistingMember);
+
+    // 회원 확인 전 입력창 접근 제한
+    ['newName', 'newPhone', 'newStartDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('focus', () => {
+                if (el.disabled) {
+                    alert('먼저 회원 확인을 진행해주세요.');
+                    document.getElementById('newCarNumber').focus();
+                }
+            });
+        }
+    });
+
     // 회원권 결제 버튼
     const btnMembershipPayRemote = document.getElementById('btnMembershipPay');
-    if (btnMembershipPayRemote) {
-        btnMembershipPayRemote.addEventListener('click', openMembershipModal);
-    }
+    if (btnMembershipPayRemote) btnMembershipPayRemote.addEventListener('click', openMembershipModal);
 
     // 회원권 결제 영수증 버튼
     const payBtn = document.getElementById("btn-membership-submit");
-    payBtn.addEventListener("click", function() {
-        showMembershipReceipt();
-    });
+    if (payBtn) {
+        payBtn.addEventListener("click", function () {
+            // form submit 전에 hidden input에 값 넣고 제출
+            document.getElementById('newCarNumberHidden').value = document.getElementById('newCarNumber').value;
+            document.getElementById('newNameHidden').value = document.getElementById('newName').value;
+            document.getElementById('newPhoneHidden').value = document.getElementById('newPhone').value;
+            document.getElementById('newStartDateHidden').value = document.getElementById('newStartDate').value;
+            document.getElementById('newExpireDateHidden').value = document.getElementById('newExpireDate').value;
+
+            document.getElementById('newMemberForm').submit();
+        });
+    }
 
     // 회원권 결제 영수증 닫기 버튼
     const receiptCloseBtn = document.getElementById("btn-receipt-close-final");
@@ -27,29 +52,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const membershipModal = new bootstrap.Modal(document.getElementById("membershipPayModal"));
 
     // 회원권 결제 후 닫기 버튼
-    receiptCloseBtn.addEventListener("click", function() {
-        // 1. 알림
-        alert("회원권 결제가 완료되었습니다");
-
-        // 2. 모달 닫기
-        membershipModal.hide();
-
-        // 3. 모달 상태 초기화 (입력 영역 다시 보여주고, 영수증 영역 숨기기)
-        document.getElementById("mem-input-section").style.display = "block";
-        document.getElementById("mem-receipt-section").style.display = "none";
-        document.getElementById("mem-footer").style.display = "flex"; // 기존 버튼 다시 보여주기
-    });
+    if (receiptCloseBtn) {
+        receiptCloseBtn.addEventListener("click", () => {
+            alert("회원권 결제가 완료되었습니다");
+            membershipModal.hide(); // 모달 닫기
+            // 모달 상태 초기화
+            document.getElementById("mem-input-section").style.display = "block";
+            document.getElementById("mem-receipt-section").style.display = "none";
+            document.getElementById("mem-footer").style.display = "flex";
+        });
+    }
 
     // 결과 메시지 표시
     const flash = document.getElementById('flashMessage');
-    if (flash) {
-        const msg = flash.dataset.msg;
-        if (msg) alert(msg);
-    }
+    if (flash && flash.dataset.msg) alert(flash.dataset.msg);
 });
 
 /* ===================== 회원 선택 시 상세 모달 ===================== */
-function openViewModal(mno, car, name, phone, start, end) {
+function openViewModal(mno, car, name, phone, start, end, charge) {
     const viewModalEl = document.getElementById('viewMemberModal');
     viewModalEl.querySelector('#mno').value = mno;
     viewModalEl.querySelector('#viewCarNumber').textContent = car;
@@ -64,25 +84,56 @@ function openViewModal(mno, car, name, phone, start, end) {
 
 /* ===================== 회원권 결제 모달 ===================== */
 function openMembershipModal() {
-    const viewModalEl = document.getElementById('viewMemberModal');
-    const mno = viewModalEl.querySelector('#mno').value;
-    if (!mno) {
-        alert('회원을 먼저 선택해주세요.');
+    // 신규 회원 모달에서 호출된 경우 검증
+    const newCar = document.getElementById("newCarNumber");
+    const newCarValue = newCar ? newCar.value.trim() : "";
+
+    const memModalEl = document.getElementById('membershipPayModal');
+
+    // 신규 회원 모달에서 호출된 경우
+    if (newCarValue !== "") {
+        const msg = validateMember(
+            newCarValue,
+            document.getElementById("newName").value.trim(),
+            document.getElementById("newPhone").value.trim(),
+            document.getElementById("newStartDate").value.trim()
+        );
+
+        if (msg) {
+            alert(msg);
+            return;
+        }
+
+        memModalEl.querySelector('#memMno').value = "";
+        memModalEl.querySelector('#memCarNum').value = newCar.value;
+        memModalEl.querySelector('#memName').value = document.getElementById("newName").value;
+        memModalEl.querySelector('#memPhone').value = document.getElementById("newPhone").value;
+        memModalEl.querySelector('#memStartDate').value = document.getElementById("newStartDate").value;
+        memModalEl.querySelector('#memEndDate').value = document.getElementById("newExpireDate").value;
+
+        new bootstrap.Modal(memModalEl).show();
         return;
     }
 
-    // 회원 상세 모달 닫기
-    const viewModal = bootstrap.Modal.getInstance(viewModalEl);
-    if(viewModal) viewModal.hide();
+    // 기존 회원 상세 모달에서 호출된 경우
+    const viewModalEl = document.getElementById('viewMemberModal');
+    const mno = viewModalEl.querySelector('#mno').value.trim();
+    const carNum = viewModalEl.querySelector('#viewCarNumber').textContent.trim();
 
-    const memModalEl = document.getElementById('membershipPayModal');
+    if (!mno || !carNum) {
+        alert("선택된 차량 정보가 없습니다.");
+        return;
+    }
+
+    bootstrap.Modal.getInstance(viewModalEl)?.hide();
+
     memModalEl.querySelector('#memMno').value = mno;
-    memModalEl.querySelector('#memCarNum').value = viewModalEl.querySelector('#viewCarNumber').textContent;
+    memModalEl.querySelector('#memCarNum').value = carNum;
     memModalEl.querySelector('#memName').value = viewModalEl.querySelector('#viewName').textContent;
     memModalEl.querySelector('#memPhone').value = viewModalEl.querySelector('#viewPhone').textContent;
     memModalEl.querySelector('#memStartDate').value = viewModalEl.querySelector('#viewStartDate').textContent;
     memModalEl.querySelector('#memEndDate').value = viewModalEl.querySelector('#viewExpireDate').textContent;
-    memModalEl.querySelector('#memPrice').value = viewModalEl.querySelector('#viewCharge').textContent;;
+    memModalEl.querySelector('#memPrice').value = Number(viewModalEl.querySelector('#viewCharge').textContent).toLocaleString() + "원";
 
     new bootstrap.Modal(memModalEl).show();
 }
@@ -114,28 +165,69 @@ function showMembershipReceipt() {
 /* ===================== 신규 회원 입력 초기화 ===================== */
 function clearNewMemberInputs() {
     const today = new Date().toISOString().slice(0, 10);
-    ['newCarNumber', 'newName', 'newPhone'].forEach(id => {
+    const inputs = ['newName', 'newPhone', 'newStartDate'];
+
+    // 모든 입력창 초기화 및 비활성화
+    ['newCarNumber', ...inputs].forEach(id => {
         const el = document.getElementById(id);
-        if(el) el.value = '';
+        if (el) {
+            el.value = '';
+            if (inputs.includes(id)) el.disabled = true; // 회원 확인 전 비활성화
+        }
     });
 
     const startEl = document.getElementById('newStartDate');
     const endEl = document.getElementById('newExpireDate');
 
-    if(startEl) startEl.value = today; // 시작일 오늘 날짜
-    if(endEl && startEl) {
-        setEndDateBy30Days('newStartDate', 'newExpireDate'); // 만료일 자동 계산
+    if (startEl) startEl.value = today; // 시작일 오늘 날짜
+    if (endEl && startEl) setEndDateBy30Days('newStartDate', 'newExpireDate'); // 만료일 자동 계산
+}
+
+/* ===================== 기존 회원 여부 확인 버튼 클릭 ===================== */
+function checkExistingMember() {
+    const carNum = document.getElementById('newCarNumber').value.trim();
+    const carInput = document.getElementById('newCarNumber');
+
+    // 차량번호 미입력 검사 추가
+    const msg = validateMember(carNum);
+    if (msg) {
+        alert(msg);
+        carInput.focus();
+        return;
+    }
+
+    const mockMembers = [
+        {carNum: "12가3456", name: "홍길동", phone: "010-1111-2222"},
+        {carNum: "99나9999", name: "김철수", phone: "010-9999-8888"},
+        {carNum: "10가5678", name: "회원10", phone: "010-1111-1110"}
+    ];
+
+    const member = mockMembers.find(m => m.carNum === carNum);
+
+    // 회원 확인 후 입력창 활성화
+    ['newName', 'newPhone', 'newStartDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = false;
+    });
+
+    if (member) {
+        alert('등록된 회원 정보가 있습니다. 기존 정보로 입력을 진행합니다.')
+        document.getElementById('newName').value = member.name;
+        document.getElementById('newPhone').value = member.phone;
+    } else {
+        alert("등록된 정보가 없습니다. 신규 회원 정보를 입력해주세요.");
+        document.getElementById('newName').focus();
     }
 }
 
-/* ===================== 회원 정보 수정 버튼 ===================== */
+/* ===================== 회원 정보 수정 모달 ===================== */
 function openEditModal() {
     const viewModalEl = document.getElementById('viewMemberModal');
     const editModalEl = document.getElementById('editMemberModal');
 
     // 회원 상세 모달 닫기
     const viewModal = bootstrap.Modal.getInstance(viewModalEl);
-    if(viewModal) viewModal.hide();
+    if (viewModal) viewModal.hide();
 
     editModalEl.querySelector('#editMno').value = viewModalEl.querySelector('#mno').value;
     editModalEl.querySelector('#editCarNumber').value = viewModalEl.querySelector('#viewCarNumber').textContent;
@@ -146,14 +238,6 @@ function openEditModal() {
 
     new bootstrap.Modal(editModalEl).show();
 }
-
-/* ===================== 회원 삭제 모달 ===================== */
-// function handleDelete() {
-//     const viewModalEl = document.getElementById('viewMemberModal');
-//     const deleteModalEl = document.getElementById('deleteConfirmModal');
-//     deleteModalEl.querySelector('#deleteMno').value = viewModalEl.querySelector('#mno').value;
-//     new bootstrap.Modal(deleteModalEl).show();
-// }
 
 /* ===================== 자동 하이픈 ===================== */
 function autoHyphenPhone(input) {
@@ -168,24 +252,19 @@ function autoHyphenPhone(input) {
 
 /* ===================== 만료일 자동 계산 ===================== */
 function setEndDateBy30Days(startId, endId) {
-    const startEl = document.getElementById(startId);
-    const endEl = document.getElementById(endId);
-    if (!startEl || !endEl) return;
-
-    // 시작일 값 가져오기
-    const s = startEl.value;
+    const s = document.getElementById(startId).value;
     if (!s) return;
 
-    // YYYY-MM-DD 문자열을 분리해서 Date 객체 생성
-    const parts = s.split('-'); // [YYYY, MM, DD]
-    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    const parts = s.split('-');
+    const d = new Date(parts[0], parts[1] - 1, parts[2]); // 로컬 기준 생성
+
     d.setDate(d.getDate() + 30);
 
-    // 만료일에 반영
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    endEl.value = `${yyyy}-${mm}-${dd}`;
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+
+    document.getElementById(endId).value = `${year}-${month}-${day}`;
 }
 
 /* ===================== 회원 정보 입력 검증 ===================== */
@@ -193,9 +272,17 @@ function validateMember(carNum, name, phone, start, end = true) {
     const carPattern = /^[0-9]{2,3}[가-힣][0-9]{4}$/;
     const phonePattern = /^[0-9]{3}-[0-9]{4}-[0-9]{4}$/;
 
-    if (!carNum || !name || !phone || !start) return '필수 항목을 입력해주세요.';
+    // 차량번호 미입력 시
+    if (!carNum) return '차량 번호를 입력해주세요.';
+
+    // 차량번호 형식 오류
     if (!carPattern.test(carNum)) return '차량 번호 형식이 올바르지 않습니다.';
-    if (!phonePattern.test(phone)) return '연락처 형식이 올바르지 않습니다.';
+
+    // 나머지 필수값 검사 (회원권 결제용)
+    if (name !== undefined && phone !== undefined && start !== undefined) {
+        if (!name || !phone || !start) return '필수 항목을 입력해주세요.';
+        if (!phonePattern.test(phone)) return '연락처 형식이 올바르지 않습니다.';
+    }
     return null;
 }
 
@@ -207,7 +294,10 @@ function handleNewMemberSubmit() {
         document.getElementById('newPhone').value.trim(),
         document.getElementById('newStartDate').value.trim()
     );
-    if (msg) { alert(msg); return false; }
+    if (msg) {
+        alert(msg);
+        return false;
+    }
     return true;
 }
 
@@ -219,6 +309,9 @@ function handleEditSubmit() {
         document.getElementById('editPhone').value.trim(),
         document.getElementById('editStartDate').value.trim()
     );
-    if (msg) { alert(msg); return false; }
+    if (msg) {
+        alert(msg);
+        return false;
+    }
     return true;
 }
