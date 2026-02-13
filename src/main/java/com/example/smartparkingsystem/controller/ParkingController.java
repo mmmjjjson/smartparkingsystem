@@ -13,7 +13,7 @@ import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 
 @Log4j2
-@WebServlet(name = "parkingController", value = "/parking/*")
+//@WebServlet(name = "parkingController", value = "/parking/*")
 public class ParkingController extends HttpServlet {
     private final ParkingHistoryService parkingService = ParkingHistoryService.INSTANCE;
 

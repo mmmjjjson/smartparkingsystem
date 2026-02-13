@@ -258,9 +258,6 @@
     </div>
 </div>
 
-<!-- Axios 라이브러리 -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
 <!-- 주차 상태 처리 모달 -->
 <%@ include file="/web/main/parking_modal.jsp"%>
 <%@include file="/web/main/membershipPayModal.jsp"%>
@@ -270,6 +267,9 @@
 
 <!-- bootstrap JS (모달 동작용) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Axios 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <!-- 함수(날짜 형식, 주차 현황 숫자) 로직 JS -->
 <script src="${pageContext.request.contextPath}/web/main/main_function.js"></script>
@@ -284,7 +284,6 @@
 <script src="${pageContext.request.contextPath}/web/main/main_modal.js"></script>
 
 <!-- 회원권 결제 모달 JS -->
-<script src="${pageContext.request.contextPath}/web/main/main_membershipPay.js"></script>
-
+<%--<script src="${pageContext.request.contextPath}/web/main/@main_membershipPay.js"></script>--%>
 </body>
 </html>
