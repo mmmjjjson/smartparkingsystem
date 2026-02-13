@@ -116,6 +116,7 @@
 
     // 3. 전송 전 콤마 제거 함수 (서버 에러 방지)
     function prepareSubmit() {
+        alert('설정이 성공적으로 변경되었습니다.')
         moneyIds.forEach(id => {
             const input = document.getElementById(id);
             if (input) {
