@@ -1,10 +1,6 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.util.ConnectionUtil;
-import com.example.smartparkingsystem.vo.MembersVO;
-import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import com.example.smartparkingsystem.vo.PaymentHistoryVO;
-import com.example.smartparkingsystem.vo.PaymentInfoVO;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,7 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -61,7 +56,7 @@ public class PaymentHistoryDAO {
 
     public PaymentHistoryVO selectRecentPayment(String carNum) {
         PaymentHistoryVO paymentHistoryVO = null;
-        String sql = "SELECT * FROM payment_history WHERE car_num = ?" +
+        String sql = "SELECT * FROM payment_history WHERE car_num = ? AND exit_time IS NULL " +
                 "ORDER BY entry_time DESC LIMIT 1";
 
         try {
