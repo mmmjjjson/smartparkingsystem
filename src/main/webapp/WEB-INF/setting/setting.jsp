@@ -7,7 +7,6 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <!-- Pretendard 폰트 -->
     <link rel="stylesheet" as="style" crossorigin
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
     <title>스마트 주차 관리 시스템 - 설정</title>
@@ -18,10 +17,10 @@
 <body>
 <%@ include file="/web/common/header_other.jsp" %>
 <div class="container">
-    <form name="setting" action="/setting" method="post" class="setup-area">
+    <form name="setting" action="/setting" method="post" class="setup-area" onsubmit="return prepareSubmit()">
         <div class="title-bar">
             설정 관리 - 요금 및 할인 정책
-            <button class="save-btn" type="submit" onclick="saveSetting()">저장하기</button>
+            <button class="save-btn" type="submit">저장하기</button>
         </div>
 
         <div class="card">
@@ -30,7 +29,7 @@
                 <div class="input-item">
                     <label>기본 주차 요금(원)</label>
                     <input type="text" id="in-base-fee" value="<%=paymentInfoDTO.getBasicCharge()%>"
-                           oninput="formatFeeInputs()" name="basic_charge">
+                           name="basic_charge">
                 </div>
                 <div class="input-item">
                     <label>기본 주차 시간(분)</label>
@@ -39,7 +38,7 @@
                 <div class="input-item">
                     <label>일일 최대 요금(원)</label>
                     <input type="text" id="in-day-max-fee" value="<%=paymentInfoDTO.getMaxCharge()%>"
-                           oninput="formatFeeInputs()" name="max_charge">
+                           name="max_charge">
                 </div>
             </div>
         </div>
@@ -54,7 +53,7 @@
                 <div class="input-item">
                     <label>추가 요금(원)</label>
                     <input type="text" id="in-add-fee" value="<%=paymentInfoDTO.getExtraCharge()%>"
-                           oninput="formatFeeInputs()" name="extra_charge">
+                           name="extra_charge">
                 </div>
                 <div class="input-item">
                     <label>추가 요금 기준 시간(분)</label>
@@ -79,7 +78,7 @@
                 <div class="input-item">
                     <label>월 정액권(원)</label>
                     <input type="text" id="in-monthly-fee" value="<%=paymentInfoDTO.getMemberCharge()%>"
-                           oninput="formatFeeInputs()" name="member_charge">
+                           name="member_charge">
                 </div>
             </div>
         </div>
@@ -87,43 +86,44 @@
 </div>
 
 <script>
-    function saveSetting() {
-        alert('설정이 성공적으로 변경되었습니다.')
+    // 콤마를 적용할 대상 ID들 리스트
+    const moneyIds = ['in-base-fee', 'in-day-max-fee', 'in-add-fee', 'in-monthly-fee'];
+
+    // 1. 숫자에 콤마를 추가하는 함수
+    function formatNumber(e) {
+        let value = e.target.value.replace(/[^\d]/g, ""); // 숫자 외 제거
+        if (value) {
+            e.target.value = Number(value).toLocaleString('ko-KR');
+        } else {
+            e.target.value = "";
+        }
     }
 
+    // 2. 페이지 로드 시 초기값 설정 및 이벤트 바인딩
+    window.addEventListener('DOMContentLoaded', function() {
+        moneyIds.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                // 초기값 콤마 처리
+                if (input.value) {
+                    input.value = Number(input.value.replace(/[^\d]/g, "")).toLocaleString('ko-KR');
+                }
+                // 입력 시 실시간 처리
+                input.addEventListener('input', formatNumber);
+            }
+        });
+    });
 
-    // function formatNumber(val) {
-    //     if (!val) return "";
-    //     let num = val.toString().replace(/[^0-9.]/g, '');
-    //     return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    // }
-    //
-    // function formatFeeInputs() { //
-    //     const feeIds = ['in-base-fee', 'in-addInfo-fee', 'in-monthly-fee', 'in-day-max-fee'];
-    //     feeIds.forEach(id => {
-    //         let input = document.getElementById(id);
-    //         if(input) input.value = formatNumber(input.value);
-    //     });
-    // }
-    //
-    // function saveSettings() {
-    //     const data = {
-    //         baseFee: document.getElementById('in-base-fee').value.replace(/,/g, ''),
-    //         baseTime: document.getElementById('in-base-time').value,
-    //         dayMaxFee: document.getElementById('in-day-max-fee').value.replace(/,/g, ''),
-    //         addFee: document.getElementById('in-addInfo-fee').value.replace(/,/g, ''),
-    //         addTime: document.getElementById('in-addInfo-time').value,
-    //         freeTime: document.getElementById('in-free-time').value,
-    //         lightDis: document.getElementById('in-light-dis').value,
-    //         disabledDis: document.getElementById('in-disabled-dis').value,
-    //         monthlyFee: document.getElementById('in-monthly-fee').value.replace(/,/g, '')
-    //     };
-    //
-    //     console.log("저장될 데이터:", data);
-    //     alert('설정이 성공적으로 변경되었습니다.');
-    // }
-    //
-    // window.onload = formatFeeInputs;
+    // 3. 전송 전 콤마 제거 함수 (서버 에러 방지)
+    function prepareSubmit() {
+        moneyIds.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.value = input.value.replace(/,/g, ""); // 콤마 제거 후 전송
+            }
+        });
+        return true; // form 제출 진행
+    }
 </script>
 
 </body>
