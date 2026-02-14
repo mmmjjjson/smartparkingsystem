@@ -1,6 +1,6 @@
 // Step 2로 이동
 function goStep2() {
-    console.log("✅ Step 2로 이동");
+    console.log("Step 2로 이동");
     document.getElementById("step1").classList.add("d-none");
     document.getElementById("step2").classList.remove("d-none");
     document.getElementById("step1Circle").classList.remove("active");
@@ -10,7 +10,7 @@ function goStep2() {
 
 // Step 3로 이동
 function goStep3() {
-    console.log("✅ Step 3로 이동");
+    console.log("Step 3로 이동");
     document.getElementById("step2").classList.add("d-none");
     document.getElementById("step3").classList.remove("d-none");
     document.getElementById("step2Circle").classList.remove("active");
@@ -20,7 +20,7 @@ function goStep3() {
 
 // Step 1로 돌아가기
 function goBackToStep1() {
-    console.log("⬅️ Step 1로 돌아가기");
+    console.log("Step 1로 돌아가기");
     document.getElementById("step2").classList.add("d-none");
     document.getElementById("step1").classList.remove("d-none");
     document.getElementById("step2Circle").classList.remove("active");
@@ -30,12 +30,63 @@ function goBackToStep1() {
 
 // Step 2로 돌아가기
 function goBackToStep2() {
-    console.log("⬅️ Step 2로 돌아가기");
+    console.log("Step 2로 돌아가기");
+
+    // 돌아갈때 타이머 제거, OTP 인증완료칸 다시 활성화
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
     document.getElementById("step3").classList.add("d-none");
     document.getElementById("step2").classList.remove("d-none");
     document.getElementById("step3Circle").classList.remove("active");
     document.getElementById("step2Circle").classList.add("active");
-    document.getElementById("otpCode").value = '';
+    // document.getElementById("otpCode").value = '';
+    document.getElementById("otpCode").disabled = false;
+    document.getElementById("loginOtp").disabled = false;
+}
+
+// 타이머
+let timeLeft = 240; // 4분
+let timerInterval = null;
+
+function startTimer() {
+
+    // 기존 타이머 존재시 제거
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    timeLeft = 240;
+
+    const timerEl = document.getElementById("timer");
+
+    timerInterval = setInterval(() => {
+
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+
+        timerEl.innerText =
+            "남은 시간: " + minutes + ":" +
+            (seconds < 10 ? "0" : "") + seconds;
+
+        // 1분 이하 빨간색으로 변경
+        if (timeLeft <= 60) {
+            document.getElementById('timer').classList.remove('bg-info');
+            document.getElementById('timer').classList.add('bg-danger');
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            alert("인증 시간이 만료되었습니다.");
+            document.getElementById('otpCode').disabled = true;
+            document.getElementById('loginOtp').disabled = true;
+            return;
+        }
+        timeLeft--;
+
+    }, 1000);
+    window.onload = startTimer;
 }
 
 // Step 1 제출 (아이디/비밀번호)
@@ -71,7 +122,7 @@ function submitStep1(event) {
         })
 }
 
-// Step 2 제출 (이메일 확인) - 테스트용
+// Step 2 제출 (이메일 확인)
 function submitEmailStep(event) {
     event.preventDefault();
 
@@ -80,6 +131,9 @@ function submitEmailStep(event) {
         alert("이메일을 입력해주세요.");
         return;
     }
+
+    // 로딩 표시
+    showLoading()
 
     fetch("/login", {
         method: "POST",
@@ -91,20 +145,27 @@ function submitEmailStep(event) {
     })
         .then(res => {
             if (res.status === 200) {
+                document.getElementById('emailText').innerText = email + '로 전송된 인증번호를 입력하세요.'
                 goStep3();
+                // 이동후 타이머 시작
+                startTimer();
             } else {
                 alert('등록된 이메일과 일치하지 않습니다.')
             }
         })
+        .finally(() => {
+            // 요청, 응답 끝나면 무조건 로딩 종료
+            hideLoading()
+        })
 }
 
-// Step 3 제출 (OTP 인증) - 테스트용
+// Step 3 제출 (OTP 인증)
 function submitStep3(event) {
     event.preventDefault();
 
     const otpCode = document.getElementById('otpCode').value;
 
-    console.log("========== OTP 인증 요청 (테스트 모드) ==========");
+    console.log("OTP 인증 요청");
     console.log("OTP 입력:", otpCode);
 
     if (otpCode.length !== 6) {
@@ -122,15 +183,16 @@ function submitStep3(event) {
     })
         .then(res => {
             if (res.status === 200) {
+                clearInterval(timerInterval);
                 alert("OTP 인증 성공")
-                window.location.href = "../../web/main/main.jsp"; // 경로 수정
+                window.location.href = "../../web/main/main.jsp"; // 변경시 경로 수정
             } else if (res.status === 401) {
                 alert("OTP가 일치하지 않음")
             } else if (res.status === 403) {
+                clearInterval(timerInterval);
                 alert("OTP 만료")
-            }
-            else {
-                alert("[Error] 알 수 없는 오류")
+            } else {
+                alert("[ERROR] 알 수 없는 오류")
             }
         })
 

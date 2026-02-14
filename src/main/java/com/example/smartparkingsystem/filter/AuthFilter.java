@@ -22,7 +22,9 @@ public class AuthFilter implements Filter {
         String uri = req.getRequestURI();
         String loginPath = "/login";
         String passwordPath = "/password";
+        String logoutPath = "/logout";
         String mypagePath = "/main/mypage";
+        String mypageEmail = "/web/emailVerification.jsp";
 
         // 속성 파일 필터 제외
         if (uri.endsWith(".css") || uri.endsWith(".js") ||
@@ -39,8 +41,8 @@ public class AuthFilter implements Filter {
             resp.setHeader("Expires", "0");
         }
 
-        // 제외 폴더 지정
-        if (uri.startsWith(loginPath) || uri.startsWith(passwordPath)) {
+        // 제외 폴더 지정 (로그인, 비밀번호 재설정, 로그아웃)
+        if (uri.startsWith(loginPath) || uri.startsWith(passwordPath) || uri.startsWith(logoutPath) || uri.startsWith(mypageEmail)) {
             chain.doFilter(request, response);
             return;
         }

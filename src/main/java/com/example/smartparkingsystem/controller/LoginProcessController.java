@@ -8,6 +8,7 @@ import com.example.smartparkingsystem.service.ValidationService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -56,7 +57,7 @@ public class LoginProcessController extends HttpServlet {
             return;
         }
 
-        // 로그인 성공시 임시 세션
+        // 로그인 성공시 임시 세션생성
         HttpSession session = req.getSession();
         session.setAttribute("tempAdminId", adminId);
         resp.setStatus(HttpServletResponse.SC_OK); // 200 (승인)
@@ -67,6 +68,7 @@ public class LoginProcessController extends HttpServlet {
         String email = req.getParameter("email");
         HttpSession session = req.getSession();
         String tempAdminId = (String) session.getAttribute("tempAdminId");
+        // TODO 이건 왜 만들었는지 기억이 안남
 //        String otpCode = validationService.getOTP(tempAdminId).getOtpCode();
 
         // step1의 임시세션에 아이디 없으면 400에러
@@ -82,8 +84,6 @@ public class LoginProcessController extends HttpServlet {
             // Step3로 들어갈때 바로 발송
             validationService.otpShipment(tempAdminId);
 
-            // otp임시세션 생성 4분 유효기간
-//            session.setAttribute("otpExpired", System.currentTimeMillis() + (4 * 60 * 1000));
             resp.setStatus(HttpServletResponse.SC_OK);
         } else {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -95,10 +95,7 @@ public class LoginProcessController extends HttpServlet {
         HttpSession session = req.getSession();
         String tempAdminId = (String) session.getAttribute("tempAdminId"); // 임시 세션
         String otpCode = req.getParameter("otpCode");
-//        String otpExpired = (String) session.getAttribute("otpExpired"); // 세션 고민중
-
         System.out.println("Step3 otpCode: " + otpCode);
-//        System.out.println("Step3 otpExpired: " + otpExpired); // 세션
 
         String resultOTP = otpDB(tempAdminId, otpCode); // 문자열로 결과 받는 변수
 
@@ -139,7 +136,7 @@ public class LoginProcessController extends HttpServlet {
     // OTP 인증, 발송 헬퍼 메서드
     private String otpDB(String adminId, String otpCode) {
         ValidationDTO validationDTO = validationService.getOTP(adminId);
-        String otp = validationDTO.getOtpCode();
+//        String otp = validationDTO.getOtpCode();
 
         if (LocalDateTime.now().isAfter(validationDTO.getExpiredTime())) {
             return "Expired"; // 만료

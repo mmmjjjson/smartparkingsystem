@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class AdminVO {
     private String adminId; // 관리자 아이디(PK)
     private String password; // 관리자 비밀번호
-//    private String birth; // 생년월일
+//    private String birth; // TODO 생년월일 (불필요 DB삭제)
     private String adminName; // 관리자 이름
     private String adminEmail; // 관리자 이메일(UNIQUE)
     private boolean isActive; // 활동 여부 (계정활동 허용, 비허용)

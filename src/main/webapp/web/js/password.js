@@ -1,6 +1,6 @@
 // Step 2로 이동
 function goStep2() {
-    console.log("✅ Step 2로 이동");
+    console.log("Step 2로 이동");
     document.getElementById("step1").classList.add("d-none");
     document.getElementById("step2").classList.remove("d-none");
     document.getElementById("inputEmail").focus();
@@ -8,7 +8,7 @@ function goStep2() {
 
 // Step 3로 이동
 function goStep3() {
-    console.log("✅ Step 3로 이동");
+    console.log("Step 3로 이동");
     document.getElementById("step2").classList.add("d-none");
     document.getElementById("step3").classList.remove("d-none");
     document.getElementById("inputVerificationCode").focus();
@@ -16,7 +16,7 @@ function goStep3() {
 
 // ClearStep 로 이동
 function ClearStep() {
-    console.log("✅ Clear Step");
+    console.log("Clear Step");
     document.getElementById("step3").classList.add("d-none");
     document.getElementById("clearStep").classList.remove("d-none");
 }
@@ -30,9 +30,57 @@ function goBackToStep1() {
 
 // Step 2로 돌아가기
 function goBackToStep2() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+
     document.getElementById("step3").classList.add("d-none");
     document.getElementById("step2").classList.remove("d-none");
     document.getElementById("inputVerificationCode").value = '';
+    document.getElementById('inputVerificationCode').disabled = false;
+    document.getElementById('goStep').disabled = false;
+}
+
+// 타이머
+let timeLeft = 240; // 4분
+let timerInterval = null;
+
+function startTimer() {
+
+    // 기존 타이머 존재시 제거
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    timeLeft = 240;
+
+    const timerEl = document.getElementById("timer");
+
+    timerInterval = setInterval(() => {
+
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+
+        timerEl.innerText =
+            "남은 시간: " + minutes + ":" +
+            (seconds < 10 ? "0" : "") + seconds;
+
+        // 1분 이하 빨간색으로 변경
+        if (timeLeft <= 60) {
+            document.getElementById('timer').classList.remove('bg-info');
+            document.getElementById('timer').classList.add('bg-danger');
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            alert("인증 시간이 만료되었습니다.");
+            document.getElementById('inputVerificationCode').disabled = true;
+            document.getElementById('goStep').disabled = true;
+            return;
+        }
+        timeLeft--;
+
+    }, 1000);
+    window.onload = startTimer;
 }
 
 // Step 1 제출 (아이디 확인)
@@ -68,6 +116,8 @@ function submitStep2(event) {
         return;
     }
 
+    showLoading()
+
     fetch("/password", {
         method: "POST",
         headers: {
@@ -79,9 +129,14 @@ function submitStep2(event) {
             if (res.status === 200) {
                 document.getElementById("emailText").innerText = email + "로 인증번호를 발송했습니다.";
                 goStep3();
+                startTimer();
             } else {
                 alert('입력하신 정보가 일치하지 않습니다.')
             }
+        })
+        .finally(() => {
+            // 요청, 응답 끝나면 무조건 로딩 종료
+            hideLoading()
         })
 }
 
@@ -89,7 +144,6 @@ function submitStep2(event) {
 function submitStep3(event) {
     event.preventDefault();
 
-    // const email = document.getElementById('verificationForm').value;
     const otpCode = document.getElementById('inputVerificationCode').value;
 
     if (otpCode.length !== 6) {

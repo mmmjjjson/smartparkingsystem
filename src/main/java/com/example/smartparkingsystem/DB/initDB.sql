@@ -104,12 +104,16 @@ CREATE TABLE IF NOT EXISTS `payment_history`
     CONSTRAINT `fk_park_no` FOREIGN KEY (`park_no`) REFERENCES parking_history (`park_no`)
 ) COMMENT '주차 요금';
 
+
 CREATE TABLE IF NOT EXISTS `validation`
 (
-    `no` int auto_increment primary key,
-    `admin_id` varchar(20) not null,
-    `otp_code` char(6) not null,
-    `admin_email` varchar(50) not null,
-    `expired_time` datetime not null comment '만료시간',
-    CONSTRAINT `fk_admin_id_otp` FOREIGN KEY (`admin_id`) REFERENCES admin (`admin_id`)
-);
+    NO           INT AUTO_INCREMENT COMMENT '인덱스'
+        PRIMARY KEY,
+    ADMIN_ID     VARCHAR(20) NOT NULL COMMENT 'FK 관리자 아이디',
+    OTP_CODE     CHAR(6)     NOT NULL COMMENT 'OTP',
+    ADMIN_EMAIL  VARCHAR(50) NOT NULL COMMENT '관리자 이메일 (OTP보낸 이메일)',
+    EXPIRED_TIME DATETIME    NOT NULL COMMENT '만료시간',
+    CONSTRAINT FK_ADMIN_ID_OTP
+        FOREIGN KEY (ADMIN_ID) REFERENCES ADMIN (ADMIN_ID)
+)
+    COMMENT 'OTP 로그';

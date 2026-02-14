@@ -30,7 +30,8 @@ public class ValidationDAO {
         }
     }
 
-//    // OTP 기록 조회
+    // TODO 필요없을거같아서 주석 (제거?)
+//    // OTP 기록 조회 (전체 조회 할일이 있을까?)
 //    public List<ValidationVO> selectOTP() {
 //        List<ValidationVO> validationVOList = new ArrayList<>();
 //        String sql = "SELECT * FROM validation";
@@ -54,6 +55,7 @@ public class ValidationDAO {
 //        } return validationVOList;
 //    }
 
+    // 관리자 아이디로 가장 최근에 추가한 OTP조회
     public ValidationVO selectOTPOne(String adminId) {
         String sql = "SELECT * FROM validation WHERE admin_id = ? ORDER BY no DESC LIMIT 1";
 

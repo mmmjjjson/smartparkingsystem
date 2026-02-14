@@ -29,13 +29,6 @@ class ValidationDAOTest {
     }
 
     @Test
-    public void LogOTPSelect() {
-        for (ValidationVO validationVO : validationDAO.selectOTP()) {
-            log.info(validationVO);
-        }
-    }
-
-    @Test
     public void LogOTPSelectOne() {
         log.info(validationDAO.selectOTPOne("test1"));
     }

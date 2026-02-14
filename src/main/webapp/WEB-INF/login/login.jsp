@@ -9,8 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/web/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="/web/js/loading.js"></script>
     <script src="/web/js/login.js"></script>
-    <script src="/web/js/emailVerification.js"></script>
 
     <%-- 템플릿 수정 css --%>
     <style>
@@ -142,12 +142,11 @@
                                 <div id="step3" class="d-none">
                                     <div class="text-center mb-3">
                                         <i class="fas fa-envelope fa-3x text-primary mb-2"></i>
-                                        <p class="small text-muted">
-                                            등록된 이메일로 전송된 인증번호를 입력하세요.
+                                        <p class="small text-muted" id="emailText">
                                         </p>
                                     </div>
                                     <div class="text-center mb-4">
-                                        <span class="badge bg-info" id="timer">04:00</span>
+                                        <span class="badge bg-info" id="timer">남은 시간: 4:00</span>
                                     </div>
 
                                     <form id="otpForm" onsubmit="submitStep3(event); return false;">
@@ -168,7 +167,7 @@
                                                     onclick="goBackToStep2()">
                                                 이전
                                             </button>
-                                            <button type="submit" class="btn btn-success flex-fill">
+                                            <button type="submit" class="btn btn-success flex-fill" id="loginOtp">
                                                 인증 완료
                                             </button>
                                         </div>
@@ -192,4 +191,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script>
+    // 개발자도구 금지
+    (function() {
+        // 우클릭 방지
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U 차단
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    })();
+</script>
 </html>

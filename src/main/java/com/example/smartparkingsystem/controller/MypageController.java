@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -38,17 +39,17 @@ public class MypageController extends HttpServlet {
         switch (box) {
             case "1" -> box1(req, resp);
             case "2" -> box2(req, resp);
+            case "returnOTP" -> returnOTP(req, resp); // OTP 재발송 따로 분리
             default -> resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
     // 첫번째 박스 (이메일 수정칸)
     private void box1 (HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
-    /*
-    TODO 이메일 변경도 구현 (팝업창 띄워서 이메일 인증하는 형식 + 3분 타이머 추가)
-     OTP연결시 제한시간 3분 (내일 이메일 인증칸 타이머 다 넣기)
-     현재 팝업창에서 otpCode 가져온거 비교해서 하드코딩된 otpCode 비교 해야함
-    */
+        /*
+        이메일 변경 구현 (팝업창 띄워서 이메일 인증하는 형식 + 4분 타이머 추가)
+        OTP연결시 제한시간 4분
+        */
         HttpSession session = req.getSession(false);
         String adminId = (String) session.getAttribute("adminId");
         String otpCode = req.getParameter("otpCode");
@@ -65,8 +66,7 @@ public class MypageController extends HttpServlet {
         }
 
         // OTP코드 인증 여부
-
-        if (newEmail == null && otpCode != null) {
+        if (newEmail == null) {
             String resultOTP = validateOtp(adminId, otpCode);
 
             if ("Success".equals(resultOTP)) {
@@ -81,7 +81,7 @@ public class MypageController extends HttpServlet {
 
 
         // 이메일 변경
-        if (newEmail != null && otpCode == null) {
+        if (otpCode == null) {
             AdminDTO adminDTO = AdminDTO.builder()
                     .adminId(adminId)
                     .password(adminService.getAdminById(adminId).getPassword())
@@ -101,13 +101,14 @@ public class MypageController extends HttpServlet {
         String adminId = (String) session.getAttribute("adminId");
         String password = req.getParameter("password");
         String newPassword = req.getParameter("newPassword");
+        String newPasswordBCrypt = BCrypt.hashpw(newPassword, BCrypt.gensalt(12));
         String email = adminService.getAdminById(adminId).getAdminEmail();
-//        String newEmail = (String) session.getAttribute("email"); // 이거 왜 했지 세션
 
 
         log.info("Box2 Admin id : {}", adminId);
         log.info("Box2 Password : {}", password);
         log.info("Box2 New Password : {}", newPassword);
+        log.info("Box2 New Password BCrypt : {}", newPasswordBCrypt);
         log.info("Box2 Email : {}", email);
 
 
@@ -116,14 +117,19 @@ public class MypageController extends HttpServlet {
             return;
         }
 
-        if (adminService.getAdminById(adminId).getPassword().equals(password)) {
-            // DB비밀번호와 일치함
+        // 암호화된 비밀번호와 사용자가 입력한 비밀번호 비교
+        boolean checkPw = BCrypt.checkpw(password, adminService.getAdminById(adminId).getPassword());
+
+        // DB비밀번호와 일치함
+        if (checkPw) {
+
             AdminDTO adminDTO = AdminDTO.builder()
                     .adminId(adminId)
-                    .password(newPassword)
+                    .password(newPasswordBCrypt) // 변경
                     .adminEmail(email)
                     .isPasswordReset(false) // 변경
                     .build();
+
             adminService.modifyAdmin(adminDTO);
             resp.setStatus(HttpServletResponse.SC_OK);
         } else {
@@ -131,11 +137,20 @@ public class MypageController extends HttpServlet {
         }
     }
 
+    private void returnOTP (HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession(false);
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+        validationService.otpShipment(adminId);
+        resp.setStatus(HttpServletResponse.SC_OK);
+    }
+
     // OTP 인증 헬퍼 메서드
     private String validateOtp(String adminId, String otpCode) {
         ValidationDTO validationDTO = validationService.getOTP(adminId);
-        String otp = validationDTO.getOtpCode();
-
         if (LocalDateTime.now().isAfter(validationDTO.getExpiredTime())) {
             return "Expired"; // 만료
         }

@@ -19,7 +19,7 @@ function updatePassword(event) {
         return;
     }
 
-    // TODO 수정 필요 현재비밀번호가 일치하지 않아도 조건달성, 재설정후 최초 로그인시 로그아웃 불가능 버그 고쳐야함
+    // TODO DB에 저장돼있는 비밀번호와 틀려도 동일하다고 뜸 고쳐야함
     if (password === newPassword) {
         alert('현재 비밀번호와 동일합니다. 다른 비밀번호를 입력해주세요.')
         return;
@@ -42,17 +42,20 @@ function updatePassword(event) {
         })
 }
 
-// TODO 사실상 이메일만 변경이라 버튼이름을 정보수정 말고 이메일변경으로 할까 고민중
 // 이메일 변경칸 (OTP 인증)
 function openEmailVerification() {
     const newEmail = document.getElementById("email").value;
+
+    // TODO 변경시 경로 수정
     const url = "/web/emailVerification.jsp?email=" + newEmail; // 파라미터 전달
 
-    // 유효성 검사
+    // 유효성 검사 (이메일 입력시 @가 있는지 없는지 검사)
     if (!newEmail || !newEmail.includes('@')) {
         alert('올바른 형식으로 입력해주세요.')
         return;
     }
+
+    showLoading()
 
     fetch("/main/mypage", {
         method: "POST",
@@ -70,10 +73,23 @@ function openEmailVerification() {
                 alert('Error 알 수 없는 에러 발생')
             }
         })
-
-
+        .finally(() => {
+            // 요청, 응답 끝나면 무조건 로딩 종료
+            hideLoading()
+        })
 }
 
+// 인증 성공시 정보 수정 버튼 활성화
+function onEmailVerified() {
+    const btn = document.getElementById("updateEmail")
+
+    alert('이메일 인증이 완료되었습니다.')
+    document.getElementById('email').disabled = true;
+    document.getElementById('emailCertified').disabled = true;
+    btn.disabled = false;
+    btn.classList.remove("btn-primary");
+    btn.classList.add("btn-success");
+}
 
 // 이메일 수정
 function submitUpdateEmail(event) {
@@ -94,19 +110,12 @@ function submitUpdateEmail(event) {
                 alert('이메일 변경완료')
                 document.getElementById('updateEmail').disabled = true; // 변경후 다시 비활성화
                 document.getElementById('email').disabled = false;
+                document.getElementById('emailCertified').disabled = false;
+                document.getElementById("updateEmail").classList.remove("btn-success");
+                document.getElementById("updateEmail").classList.add("btn-primary");
+
             } else {
                 alert('Error 알 수 없는 에러')
             }
         })
-}
-
-// 인증 성공시 정보 수정 버튼 활성화
-function onEmailVerified() {
-    const btn = document.getElementById("updateEmail")
-
-    alert('이메일 인증이 완료되었습니다.')
-    document.getElementById('email').disabled = true;
-    btn.disabled = false;
-    btn.classList.remove("btn-primary");
-    btn.classList.add("btn-success");
 }

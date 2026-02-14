@@ -43,6 +43,8 @@ public class LoginPasswordController extends HttpServlet {
             default -> resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
+
+    // DB에 아이디가 있는지 확인 (없어도 넘어감)
     public void step1(HttpServletRequest req, HttpServletResponse resp) {
         String adminId = req.getParameter("adminId");
         if (adminId == null || adminId.trim().isEmpty()) {
@@ -59,8 +61,10 @@ public class LoginPasswordController extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
+
+    // DB에 아이디가 있으면 해당하는 레코드에 이메일 확인 (Step1에서 부터 401응답을 받으면 무슨 값을 넣어도 에러)
     public void step2(HttpServletRequest req, HttpServletResponse resp) {
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
         String adminId = (String) session.getAttribute("logAdminId");
         String email = req.getParameter("email");
         log.info("step2 adminId: {}", adminId);
@@ -75,7 +79,7 @@ public class LoginPasswordController extends HttpServlet {
         }
     }
     public void step3(HttpServletRequest req, HttpServletResponse resp) {
-        HttpSession session = req.getSession(false);
+        HttpSession session = req.getSession();
         String adminId = (String) session.getAttribute("logAdminId");
 //        String email = (String) session.getAttribute("logEmail");
         String otpCode = req.getParameter("otpCode");
@@ -85,6 +89,7 @@ public class LoginPasswordController extends HttpServlet {
 
         if ("Success".equals(resultOTP)) {
 
+            // TODO 이것도 필요없을듯 제거
 //            // 12자리 랜덤 UUID 생성
 //            String newPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
 //
@@ -96,6 +101,8 @@ public class LoginPasswordController extends HttpServlet {
 //                    .isPasswordReset(true) // 변경
 //                    .build();
 //            adminService.modifyAdmin(adminDTO);
+
+            // 랜덤키 메일로 발송과 동시에 비밀번호 변경
             validationService.uuidPassword(adminId);
 
             session.removeAttribute("logAdminId");

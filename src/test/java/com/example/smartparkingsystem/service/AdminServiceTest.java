@@ -30,7 +30,7 @@ class AdminServiceTest {
 
     @Test
     public void adminLogin() {
-        log.info(adminService.AuthenticateAdmin("test", "1111"));
+        log.info(adminService.AuthenticateAdmin("admin", "1234"));
     }
 
     @Test

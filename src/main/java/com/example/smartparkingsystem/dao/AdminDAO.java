@@ -14,6 +14,7 @@ import java.util.List;
 
 public class AdminDAO {
 
+    // TODO 필요한가?
     // 관리자 계정 조회
     public List<AdminVO> selectAllAdmin() {
         List<AdminVO> adminVOList = new ArrayList<>();
@@ -86,6 +87,7 @@ public class AdminDAO {
         }
     }
 
+    // TODO 필요없을거같아서 주석 (제거?)
 //    // 비밀번호 변경
 //    public void updatePassword(String password, String adminId) {
 //        String sql = "UPDATE admin SET password = ? WHERE admin_id = ?";
@@ -115,6 +117,7 @@ public class AdminDAO {
         }
     }
 
+    // TODO 필요없을거같아서 주석 (제거?)
     // 계정 삭제
 //    public void deleteAdmin(String admin_id) {
 //        String sql = "DELETE FROM admin WHERE admin_id = ?";

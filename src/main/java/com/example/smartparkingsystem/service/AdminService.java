@@ -4,6 +4,7 @@ import com.example.smartparkingsystem.dao.AdminDAO;
 import com.example.smartparkingsystem.dto.AdminDTO;
 import com.example.smartparkingsystem.util.MapperUtil;
 import com.example.smartparkingsystem.vo.AdminVO;
+import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public enum AdminService {
         modelMapper = MapperUtil.INSTANCE.getInstance();
     }
 
+    // TODO 사용안했음 (제거?)
     // 전체 조회
     public List<AdminDTO> getAdminAll() {
         List<AdminDTO> adminDTOList = new ArrayList<>();
@@ -42,11 +44,8 @@ public enum AdminService {
 
     // 로그인 인증 (활동여부 사용중 True, 사용중지 False)
     public boolean AuthenticateAdmin(String adminId, String password) {
-        boolean isAuth = false;
         AdminDTO admin = getAdminById(adminId);
-        if (admin != null && admin.getPassword().equals(password)) {
-            isAuth = true;
-        } return isAuth;
+        return admin != null && BCrypt.checkpw(password, admin.getPassword());
     }
 
     // 로그
@@ -54,6 +53,7 @@ public enum AdminService {
         adminDAO.updateLog(adminId, lastLoginIp);
     }
 
+    // TODO 사용안함 주석 (제거?)
     // 비밀번호 변경
 //    public void changePassword(String adminId, String password) {
 //        adminDAO.updatePassword(password, adminId);
@@ -65,6 +65,7 @@ public enum AdminService {
         adminDAO.updateAdmin(adminVO);
     }
 
+    // TODO 필요없을거같아서 주석 (제거?)
     // 계정 삭제
 //    public void removeAdmin(String admin_id) {
 //        adminDAO.deleteAdmin(admin_id);
