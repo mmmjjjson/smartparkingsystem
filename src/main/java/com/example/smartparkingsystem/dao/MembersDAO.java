@@ -4,7 +4,6 @@ import com.example.smartparkingsystem.vo.MembersVO;
 import lombok.Cleanup;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,20 +45,6 @@ public class MembersDAO {
         }
     }
 
-    // 회원 삭제
-//    public void deleteMember(Long mno) {
-//        String sql = "DELETE FROM members WHERE mno = ?";
-//
-//        try {
-//            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
-//            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
-//            preparedStatement.setLong(1, mno);
-//            preparedStatement.executeUpdate();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     // 전체 회원 목록 조회
     public List<MembersVO> selectAllMembers() {
         List<MembersVO> membersVOList = new ArrayList<>();
@@ -95,6 +80,35 @@ public class MembersDAO {
             preparedStatement.setString(1, carNum);
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
+                MembersVO membersVO = MembersVO.builder()
+                        .mno(resultSet.getLong("mno"))
+                        .carNum(resultSet.getString("car_num"))
+                        .memberName(resultSet.getString("member_name"))
+                        .memberPhone(resultSet.getString("member_phone"))
+                        .startDate(resultSet.getDate("start_date").toLocalDate())
+                        .endDate(resultSet.getDate("end_date").toLocalDate())
+                        .memberCharge(resultSet.getInt("member_charge"))
+                        .build();
+
+                return membersVO;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    // 가장 최근 등록된 회원 조회
+    public MembersVO selectMemberByCarNum(String carNum) {
+        String sql = "SELECT * FROM members WHERE car_num = ? ORDER BY end_date DESC LIMIT 1";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, carNum);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
                 MembersVO membersVO = MembersVO.builder()
                         .mno(resultSet.getLong("mno"))
                         .carNum(resultSet.getString("car_num"))
@@ -167,7 +181,7 @@ public class MembersDAO {
         return membersVOList;
     }
 
-    // 회원 목록 페이징
+    // 회원 목록 전체 개수
     public int selectMemberCount(String searchType, String keyword, String status) {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM members WHERE 1=1");
 
@@ -181,22 +195,24 @@ public class MembersDAO {
                 case "carNum":
                     column = "car_num";
                     break;
-                case "name":
+                case "memberName":
                     column = "member_name";
                     break;
-                case "phone":
+                case "memberPhone":
                     column = "member_phone";
                     break;
                 default:
                     throw new IllegalArgumentException("잘못된 검색 타입");
             }
             sql.append(" AND ").append(column).append(" LIKE ? ");
-        } else  {
+        } else {
             // 검색 키워드가 없으면 status 필터 적용 (회원 or 비회원 하나만 조회)
-            if ("expired".equals(status)) {
-                sql.append(" AND end_date < CURDATE()"); // 비회원
-            } else {
-                sql.append(" AND end_date >= CURDATE()"); // 회원
+            if (status != null) {
+                if ("expired".equals(status)) {
+                    sql.append(" AND end_date < CURDATE()");
+                } else if ("active".equals(status)) {
+                    sql.append(" AND end_date >= CURDATE()");
+                }
             }
         }
 
@@ -218,5 +234,72 @@ public class MembersDAO {
         }
 
         return count;
+    }
+
+    // 회원 목록 페이징
+    public List<MembersVO> selectMemberList(String searchType, String keyword, String status, int offset, int limit) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM members WHERE 1=1");
+
+        boolean isSearch = keyword != null && !keyword.isEmpty() && searchType != null && !searchType.isEmpty();
+
+        if (isSearch) {
+            String column;
+            switch (searchType) {
+                case "carNum":
+                    column = "car_num";
+                    break;
+                case "memberName":
+                    column = "member_name";
+                    break;
+                case "memberPhone":
+                    column = "member_phone";
+                    break;
+                default:
+                    throw new IllegalArgumentException("잘못된 검색 타입");
+            }
+            sql.append(" AND ").append(column).append(" LIKE ? ");
+        } else {
+            if (status != null) {
+                if ("expired".equals(status)) {
+                    sql.append(" AND end_date < CURDATE()");
+                } else {
+                    sql.append(" AND end_date >= CURDATE()");
+                }
+            }
+        }
+
+        sql.append(" ORDER BY mno DESC LIMIT ?, ?");
+
+        List<MembersVO> membersVOList = new ArrayList<>();
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+
+            int index = 1;
+
+            if (isSearch) {
+                preparedStatement.setString(index++, "%" + keyword + "%");
+            }
+            preparedStatement.setInt(index++, offset);
+            preparedStatement.setInt(index, limit);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                MembersVO membersVO = MembersVO.builder()
+                        .mno(resultSet.getLong("mno"))
+                        .carNum(resultSet.getString("car_num"))
+                        .memberName(resultSet.getString("member_name"))
+                        .memberPhone(resultSet.getString("member_phone"))
+                        .startDate(resultSet.getDate("start_date").toLocalDate())
+                        .endDate(resultSet.getDate("end_date").toLocalDate())
+                        .memberCharge(resultSet.getInt("member_charge"))
+                        .build();
+                membersVOList.add(membersVO);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return membersVOList;
     }
 }

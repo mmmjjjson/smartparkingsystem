@@ -32,9 +32,5 @@
             .build();
 
     membersService.addMember(member);
-
-    session.setAttribute("flashMsg", "회원이 정상적으로 등록되었습니다.");
-    response.sendRedirect("/member_list.do");
-
     return;
 %>

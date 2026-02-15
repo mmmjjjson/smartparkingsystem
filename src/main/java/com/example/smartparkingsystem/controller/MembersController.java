@@ -1,5 +1,6 @@
 package com.example.smartparkingsystem.controller;
 
+import com.example.smartparkingsystem.dao.PaymentInfoDAO;
 import com.example.smartparkingsystem.dto.MembersDTO;
 import com.example.smartparkingsystem.dto.PageRequestDTO;
 import com.example.smartparkingsystem.dto.PageResponseDTO;
@@ -49,9 +50,31 @@ public class MembersController extends HttpServlet {
                     return;
                 }
 
+                String pageNumStr = req.getParameter("pageNum");
+
+                if (pageNumStr == null) {
+
+                    String status = req.getParameter("status");
+                    String searchType = req.getParameter("searchType");
+                    String keyword = req.getParameter("keyword");
+
+                    StringBuilder redirectURL = new StringBuilder("/member_list.do?pageNum=1");
+
+                    if (status != null) redirectURL.append("&status=").append(status);
+                    if (searchType != null) redirectURL.append("&searchType=").append(searchType);
+                    if (keyword != null) redirectURL.append("&keyword=").append(keyword);
+
+                    resp.sendRedirect(redirectURL.toString());
+                    return;
+                }
+
                 String searchType = req.getParameter("searchType");
                 String keyword = req.getParameter("keyword");
                 String status = req.getParameter("status");
+
+                if (status == null || status.isEmpty()) {
+                    status = "active";
+                }
 
                 int pageNum = 1;
 
@@ -69,8 +92,32 @@ public class MembersController extends HttpServlet {
                 PageResponseDTO pageResponseDTO = membersService.getMemberList(pageRequestDTO);
                 req.setAttribute("pageResponseDTO", pageResponseDTO);
 
+                // 결제 정보 가져오기
+                int memberCharge = PaymentInfoDAO.getInstance().selectInfo().getMemberCharge();
+                req.setAttribute("memberCharge", memberCharge);
+
                 RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/members/member_list.jsp");
                 requestDispatcher.forward(req, resp);
+            }
+
+            case "/member_check.do" -> { // 기존 회원 여부 확인
+                log.info("기존 회원 여부 확인");
+
+                String carNum = req.getParameter("carNum");
+
+                MembersDTO membersDTO = membersService.getMemberOne(carNum);
+
+                if (membersDTO != null) {
+                    // 기존 회원 있음
+                    session.setAttribute("checkResult", "found");
+                    session.setAttribute("memberDTO", membersDTO);
+                } else {
+                    // 기존 회원 없음
+                    session.setAttribute("checkResult", "notFound");
+                    session.setAttribute("searchCarNum", carNum);
+                }
+
+                resp.sendRedirect("/member_list.do?pageNum=1");
             }
 
             case "/member_add.do" -> { // 신규 회원 등록
@@ -81,6 +128,7 @@ public class MembersController extends HttpServlet {
                 String memberPhone = req.getParameter("memberPhone");
                 LocalDate startDate = LocalDate.parse(req.getParameter("startDate"));
                 LocalDate endDate = LocalDate.parse(req.getParameter("endDate"));
+                String isExistingMember = req.getParameter("isExistingMember");
 
                 MembersDTO membersDTO = MembersDTO.builder()
                         .carNum(carNum)
@@ -92,10 +140,14 @@ public class MembersController extends HttpServlet {
 
                 membersService.addMember(membersDTO);
 
-                membersService.modifyMember(membersDTO);
-
                 session = req.getSession();
-                session.setAttribute("flashMsg", "회원이 등록되었습니다.");
+                session.removeAttribute("searchCarNum");
+
+                if ("true".equals(isExistingMember)) {
+                    session.setAttribute("flashMsg", "회원권이 연장되었습니다.");
+                } else {
+                    session.setAttribute("flashMsg", "회원이 등록되었습니다.");
+                }
 
                 resp.sendRedirect("/member_list.do");
             }

@@ -4,13 +4,24 @@
 <%@ page import="com.example.smartparkingsystem.dto.PageResponseDTO" %>
 <%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
 <%@ page import="com.example.smartparkingsystem.dao.PaymentInfoDAO" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    PaymentInfoDAO paymentInfoDAO = PaymentInfoDAO.getInstance();
+    MembersDTO membersDTO = (MembersDTO) request.getAttribute("memberDTO");
+
+    // 회원 확인 결과 가져오기
+    String checkResult = (String) session.getAttribute("checkResult");
+    MembersDTO checkedMember = (MembersDTO) session.getAttribute("memberDTO");
+    String searchCarNum = (String) session.getAttribute("searchCarNum");
+
+    // 세션 데이터 정리
+    session.removeAttribute("checkResult");
+    session.removeAttribute("memberDTO");
+
     PageResponseDTO pageResponseDTO = (PageResponseDTO) request.getAttribute("pageResponseDTO");
-    List<MembersDTO> membersDTOList = pageResponseDTO.getMembersDTOList();
-    int pageNum = pageResponseDTO.getPageNum();
-    int totalPage = pageResponseDTO.getTotalPage();
+    List<MembersDTO> membersDTOList = pageResponseDTO != null ? pageResponseDTO.getMembersDTOList() : new ArrayList<>();
+    int pageNum = pageResponseDTO != null && pageResponseDTO.getPageNum() != 0 ? pageResponseDTO.getPageNum() : 1;
+    int totalPage = pageResponseDTO != null ? pageResponseDTO.getTotalPage() : 1;
 
     int limit = 10; // 한 페이지 당 나올 개수
     int n = (pageNum - 1) * limit + 1; // 데이터의 인덱스
@@ -60,6 +71,7 @@
             <h3 class="section-title mb-0">회원 관리 - 월정액 회원 정보 관리</h3>
             <!-- 회원 정보 검색 -->
             <form method="get" action="/member_list.do" class="d-flex justify-content-end align-items-center">
+                <input type="hidden" name="pageNum" value="1">
                 <input type="hidden" name="status"
                        value="<%= request.getParameter("status") == null ? "" : request.getParameter("status") %>">
                 <!-- 검색 타입 -->
@@ -68,10 +80,10 @@
                         차량
                         번호
                     </option>
-                    <option value="name" <%= "name".equals(request.getParameter("searchType")) ? "selected" : "" %>>
+                    <option value="memberName" <%= "memberName".equals(request.getParameter("searchType")) ? "selected" : "" %>>
                         이름
                     </option>
-                    <option value="phone" <%= "phone".equals(request.getParameter("searchType")) ? "selected" : "" %>>
+                    <option value="memberPhone" <%= "memberPhone".equals(request.getParameter("searchType")) ? "selected" : "" %>>
                         연락처
                     </option>
                 </select>
@@ -92,7 +104,8 @@
                 <a href="./member_list.do"
                    class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
                 <a href="./member_list.do?status=expired"
-                   class="btn btn-outline-primary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료 회원</a>
+                   class="btn btn-outline-primary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료
+                    회원</a>
             </div>
 
             <!-- 신규 회원 등록 버튼 -->
@@ -237,20 +250,35 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">차량 번호 (필수)</label>
                         <div class="input-group">
-                            <input type="text" name="carNum" placeholder="예: 12가3456" maxlength="8" class="form-control"
-                                   id="newCarNumber">
-                            <button type="button" id="btn-check-member" class="btn btn-outline-primary">회원 확인</button>
+                            <input type="text" name="carNum" placeholder="예: 12가3456" maxlength="8"
+                                   class="form-control" id="newCarNumber"
+                                   value="<%= (checkResult != null && checkedMember != null) ? checkedMember.getCarNum() : ((checkResult != null && searchCarNum != null) ? searchCarNum : "") %>">
+                            <button type="button" id="btn-check-member" class="btn btn-outline-primary"
+                                    style="min-width: 150px">회원 확인
+                            </button>
                         </div>
+                        <!-- 회원 여부 확인 -->
+                        <input type="hidden" id="checkResult" value="<%= checkResult != null ? checkResult : "" %>">
+                        <input type="hidden" id="memberCar"
+                               value="<%= checkedMember != null ? checkedMember.getCarNum() : "" %>">
+                        <input type="hidden" id="memberName"
+                               value="<%= checkedMember != null ? checkedMember.getMemberName() : "" %>">
+                        <input type="hidden" id="memberPhone"
+                               value="<%= checkedMember != null ? checkedMember.getMemberPhone() : "" %>">
+                        <input type="hidden" id="memberEnd"
+                               value="<%= checkedMember != null ? checkedMember.getEndDate() : "" %>">
+                        <input type="hidden" id="isExistingMember" value="">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">이름 (필수)</label>
                         <input type="text" name="memberName" placeholder="이름을 입력하세요" class="form-control"
-                               id="newName">
+                               id="newName" value="<%= membersDTO != null ? membersDTO.getMemberName() : "" %>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">연락처 (필수)</label>
                         <input type="tel" name="memberPhone" placeholder="예: 010-1234-5678" maxlength="13"
-                               oninput="autoHyphenPhone(this)" class="form-control" id="newPhone">
+                               oninput="autoHyphenPhone(this)" class="form-control" id="newPhone"
+                               value="<%= membersDTO != null ? membersDTO.getMemberPhone() : "" %>">
                     </div>
                     <div class="row g-2">
                         <div class="col-md-6 mb-3">
@@ -377,7 +405,8 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">총 결제 요금</label>
                         <input type="text" id="memPrice" class="form-control fw-bold text-primary"
-                               value="<%=String.format("%,d원", paymentInfoDAO.selectInfo().getMemberCharge())%>" readonly>
+                               value="<%=String.format("%,d원", request.getAttribute("memberCharge"))%>"
+                               readonly>
                     </div>
                 </div>
 
@@ -418,6 +447,7 @@
                         <input type="hidden" name="memberPhone" id="newPhoneHidden">
                         <input type="hidden" name="startDate" id="newStartDateHidden">
                         <input type="hidden" name="endDate" id="newExpireDateHidden">
+                        <input type="hidden" name="isExistingMember" id="isExistingMemberHidden">
 
                         <button type="submit" class="btn btn-primary" id="btn-membership-submit">결제하기</button>
                     </form>
