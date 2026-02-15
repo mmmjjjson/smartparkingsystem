@@ -45,6 +45,7 @@
     <%--    <link rel="stylesheet" href="css/member.css">--%>
     <%--    <link rel="stylesheet" href="../../login/css/styles.css">--%>
     <link rel="stylesheet" href="../../web/main/mainboard.css">
+    <link rel="stylesheet" href="../../web/main/receipt.css">
 
     <script src="<%=request.getContextPath()%>/web/member/js/member.js" defer></script>
     <script src="../../web/main/main_membershipPay.js" defer></script>
@@ -433,7 +434,7 @@
                         </div>
                     </div>
                     <div class="mt-3 d-grid gap-2">
-                        <button class="btn btn-dark w-100" onclick="window.print()">영수증 출력</button>
+                        <button class="btn btn-dark w-100" onclick="printReceipt()">영수증 출력</button>
                         <button type="button" id="btn-receipt-close-final" class="btn btn-secondary w-100">닫기
                         </button>
                     </div>

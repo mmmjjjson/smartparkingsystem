@@ -229,7 +229,7 @@ function openMembershipModal() {
         document.getElementById('newCarNumber').focus();
         return;
     }
-    
+
     // validateMember 함수로 전체 검증
     const msg = validateMember(
         document.getElementById('newCarNumber').value.trim(),
@@ -265,6 +265,19 @@ function showMembershipReceipt() {
     document.getElementById("mem-input-section").style.display = "none";
     document.getElementById("mem-receipt-section").style.display = "block";
     document.getElementById("mem-footer").style.display = "none";
+}
+
+/* ===================== 영수증 출력 ===================== */
+function printReceipt() {
+    // 영수증 영역에 print용 class 추가
+    const receiptSection = document.getElementById("mem-receipt-section");
+    receiptSection.classList.add("receipt-print-area");
+
+    // 출력
+    window.print();
+
+    // 출력 후 class 제거 (선택사항)
+    receiptSection.classList.remove("receipt-print-area");
 }
 
 /* ===================== 회원 정보 수정 모달 ===================== */
