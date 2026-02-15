@@ -155,8 +155,10 @@ function handleMemberCheck() {
     const carInput = document.getElementById('newCarNumber');
     const carNum = carInput.value.trim();
 
-    if (!carNum) {
-        alert('차량 번호를 입력해주세요.');
+    // validateMember 함수 활용 (차량번호만 검증)
+    const msg = validateMember(carNum);
+    if (msg) {
+        alert(msg);
         carInput.focus();
         return;
     }
@@ -219,11 +221,25 @@ function clearNewMemberInputs() {
 
 /* ===================== 회원권 결제 모달 ===================== */
 function openMembershipModal() {
-    // 차량번호 검증
-    const carNum = document.getElementById("newCarNumber").value.trim();
+    const carNum = document.getElementById('newCarNumber').value.trim();
+
+    // 차량번호가 없으면 먼저 체크
     if (!carNum) {
         alert('선택된 차량 정보가 없습니다.');
         document.getElementById('newCarNumber').focus();
+        return;
+    }
+    
+    // validateMember 함수로 전체 검증
+    const msg = validateMember(
+        document.getElementById('newCarNumber').value.trim(),
+        document.getElementById('newName').value.trim(),
+        document.getElementById('newPhone').value.trim(),
+        document.getElementById('newStartDate').value.trim()
+    );
+
+    if (msg) {
+        alert(msg);
         return;
     }
 
