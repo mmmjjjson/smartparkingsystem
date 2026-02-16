@@ -17,6 +17,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/web/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="/web/js/f12Ban.js"></script>
     <script src="/web/js/loading.js"></script>
     <script src="/web/js/myPage.js"></script>
 
@@ -127,22 +128,4 @@
     </div>
 </div>
 </body>
-<script>
-    // 개발자도구 금지
-    (function() {
-        // 우클릭 방지
-        document.addEventListener('contextmenu', e => e.preventDefault());
-
-        // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U 차단
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-                (e.ctrlKey && e.shiftKey && e.key === 'J') ||
-                (e.ctrlKey && e.key === 'U')) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    })();
-</script>
 </html>

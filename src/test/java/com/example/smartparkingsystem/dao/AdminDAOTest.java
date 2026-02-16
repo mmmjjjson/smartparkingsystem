@@ -37,7 +37,7 @@ class AdminDAOTest {
                 .adminId("test1")
                 .password("test1")
                 .adminName("수정")
-                .adminEmail("수정@gmail.com")
+                .adminEmail("test1@gmail.com")
                 .isActive(true)
                 .isPasswordReset(false)
                 .build();

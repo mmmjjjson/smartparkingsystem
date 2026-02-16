@@ -151,6 +151,8 @@ function submitStep3(event) {
         return;
     }
 
+    showLoading()
+
     fetch("/password", {
         method: "POST",
         headers: {
@@ -160,14 +162,20 @@ function submitStep3(event) {
     })
         .then(res => {
             if (res.status === 200) {
+                clearInterval(timerInterval);
+                alert("[OTP Success] 인증 완료")
                 ClearStep()
             } else if (res.status === 401) {
-                alert("OTP가 일치하지 않음")
+                alert("[OTP Fail] 인증번호가 일치 하지 않습니다.")
             } else if (res.status === 403) {
-                alert("OTP 만료")
+                clearInterval(timerInterval);
+                alert("[OTP Expired] 이전페이지로 돌아가 재발송해주세요.")
             } else {
-                alert("[Error] 알 수 없는 오류")
+                alert("[ERROR] 알 수 없는 오류")
             }
+        })
+        .finally(() => {
+            hideLoading()
         })
 }
 

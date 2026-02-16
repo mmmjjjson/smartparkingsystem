@@ -62,16 +62,16 @@ function verifyOTP(event) {
     })
         .then(res => {
             if (res.status === 200) {
-                alert('인증이 완료되었습니다.')
+                alert("[OTP Success] 인증 완료")
                 // 인증이 완료되었을시 콜백 함수 실행
                 if (window.opener && window.opener.onEmailVerified) {
                     window.opener.onEmailVerified();
                 }
                 window.close();
             } else if (res.status === 401) {
-                alert("OTP가 일치하지 않음")
+                alert("[OTP Fail] 인증번호가 일치 하지 않습니다.")
             } else if (res.status === 403) {
-                alert("OTP 만료")
+                alert("[OTP Expired] 이전페이지로 돌아가 재발송해주세요.")
             } else {
                 alert("[ERROR] 알 수 없는 오류")
             }
@@ -92,7 +92,7 @@ function returnOTP() {
         })
             .then(res => {
                 if (res.status === 200) {
-                    alert('OTP가 재발송되었습니다.')
+                    alert("[OTP Resend] 인증번호가 재발송되었습니다.")
                     startTimer()
                     document.getElementById('rtOTP').disabled = true;
                     document.getElementById('otpCode').disabled = false;

@@ -6,33 +6,38 @@ USE `smart-_parking_system`;
 
 CREATE TABLE IF NOT EXISTS `admin`
 (
-    admin_id      VARCHAR(20) PRIMARY KEY COMMENT '관리자 아이디',
-    password      VARCHAR(50) NOT NULL COMMENT '관리자 비밀번호',
-    admin_name    VARCHAR(20) NOT NULL COMMENT '관리자 이름',
+    admin_id            VARCHAR(20) PRIMARY KEY COMMENT '관리자 아이디',
+    password            VARCHAR(100) NOT NULL COMMENT '관리자 비밀번호',
+    admin_name          VARCHAR(20)  NOT NULL COMMENT '관리자 이름',
 #     birth         VARCHAR(6)  NOT NULL COMMENT '관리자 생년월일 6자리',
-    admin_email   VARCHAR(50) NOT NULL UNIQUE COMMENT '이메일',
-    is_active     BOOLEAN  DEFAULT TRUE COMMENT '사용여부 True 사용중, False 사용중지',
-    last_login    DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '마지막 로그인 날짜',
-    last_login_ip VARCHAR(45) NULL COMMENT '마지막 로그인 IP (보안용)',
-    `is_password_reset` BOOLEAN DEFAULT FALSE COMMENT '재설정후 최초 로그인 여부 True 최초, False 일반',
-    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '계정 생성일'
+    admin_email         VARCHAR(50)  NOT NULL UNIQUE COMMENT '이메일',
+    is_active           BOOLEAN  DEFAULT TRUE COMMENT '사용여부 True 사용중, False 사용중지',
+    last_login          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '마지막 로그인 날짜',
+    last_login_ip       VARCHAR(45)  NULL COMMENT '마지막 로그인 IP (보안용)',
+    `is_password_reset` BOOLEAN  DEFAULT FALSE COMMENT '재설정후 최초 로그인 여부 True 최초, False 일반',
+    created_at          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '계정 생성일'
 ) COMMENT '관리자';
+
+-- admin: 1234, test: 1111, test1: test1
 INSERT INTO admin
 (admin_id, password, admin_name, admin_email, is_active, last_login, last_login_ip, created_at)
-    VALUES ('admin', '1234', '관리자', 'admin@naver.com', true, NULL, NULL, NOW()),
-           ('test', '1111', 'Test', 'test@naver.com', false, NULL, NULL, NOW())
-           ('test1', '2222', 'Test1', 'test1@naver.com', true, NULL, NULL, NOW())
+VALUES ('admin', '$2a$12$hvk0XVGUYQk2BwV4SZ9Sz.xCrkCOCgQ3KGCv.QI77JGdJZ9Ri2usW', '관리자', 'admin@naver.com', true, NULL,
+        NULL, NOW()),
+       ('test', '$2a$12$D0Tcf..4G2y8woY2HgB9veF.yjdoUeiI2yMymm8xVIOLB8yv7mjmO', 'Test', 'test@naver.com', false, NULL,
+        NULL, NOW()),
+       ('test1', '$2a$12$teiNyPb2nUP6vMA9aoQL/OeXC01FtycxknhHtm10CSj4SU/VqQIG6', 'Test1', 'test1@naver.com', true, NULL,
+        NULL, NOW());
 
 
 CREATE TABLE IF NOT EXISTS `members`
 (
-    `mno`          BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '인덱스',
-    `car_num`      VARCHAR(10) NOT NULL COMMENT '차량 번호',
-    `member_name`  VARCHAR(20) NOT NULL COMMENT '이름',
-    `member_phone` VARCHAR(15) NOT NULL COMMENT '연락처',
-    `start_date`   DATE        NOT NULL COMMENT '이용 시작일',
-    `end_date`     DATE        NOT NULL COMMENT '이용 만료일',
-    `member_charge` INT NOT NULL COMMENT '회원권 결제 요금',
+    `mno`           BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '인덱스',
+    `car_num`       VARCHAR(10) NOT NULL COMMENT '차량 번호',
+    `member_name`   VARCHAR(20) NOT NULL COMMENT '이름',
+    `member_phone`  VARCHAR(15) NOT NULL COMMENT '연락처',
+    `member_charge` INT         NOT NULL COMMENT '회원권 결제 요금',
+    `start_date`    DATE        NOT NULL COMMENT '이용 시작일',
+    `end_date`      DATE        NOT NULL COMMENT '이용 만료일',
     INDEX idx_date (`start_date`, `end_date`),
     CONSTRAINT `chk_member_charge` CHECK (`member_charge` >= 0)
 ) COMMENT '회원';
@@ -63,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `payment_info`
     `member_charge`      INT COMMENT '월회원 요금',
     `small_car_discount` DOUBLE COMMENT '경차 할인율',
     `disabled_discount`  DOUBLE COMMENT '장애인 할인율',
-    `is_active`          BOOLEAN  DEFAULT TRUE COMMENT '정책 활성화 여부 True (현재) / False (이전)',
+#     `is_active`          BOOLEAN  DEFAULT TRUE COMMENT '정책 활성화 여부 True (현재) / False (이전)',
     `admin_id`           VARCHAR(20) COMMENT '정책 수정한 관리자 아이디',
     `updated_at`         DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '관리자 정책 수정일',
     CONSTRAINT `chk_free_time` CHECK (`free_time` >= 0),
@@ -107,13 +112,17 @@ CREATE TABLE IF NOT EXISTS `payment_history`
 
 CREATE TABLE IF NOT EXISTS `validation`
 (
-    NO           INT AUTO_INCREMENT COMMENT '인덱스'
-        PRIMARY KEY,
-    ADMIN_ID     VARCHAR(20) NOT NULL COMMENT 'FK 관리자 아이디',
-    OTP_CODE     CHAR(6)     NOT NULL COMMENT 'OTP',
-    ADMIN_EMAIL  VARCHAR(50) NOT NULL COMMENT '관리자 이메일 (OTP보낸 이메일)',
-    EXPIRED_TIME DATETIME    NOT NULL COMMENT '만료시간',
-    CONSTRAINT FK_ADMIN_ID_OTP
-        FOREIGN KEY (ADMIN_ID) REFERENCES ADMIN (ADMIN_ID)
+    `no`           INT PRIMARY KEY AUTO_INCREMENT COMMENT '인덱스',
+    `admin_id`     VARCHAR(20) NOT NULL COMMENT 'FK 관리자 아이디',
+    `otp_code`     CHAR(6)     NOT NULL COMMENT 'OTP',
+    `admin_email`  VARCHAR(50) NOT NULL COMMENT '관리자 이메일 (OTP보낸 이메일)',
+    `expired_time` DATETIME    NOT NULL COMMENT '만료시간',
+    CONSTRAINT fk_admin_id_otp
+        FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`)
 )
     COMMENT 'OTP 로그';
+
+
+CREATE USER 'spsUser_user'@'localhost' IDENTIFIED BY '0220';
+
+GRANT ALL PRIVILEGES ON `smart-_parking_system`.* TO 'spsUser_user'@'localhost';
