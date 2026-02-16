@@ -118,7 +118,7 @@ public class ParkingHistoryDAO {
     /* 최근 입차 조회 */
     public ParkingHistoryVO selectRecentParking(String carNum) {
         ParkingHistoryVO parkingHistoryVO = null;
-        String sql = "SELECT * FROM parking_history WHERE car_num = ? AND exit_time IS NULL " +
+        String sql = "SELECT * FROM parking_history WHERE car_num = ? " +
                 "ORDER BY entry_time DESC LIMIT 1";
 
         try {
