@@ -1,7 +1,6 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.dto.ParkingHistoryDTO;
-import com.example.smartparkingsystem.dao.ConnectionUtil;
+import com.example.smartparkingsystem.util.ConnectionUtil;
 import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
