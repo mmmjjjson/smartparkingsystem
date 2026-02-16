@@ -1,7 +1,7 @@
 package com.example.smartparkingsystem.dao;
 
+import com.example.smartparkingsystem.util.ConnectionUtil;
 import com.example.smartparkingsystem.vo.AdminVO;
-import com.example.smartparkingsystem.vo.ValidationVO;
 import lombok.Cleanup;
 
 import java.sql.Connection;

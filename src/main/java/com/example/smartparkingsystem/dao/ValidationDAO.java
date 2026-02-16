@@ -1,5 +1,6 @@
 package com.example.smartparkingsystem.dao;
 
+import com.example.smartparkingsystem.util.ConnectionUtil;
 import com.example.smartparkingsystem.vo.ValidationVO;
 import lombok.Cleanup;
 
@@ -8,8 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ValidationDAO {
 
