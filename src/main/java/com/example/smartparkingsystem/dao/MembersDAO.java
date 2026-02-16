@@ -1,6 +1,6 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.util.ConnectionUtil;
+
 import com.example.smartparkingsystem.vo.MembersVO;
 import lombok.Cleanup;
 
