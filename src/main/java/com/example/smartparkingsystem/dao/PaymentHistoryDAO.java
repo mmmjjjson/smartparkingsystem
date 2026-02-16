@@ -1,5 +1,6 @@
 package com.example.smartparkingsystem.dao;
 
+import com.example.smartparkingsystem.util.ConnectionUtil;
 import com.example.smartparkingsystem.vo.PaymentHistoryVO;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;

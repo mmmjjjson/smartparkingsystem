@@ -1,4 +1,4 @@
-package com.example.smartparkingsystem.dao;
+package com.example.smartparkingsystem.util;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -14,9 +14,9 @@ public enum ConnectionUtil {
     ConnectionUtil() {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.mariadb.jdbc.Driver");
-        config.setJdbcUrl("jdbc:mariadb://localhost:3306/smart-_parking_system");
-        config.setUsername("root");
-        config.setPassword("5506");
+        config.setJdbcUrl("jdbc:mariadb://localhost:3306/smart_parking_system");
+        config.setUsername("smart_parking_system_user");
+        config.setPassword("5740");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
