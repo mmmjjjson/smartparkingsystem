@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class PaymentInfoController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
         log.info("setting post");
         PaymentInfoDTO paymentInfoDTO = PaymentInfoDTO.builder()
                 .freeTime(Integer.parseInt(req.getParameter("free_time")))
@@ -40,7 +42,7 @@ public class PaymentInfoController extends HttpServlet {
                 .memberCharge(Integer.parseInt(req.getParameter("member_charge")))
                 .smallCarDiscount(Double.parseDouble(req.getParameter("small_car_discount")))
                 .disabledDiscount(Double.parseDouble(req.getParameter("disabled_discount")))
-//                .adminId(req.getParameter("admin_id"))
+                .adminId((String) session.getAttribute("adminId"))
                 .build();
         log.info(paymentInfoDTO);
         paymentInfoService.addInfo(paymentInfoDTO);

@@ -36,6 +36,13 @@ public class PaymentHistoryService {
         paymentInfoVO = paymentInfoDAO.selectInfo();
     }
 
+    public static PaymentHistoryService getInstance() {
+        if (instance == null) {
+            instance = new PaymentHistoryService();
+        }
+        return instance;
+    }
+
     // 변수 선언
     LocalDateTime exitTime; // 출차 시간
     long totalMinutes; // 총 시간(분)
