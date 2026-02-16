@@ -1,8 +1,17 @@
 CREATE DATABASE IF NOT EXISTS `smart-_parking_system`;
 
-USE `smart-_parking_system`;
+-- 스키마 생성
+CREATE DATABASE IF NOT EXISTS `smart_parking_system`;
 
+-- 사용자 생성, 권한 부여
+CREATE USER IF NOT EXISTS 'sps_user'@'localhost' IDENTIFIED BY '0220';
 
+GRANT ALL PRIVILEGES ON `smart_parking_system`.* TO 'sps_user'@'localhost';
+
+-- 권한 다시 로드, 즉시 적용하기 위해 넣음
+FLUSH PRIVILEGES;
+
+USE `smart_parking_system`;
 
 CREATE TABLE IF NOT EXISTS `admin`
 (
@@ -121,8 +130,3 @@ CREATE TABLE IF NOT EXISTS `validation`
         FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`)
 )
     COMMENT 'OTP 로그';
-
-
-CREATE USER 'spsUser_user'@'localhost' IDENTIFIED BY '0220';
-
-GRANT ALL PRIVILEGES ON `smart-_parking_system`.* TO 'spsUser_user'@'localhost';

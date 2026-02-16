@@ -25,6 +25,9 @@ public enum AdminService {
     // 전체 조회
     public List<AdminDTO> getAdminAll() {
         List<AdminDTO> adminDTOList = new ArrayList<>();
+
+
+
         List<AdminVO> adminVOList = adminDAO.selectAllAdmin();
 
         for (AdminVO adminVO : adminVOList) {
