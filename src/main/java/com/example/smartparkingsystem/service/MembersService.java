@@ -19,12 +19,11 @@ public enum MembersService {
 
     private final MembersDAO membersDAO;
     private final PaymentInfoDAO paymentInfoDAO = PaymentInfoDAO.getInstance();
-    private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper = MapperUtil.INSTANCE.getInstance();
     private final int pagePerCount = 10;
 
     MembersService() {
         membersDAO = new MembersDAO();
-        modelMapper = MapperUtil.INSTANCE.getInstance();
     }
 
     // 회원 목록 페이징

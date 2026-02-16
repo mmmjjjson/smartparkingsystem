@@ -128,8 +128,6 @@ public class MembersController extends HttpServlet {
                 String memberPhone = req.getParameter("memberPhone");
                 LocalDate startDate = LocalDate.parse(req.getParameter("startDate"));
                 LocalDate endDate = LocalDate.parse(req.getParameter("endDate"));
-                String isExistingMember = req.getParameter("isExistingMember");
-
                 MembersDTO membersDTO = MembersDTO.builder()
                         .carNum(carNum)
                         .memberName(memberName)
@@ -143,11 +141,10 @@ public class MembersController extends HttpServlet {
                 session = req.getSession();
                 session.removeAttribute("searchCarNum");
 
-                if ("true".equals(isExistingMember)) {
-                    session.setAttribute("flashMsg", "회원권이 연장되었습니다.");
-                } else {
-                    session.setAttribute("flashMsg", "회원이 등록되었습니다.");
-                }
+                String message = "true".equals(req.getParameter("isExistingMember"))
+                        ? "회원권이 연장되었습니다."
+                        : "회원이 등록되었습니다.";
+                session.setAttribute("flashMsg", message);
 
                 resp.sendRedirect("/member_list.do");
             }

@@ -72,7 +72,7 @@ public class MembersDAO {
         return membersVOList;
     }
 
-    // 특정 회원 목록 조회
+    // 특정 회원 목록 전체 조회
     public MembersVO selectOneMember(String carNum) {
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
@@ -98,7 +98,7 @@ public class MembersDAO {
         return null;
     }
 
-    // 가장 최근 등록된 회원 조회
+    // 특정 회원 목록 중 가장 최근 등록된 1건 조회
     public MembersVO selectMemberByCarNum(String carNum) {
         String sql = "SELECT * FROM members WHERE car_num = ? ORDER BY end_date DESC LIMIT 1";
 
@@ -127,7 +127,7 @@ public class MembersDAO {
         return null;
     }
 
-    // 회원 목록 조회
+    // 전체 회원 목록 조회
     public List<MembersVO> selectIsMembers() {
         List<MembersVO> membersVOList = new ArrayList<>();
 
@@ -152,9 +152,9 @@ public class MembersDAO {
             throw new RuntimeException(e);
         }
         return membersVOList;
-    }
+    } // 필요 없으면 삭제해도 될 것 같음
 
-    // 만료 회원 목록 조회
+    // 전체 만료 회원 목록 조회
     public List<MembersVO> selectIsNotMembers() {
         List<MembersVO> membersVOList = new ArrayList<>();
 
@@ -179,7 +179,7 @@ public class MembersDAO {
             throw new RuntimeException(e);
         }
         return membersVOList;
-    }
+    } // 필요 없으면 삭제해도 될 것 같음
 
     // 회원 목록 전체 개수
     public int selectMemberCount(String searchType, String keyword, String status) {
