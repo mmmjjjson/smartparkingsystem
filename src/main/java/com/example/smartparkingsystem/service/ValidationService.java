@@ -29,10 +29,10 @@ public enum ValidationService {
         random = new SecureRandom();
     }
 
-    // 시큐리티 랜덤값 사용
+    // 시큐리티 랜덤값 사용 (앞자리 0 포함 6자리)
     public String randomOTP() {
         int otpCode = random.nextInt(1000000);
-        return String.valueOf(otpCode);
+        return String.format("%06d", otpCode);
     }
 
     // OTP 발송
