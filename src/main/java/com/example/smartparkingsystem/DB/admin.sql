@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `admin`
 (
     `admin_id`            VARCHAR(20) PRIMARY KEY COMMENT '관리자 아이디',
-    `password`            VARCHAR(100) NOT NULL COMMENT '관리자 비밀번호',
+    `password`            VARCHAR(100) NOT NULL COMMENT '관리자 비밀번호', -- BCrypt적용하니 글자수가 60개가 나옴; 널널하게 100으로 변경(상의예정)
     `admin_name`          VARCHAR(20)  NOT NULL COMMENT '관리자 이름',
 #     `birth`         VARCHAR(6)  NOT NULL COMMENT '관리자 생년월일 6자리',
     `admin_email`         VARCHAR(50)  NOT NULL UNIQUE COMMENT '이메일',
