@@ -15,10 +15,6 @@
 
     <%-- 템플릿 수정 css --%>
     <style>
-        /* 배경색 */
-        body {
-            background-color: #f0f2f5;
-        }
 
         /* step 박스 */
         .auth-stepper {
@@ -59,7 +55,7 @@
 <%-- 아이콘 --%>
 <link rel="icon" href="data:,">
 
-<body>
+<body class="bg-light">
 
 <div id="layoutAuthentication">
     <div id="layoutAuthentication_content">

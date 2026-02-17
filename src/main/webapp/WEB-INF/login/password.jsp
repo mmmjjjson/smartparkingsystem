@@ -15,7 +15,7 @@
 </head>
 <link rel="icon" href="data:,">
 
-<body>
+<body class="bg-light">
 
 <div id="layoutAuthentication">
     <div id="layoutAuthentication_content">

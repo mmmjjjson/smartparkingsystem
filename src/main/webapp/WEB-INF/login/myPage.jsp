@@ -31,6 +31,7 @@
         }
     </style>
 </head>
+<link rel="icon" href="data:,">
 <body>
 <%@include file="/web/common/header_other.jsp"%>
 <div class="container-fluid px-4">
