@@ -28,10 +28,10 @@ public class PaymentHistoryService {
     private static PaymentHistoryService instance;
 
     private PaymentHistoryService() {
-        paymentHistoryDAO = PaymentHistoryDAO.getInstance();
+        paymentHistoryDAO = new PaymentHistoryDAO();
         parkingHistoryDAO = new ParkingHistoryDAO();
         membersDAO = new  MembersDAO();
-        paymentInfoDAO = PaymentInfoDAO.getInstance();
+        paymentInfoDAO = new PaymentInfoDAO();
         modelMapper = MapperUtil.INSTANCE.getInstance();
         paymentInfoVO = paymentInfoDAO.selectInfo();
     }

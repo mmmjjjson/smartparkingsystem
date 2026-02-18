@@ -13,16 +13,6 @@ import java.time.LocalDateTime;
 
 @Slf4j
 public class PaymentHistoryDAO {
-    private static PaymentHistoryDAO instance;
-
-    private PaymentHistoryDAO() {}
-
-    public static PaymentHistoryDAO getInstance() {
-        if (instance == null) {
-            instance = new PaymentHistoryDAO();
-        }
-        return instance;
-    }
 
     public void insertPaymentHistory(PaymentHistoryVO paymentHistoryVO) {
         log.info("insertPaymentHistory: ");

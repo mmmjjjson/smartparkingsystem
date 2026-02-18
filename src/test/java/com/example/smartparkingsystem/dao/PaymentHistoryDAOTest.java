@@ -13,7 +13,7 @@ class PaymentHistoryDAOTest {
 
     @BeforeEach
     public void ready() {
-        paymentHistoryDAO = PaymentHistoryDAO.getInstance();
+        paymentHistoryDAO = new PaymentHistoryDAO();
     }
 
     @Test
