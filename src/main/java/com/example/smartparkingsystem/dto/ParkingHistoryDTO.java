@@ -32,8 +32,8 @@ public class ParkingHistoryDTO {
     private int totalMinutes;
 
 
-    // 통계용 추가
-    private Integer finalCharge;
+//    // 통계용 추가
+//    private Integer finalCharge;
 }
 
 

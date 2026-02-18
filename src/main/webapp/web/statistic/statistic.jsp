@@ -37,14 +37,14 @@
           <label>상세 조건</label>
           <select id="year">
             <option value="2024">2024년</option>
-            <option value="2025" selected>2025년</option>
-            <option value="2026">2026년</option>
+            <option value="2025">2025년</option>
+            <option value="2026" selected>2026년</option>
           </select>
 
           <select id="month">
-            <option value="all" selected>전체</option>
+            <option value="all">전체</option>
             <option value="1">1월</option>
-            <option value="2">2월</option>
+            <option value="2" selected>2월</option>
             <option value="3">3월</option>
             <option value="4">4월</option>
             <option value="5">5월</option>

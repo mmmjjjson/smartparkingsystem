@@ -4,8 +4,8 @@ import com.example.smartparkingsystem.dao.MembersDAO;
 import com.example.smartparkingsystem.dao.ParkingHistoryDAO;
 import com.example.smartparkingsystem.dao.PaymentHistoryDAO;
 import com.example.smartparkingsystem.dao.PaymentInfoDAO;
-import com.example.smartparkingsystem.dto.ParkingHistoryDTO;
 import com.example.smartparkingsystem.dto.MonthlyData;
+import com.example.smartparkingsystem.dto.PaymentHistoryDTO;
 import com.example.smartparkingsystem.vo.MembersVO;
 import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import lombok.extern.log4j.Log4j2;
@@ -190,7 +190,6 @@ public enum StatisticService2 {
         Map<Integer, List<MonthlyData>> paymentDataByYear = getCachedPaymentData();
         int year = date.getYear();
         int month = date.getMonthValue();
-        int day = date.getDayOfMonth();
 
         List<MonthlyData> yearData = paymentDataByYear.get(year);
         if (yearData == null) return 0;
@@ -203,12 +202,10 @@ public enum StatisticService2 {
         if (monthData == null) return 0;
 
         int dailySales = 0;
-        for (ParkingHistoryDTO record : monthData.getRecords()) {
+        //  PaymentHistoryDTO로 변경!
+        for (PaymentHistoryDTO record : monthData.getRecords()) {
             if (record.getEntryTime().toLocalDate().equals(date)) {
-                // payment_history에 저장된 final_charge 사용
-                // DTO에 finalCharge 필드가 없으므로 0으로 처리 (DTO 수정 필요)
-                // 임시로 비회원만 계산하려면 별도 조회 필요
-                dailySales += 0; // TODO: DTO에 finalCharge 필드 추가 필요
+                dailySales += record.getFinalCharge();  //  getFinalCharge() 사용
             }
         }
 
@@ -283,12 +280,10 @@ public enum StatisticService2 {
             categories.add(monthData.getMonth() + "월");
 
             int normalSum = 0;
-            for (ParkingHistoryDTO record : monthData.getRecords()) {
-                if (!record.isMember()) {
-                    // ✅ finalCharge 사용 + null 체크
-                    if (record.getFinalCharge() != null) {
-                        normalSum += record.getFinalCharge();
-                    }
+            for (PaymentHistoryDTO record : monthData.getRecords()) {
+                //  mno가 null이면 비회원
+                if (record.getMno() == null) {
+                    normalSum += record.getFinalCharge();
                 }
             }
 
@@ -342,13 +337,11 @@ public enum StatisticService2 {
         }
 
         // payment_history에서 final_charge 합산
-        for (ParkingHistoryDTO record : monthData.getRecords()) {
+        for (PaymentHistoryDTO record : monthData.getRecords()) {
             int day = record.getEntryTime().getDayOfMonth();
-            if (day >= 1 && day <= daysInMonth && !record.isMember()) {
-                // ✅ finalCharge 사용 + null 체크
-                if (record.getFinalCharge() != null) {
-                    dailyNormal[day - 1] += record.getFinalCharge();
-                }
+            //  mno가 null이면 비회원
+            if (day >= 1 && day <= daysInMonth && record.getMno() == null) {
+                dailyNormal[day - 1] += record.getFinalCharge();
             }
         }
 
@@ -421,12 +414,10 @@ public enum StatisticService2 {
             categories.add(monthData.getMonth() + "월");
 
             int normalSum = 0;
-            for (ParkingHistoryDTO record : monthData.getRecords()) {
-                if (!record.isMember()) {
-                    // ✅ finalCharge 사용 + null 체크
-                    if (record.getFinalCharge() != null) {
-                        normalSum += record.getFinalCharge();
-                    }
+            for (PaymentHistoryDTO record : monthData.getRecords()) {
+                //  mno가 null이면 비회원
+                if (record.getMno() == null) {
+                    normalSum += record.getFinalCharge();
                 }
             }
 
@@ -482,14 +473,11 @@ public enum StatisticService2 {
             }
         }
 
-        // payment_history 매출
-        for (ParkingHistoryDTO record : monthData.getRecords()) {
+        for (PaymentHistoryDTO record : monthData.getRecords()) {
             int day = record.getEntryTime().getDayOfMonth();
-            if (day >= 1 && day <= daysInMonth && !record.isMember()) {
-                // ✅ finalCharge 사용 + null 체크
-                if (record.getFinalCharge() != null) {
-                    dailyNormal[day - 1] += record.getFinalCharge();
-                }
+            //  mno가 null이면 비회원
+            if (day >= 1 && day <= daysInMonth && record.getMno() == null) {
+                dailyNormal[day - 1] += record.getFinalCharge();
             }
         }
 
@@ -569,7 +557,8 @@ public enum StatisticService2 {
         // 모든 데이터 순회
         for (List<MonthlyData> yearData : paymentDataByYear.values()) {
             for (MonthlyData monthData : yearData) {
-                for (ParkingHistoryDTO record : monthData.getRecords()) {
+                // ✅ PaymentHistoryDTO로 변경!
+                for (PaymentHistoryDTO record : monthData.getRecords()) {
                     int hour = record.getEntryTime().getHour();
                     if (hour >= 0 && hour < 24) {
                         hourlyCount[hour]++;
@@ -590,7 +579,6 @@ public enum StatisticService2 {
         log.info("피크 시간대 분석 완료");
         return response;
     }
-
     // ===============
     // 유틸리티 메서드
     // ===============

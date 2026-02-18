@@ -11,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 public class MonthlyData { // 월별로 데이터 나누기
     private int month;
-    private List<ParkingHistoryDTO> records;
+    private List<PaymentHistoryDTO> records;
 }
