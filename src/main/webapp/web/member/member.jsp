@@ -10,7 +10,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <title>스마트 주차관리 시스템 - 회원 관리</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="member.css">
+    <link rel="stylesheet" href="css/member.css">
 </head>
 <body>
 <div class="member-wrap"> <!-- 디자인 통합 위해 container -> member-wrap으로 바꾸었습니다 -->

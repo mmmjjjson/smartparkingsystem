@@ -336,5 +336,5 @@ window.moveMembershipPage = function () {
     alert("신규 회원 등록 페이지로 이동합니다.");
 
     modal.hide();
-    // window.location.href = '/member_add.do';
+    window.location.href = '/member_list.do?openNewMemberModal=true&carNum=' + encodeURIComponent(carNum);
 }
