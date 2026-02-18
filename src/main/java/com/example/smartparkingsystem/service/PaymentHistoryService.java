@@ -91,13 +91,6 @@ public class PaymentHistoryService {
 
         int totalCharge = calculateTotalCharge(carNum);
         int discountAmount = 0; // 할인 금액
-        int finalCharge; // 최종 결제 요금
-
-        // 멤버인지 아닌지 확인 후 멤버면 총 요금 0원
-        if (membersDAO.selectOneMember(carNum) != null) {
-            totalCharge = 0;
-            return totalCharge;
-        }
 
         // 정책
         double smallCarDiscount = paymentInfoVO.getSmallCarDiscount();
@@ -128,6 +121,14 @@ public class PaymentHistoryService {
         long totalMinutes = getTotalMinutes(carNum);
         int finalCharge; // 최종 결제 요금
 
+        // 멤버인지 아닌지 확인 후 멤버면 총 요금 0원
+        if (membersDAO.selectOneMember(carNum) != null) {
+            totalCharge = 0;
+            discountAmount = 0;
+            finalCharge = 0;
+            return;
+        }
+
         // 최종 결제 금액
         finalCharge = totalCharge - discountAmount;
 
@@ -150,7 +151,7 @@ public class PaymentHistoryService {
                 .finalCharge(finalCharge)
                 .isPaid(true)
                 .build();
-        paymentHistoryDAO.insertPaymentHistory(paymentHistoryVO);
+         paymentHistoryDAO.insertPaymentHistory(paymentHistoryVO);
     }
 
     public PaymentHistoryDTO getRecentPayment(String carNum) {
