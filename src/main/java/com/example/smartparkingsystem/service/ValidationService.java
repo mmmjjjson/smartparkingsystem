@@ -25,7 +25,7 @@ public enum ValidationService {
         validationDAO = new ValidationDAO();
         adminService = AdminService.INSTANCE;
         modelMapper = MapperUtil.INSTANCE.getInstance();
-        mailService = MailService.getINSTANCE();
+        mailService = MailService.INSTANCE;
         random = new SecureRandom();
     }
 

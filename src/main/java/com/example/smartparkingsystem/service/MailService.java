@@ -10,15 +10,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 @Log4j2
-public class MailService {
-    private static MailService INSTANCE;
-
-    public static MailService getINSTANCE() {
-        if (INSTANCE == null) {
-            INSTANCE = new MailService();
-        }
-        return INSTANCE;
-    }
+public enum MailService {
+    INSTANCE;
 
     private String host;
     private String port;
@@ -26,7 +19,7 @@ public class MailService {
     private String pass;
 
     // 구동시 기본 값들을 가져오기.
-    private MailService() {
+    MailService() {
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("mail.properties")) {
             Properties prop = new Properties();
 
