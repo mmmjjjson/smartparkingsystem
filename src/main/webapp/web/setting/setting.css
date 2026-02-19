@@ -6,20 +6,20 @@
 
 /* 기본 폰트 설정 */
 body {
-    /*font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;*/
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
     background-color: white;
     margin: 0;
     padding: 0;
     color: #333;
 }
 
-/* 헤더 하단 마진 제거 */
-/*.navbar {*/
-/*    width: 100%;*/
-/*    margin-bottom: 0 !important;*/
-/*    padding-top: 15px !important;*/
-/*    padding-bottom: 15px !important;*/
-/*}*/
+/* 헤더 통일*/
+.navbar {
+    width: 100%;
+    margin-bottom: 0 !important;
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+}
 
 /* 전체 컨테이너 */
 .container {
