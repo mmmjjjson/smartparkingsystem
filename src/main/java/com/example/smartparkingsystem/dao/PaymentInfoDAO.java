@@ -13,6 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentInfoDAO {
+    private static PaymentInfoDAO instance;
+
+    private PaymentInfoDAO() {}
+
+    public static PaymentInfoDAO getInstance() {
+        if (instance == null) {
+            instance = new PaymentInfoDAO();
+        }
+        return instance;
+    }
 
     public List<PaymentInfoVO> selectAllInfo() {
         List<PaymentInfoVO> paymentInfoVOList = new ArrayList<>();

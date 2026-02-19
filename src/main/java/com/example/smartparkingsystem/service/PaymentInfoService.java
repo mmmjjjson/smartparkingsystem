@@ -10,7 +10,7 @@ import org.modelmapper.ModelMapper;
 
 @Log4j2
 public class PaymentInfoService {
-    private final PaymentInfoDAO paymentInfoDAO = new PaymentInfoDAO();
+    private final PaymentInfoDAO paymentInfoDAO = PaymentInfoDAO.getInstance();
     private final ModelMapper modelMapper = MapperUtil.INSTANCE.getInstance();
 
     private static PaymentInfoService instance;

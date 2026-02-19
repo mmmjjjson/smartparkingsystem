@@ -28,10 +28,10 @@ public class PaymentHistoryService {
     private static PaymentHistoryService instance;
 
     private PaymentHistoryService() {
-        paymentHistoryDAO = new PaymentHistoryDAO();
+        paymentHistoryDAO = PaymentHistoryDAO.getInstance();
         parkingHistoryDAO = new ParkingHistoryDAO();
         membersDAO = new  MembersDAO();
-        paymentInfoDAO = new PaymentInfoDAO();
+        paymentInfoDAO = PaymentInfoDAO.getInstance();
         modelMapper = MapperUtil.INSTANCE.getInstance();
         paymentInfoVO = paymentInfoDAO.selectInfo();
     }
@@ -118,6 +118,15 @@ public class PaymentHistoryService {
         if (parkingHistoryDAO.selectRecentParking(carNum).getCarNum() == null) {
             return;
         }
+        log.info("calculateFinalCharge 시작 - carNum: " + carNum);
+
+        ParkingHistoryVO recent = parkingHistoryDAO.selectRecentParking(carNum);
+        log.info("selectRecentParking 결과: " + recent);
+
+        if (recent == null || recent.getCarNum() == null) {
+            log.info("차량 없음으로 return");
+            return;
+        }
 
         int totalCharge = calculateTotalCharge(carNum);
         int discountAmount = calculateDiscountAmount(carNum);
@@ -129,7 +138,6 @@ public class PaymentHistoryService {
             totalCharge = 0;
             discountAmount = 0;
             finalCharge = 0;
-            return;
         }
 
         // 최종 결제 금액
@@ -155,6 +163,10 @@ public class PaymentHistoryService {
                 .isPaid(true)
                 .build();
          paymentHistoryDAO.insertPaymentHistory(paymentHistoryVO);
+        log.info("insert 완료, 조회 시작");
+
+        PaymentHistoryVO check = paymentHistoryDAO.selectRecentPayment(carNum);
+        log.info("selectRecentPayment 결과: " + check);
     }
 
     // VO를 DTO로 변경 메서드

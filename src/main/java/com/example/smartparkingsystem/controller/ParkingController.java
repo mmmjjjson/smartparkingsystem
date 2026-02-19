@@ -127,6 +127,7 @@ public class ParkingController extends HttpServlet {
         // 계산 후 테이블 등록
         paymentHistoryService.calculateFinalCharge(carNum);
 
+
         // 결제 정보 조회
         PaymentHistoryDTO paymentHistoryDTO = paymentHistoryService.getRecentPayment(carNum);
         PaymentInfoDTO paymentInfoDTO = paymentInfoService.getInfo();
