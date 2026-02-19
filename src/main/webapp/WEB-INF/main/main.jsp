@@ -179,7 +179,7 @@
 
 <!-- 주차 상태 처리 모달 -->
 <%@ include file="/web/main/parking_modal.jsp"%>
-<%@include file="/web/main/membershipPayModal.jsp"%>
+<%--<%@include file="/web/main/@membershipPayModal.jsp"%>--%>
 
 <!-- 공통 footer 구역 -->
 <%@ include file="/web/common/footer.jsp"%>
@@ -203,6 +203,6 @@
 <script src="${pageContext.request.contextPath}/web/main/js/main_modal.js"></script>
 
 <!-- 회원권 결제 모달 JS -->
-<%--<script src="${pageContext.request.contextPath}/web/main/@main_membershipPay.js"></script>--%>
+<%--<script src="${pageContext.request.contextPath}/web/main/@@main_membershipPay.js"></script>--%>
 </body>
 </html>

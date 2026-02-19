@@ -3,11 +3,11 @@ const membershipPayModal = new bootstrap.Modal(membershipPayModalElement);
 const btnMembershipPayRemote = document.getElementById('btnMembershipPay');
 const btnMembershipSubmit = document.getElementById('btn-membership-submit');
 
-// 목업데이터 추후 삭제
-const mockMembers = [
-    {carNum: "12가3456", name: "홍길동", phone: "010-1111-2222"},
-    {carNum: "99나9999", name: "김철수", phone: "010-9999-8888"}
-];
+// // 목업데이터 추후 삭제
+// const mockMembers = [
+//     {carNum: "12가3456", name: "홍길동", phone: "010-1111-2222"},
+//     {carNum: "99나9999", name: "김철수", phone: "010-9999-8888"}
+// ];
 
 // '회원권 결제 버튼' 클릭
 btnMembershipPayRemote.addEventListener('click', () => {

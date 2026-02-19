@@ -2,8 +2,8 @@ let modal;
 
 document.addEventListener('DOMContentLoaded', () => {
     /* 모달 관련 객체 선언
-모달 객체 불러와 정보 가져오기 (주차 구역, 차량 번호, 주차 시간, 주차 구역 상태)
-*/
+    모달 객체 불러와 정보 가져오기 (주차 구역, 차량 번호, 주차 시간, 주차 구역 상태)
+    */
     modal = new bootstrap.Modal(document.getElementById('parkingModal'));
     const modalTitle = document.getElementById('modal-id');
     const modalAction = document.getElementById('modal-action');
