@@ -15,7 +15,7 @@
     <script src="/web/setting/setting.js"></script>
 </head>
 <body>
-<%@ include file="/web/common/header_other.jsp" %>
+<%@ include file="/web/common/header_main.jsp" %>
 <div class="container">
     <form name="setting" action="/setting" method="post" class="setup-area" onsubmit="return prepareSubmit()">
         <div class="title-bar">
