@@ -17,57 +17,100 @@ SELECT
     TIMESTAMPADD(MINUTE, total_minutes, entry_time) AS exit_time,
     total_minutes
 FROM (
-         -- 1. 회원 주차 기록 (3,000건) - 회원 유효 기간 내에서만
+         -- =============================================
+         -- 1. 회원 주차 기록 (3,000건)
+         -- =============================================
          (SELECT
-              CONCAT('A', FLOOR(RAND() * 20 + 1)) AS parking_area,
-              m.car_num,
-              TRUE AS is_member,
-              -- 회원 유효 기간 내 랜덤 시간 (단, 2026-02-11을 넘지 않음)
+              parking_area,
+              car_num,
+              is_member,
+              --  외부에서 rand_val 참조 → 행마다 다른 시간대 버킷
               TIMESTAMP(
-                      LEAST(
-                              m.start_date + INTERVAL FLOOR(RAND() * DATEDIFF(LEAST(m.end_date, '2026-02-11'), m.start_date)) DAY,
-                              '2026-02-11'
-                      ),
-                      SEC_TO_TIME(FLOOR(RAND() * 86400))
+                      date_part,
+                      SEC_TO_TIME(
+                              CASE
+                                  WHEN rand_val < 0.03 THEN FLOOR(RAND() * 28800)              -- 3%  : 00~08시 (새벽)
+                                  WHEN rand_val < 0.15 THEN FLOOR(28800 + RAND() * 3600)       -- 12% : 08~09시
+                                  WHEN rand_val < 0.38 THEN FLOOR(32400 + RAND() * 3600)       -- 23% : 09~10시 ★ 피크
+                                  WHEN rand_val < 0.55 THEN FLOOR(36000 + RAND() * 7200)       -- 17% : 10~12시
+                                  WHEN rand_val < 0.68 THEN FLOOR(43200 + RAND() * 10800)      -- 13% : 12~15시
+                                  WHEN rand_val < 0.80 THEN FLOOR(54000 + RAND() * 10800)      -- 12% : 15~18시
+                                  WHEN rand_val < 0.93 THEN FLOOR(64800 + RAND() * 10800)      -- 13% : 18~21시
+                                  ELSE                      FLOOR(75600 + RAND() * 10799)      -- 7%  : 21~24시 (86399초 상한)
+                                  END
+                      )
               ) AS entry_time,
-              CASE
-                  WHEN RAND() < 0.9 THEN FLOOR(RAND() * 240 + 30)
-                  ELSE FLOOR(RAND() * 1440 + 240)
-                  END AS total_minutes
-          FROM members m
-                   CROSS JOIN (SELECT 1 UNION SELECT 2 UNION SELECT 3) AS t
-          WHERE m.start_date <= '2026-02-11'  -- 2026-02-11 이전에 시작한 회원만
-          LIMIT 3000)
+              total_minutes
+          FROM (
+                   --  핵심: SELECT 안에 RAND() → 행마다 독립 평가
+                   SELECT
+                       CONCAT('A', FLOOR(RAND() * 20 + 1))                            AS parking_area,
+                       m.car_num                                                        AS car_num,
+                       TRUE                                                             AS is_member,
+                       RAND()                                                           AS rand_val,  -- ← 행마다 고유값
+                       LEAST(
+                               m.start_date + INTERVAL FLOOR(RAND() * DATEDIFF(LEAST(m.end_date, '2026-02-11'), m.start_date)) DAY,
+                               '2026-02-11'
+                       )                                                                AS date_part,
+                       CASE
+                           WHEN RAND() < 0.9 THEN FLOOR(RAND() * 240 + 30)
+                           ELSE FLOOR(RAND() * 1440 + 240)
+                           END                                                              AS total_minutes
+                   FROM members m
+                            CROSS JOIN (SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5) AS t
+                   WHERE m.start_date <= '2026-02-11'
+                   LIMIT 3000
+               ) AS member_inner)
 
          UNION ALL
 
-
-
-
-
-         -- 2. 비회원 주차 기록 (7,000건) - 2024-01-01 ~ 2026-02-11
+         -- =============================================
+         -- 2. 비회원 주차 기록 (7,000건)
+         -- =============================================
          (SELECT
-              CONCAT('A', FLOOR(RAND() * 20 + 1)) AS parking_area,
-              CONCAT(
-                      IF(RAND() > 0.5, FLOOR(RAND() * 90 + 10), FLOOR(RAND() * 900 + 100)),
-                      ELT(FLOOR(RAND() * 5) + 1, '가', '나', '다', '라', '마'),
-                      LPAD(FLOOR(RAND() * 9000 + 1000), 4, '0')
-              ) AS car_num,
-              FALSE AS is_member,
-              -- 2024-01-01 ~ 2026-02-11 (약 772일 = 1,111,680분)
-              TIMESTAMP('2024-01-01 00:00:00' + INTERVAL FLOOR(RAND() * 1111680) MINUTE) AS entry_time,
-              CASE
-                  WHEN RAND() < 0.9 THEN FLOOR(RAND() * 240 + 30)
-                  ELSE FLOOR(RAND() * 1440 + 240)
-                  END AS total_minutes
-          FROM information_schema.columns c1, information_schema.columns c2
-          LIMIT 7000)
+              parking_area,
+              car_num,
+              is_member,
+              TIMESTAMP(
+                      date_part,
+                      SEC_TO_TIME(
+                              CASE
+                                  WHEN rand_val < 0.03 THEN FLOOR(RAND() * 28800)
+                                  WHEN rand_val < 0.15 THEN FLOOR(28800 + RAND() * 3600)
+                                  WHEN rand_val < 0.38 THEN FLOOR(32400 + RAND() * 3600)       -- ★ 피크
+                                  WHEN rand_val < 0.55 THEN FLOOR(36000 + RAND() * 7200)
+                                  WHEN rand_val < 0.68 THEN FLOOR(43200 + RAND() * 10800)
+                                  WHEN rand_val < 0.80 THEN FLOOR(54000 + RAND() * 10800)
+                                  WHEN rand_val < 0.93 THEN FLOOR(64800 + RAND() * 10800)
+                                  ELSE                      FLOOR(75600 + RAND() * 10799)
+                                  END
+                      )
+              ) AS entry_time,
+              total_minutes
+          FROM (
+                   SELECT
+                       CONCAT('A', FLOOR(RAND() * 20 + 1))                            AS parking_area,
+                       CONCAT(
+                               IF(RAND() > 0.5, FLOOR(RAND() * 90 + 10), FLOOR(RAND() * 900 + 100)),
+                               ELT(FLOOR(RAND() * 5) + 1, '가', '나', '다', '라', '마'),
+                               LPAD(FLOOR(RAND() * 9000 + 1000), 4, '0')
+                       )                                                                AS car_num,
+                       FALSE                                                            AS is_member,
+                       RAND()                                                           AS rand_val,  -- ← 행마다 고유값
+                       DATE_ADD('2024-01-01', INTERVAL FLOOR(RAND() * 772) DAY)        AS date_part,
+                       CASE
+                           WHEN RAND() < 0.9 THEN FLOOR(RAND() * 240 + 30)
+                           ELSE FLOOR(RAND() * 1440 + 240)
+                           END                                                              AS total_minutes
+                   FROM information_schema.columns c1, information_schema.columns c2
+                   LIMIT 7000
+               ) AS nonmember_inner)
      ) AS combined_data
 ORDER BY entry_time;
 
 
 
--- 출차기록 없는 데이터. payment_history에는 생성 안됨 (출차기록이 없으니까?)
+-- 출차기록 없는 데이터. payment_history > insert후 맨 마지막에 실행할 것
 INSERT INTO parking_history
 (parking_area, car_num, car_type, is_member, entry_time, exit_time, total_minutes)
 VALUES

@@ -21,6 +21,7 @@ public class ParkingHistoryDTO {
     private LocalDateTime exitTime;
     private int totalMinutes;
 
-    public void setFinalCharge(int finalCharge) {
-    }
+
+//    // 통계용 추가
+//    private Integer finalCharge;
 }
