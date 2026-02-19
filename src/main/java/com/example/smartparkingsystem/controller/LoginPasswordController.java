@@ -89,19 +89,6 @@ public class LoginPasswordController extends HttpServlet {
 
         if ("Success".equals(resultOTP)) {
 
-            // TODO 이것도 필요없을듯 제거
-//            // 12자리 랜덤 UUID 생성
-//            String newPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-//
-//            // 랜덤키 변경후 최초 로그인 변경
-//            AdminDTO adminDTO = AdminDTO.builder()
-//                    .adminId(adminId)
-//                    .password(newPassword)
-//                    .adminEmail(email)
-//                    .isPasswordReset(true) // 변경
-//                    .build();
-//            adminService.modifyAdmin(adminDTO);
-
             // 랜덤키 메일로 발송과 동시에 비밀번호 변경
             validationService.uuidPassword(adminId);
 

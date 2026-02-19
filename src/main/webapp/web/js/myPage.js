@@ -18,8 +18,6 @@ function updatePassword(event) {
         alert('새 비밀번호가 일치하지 않습니다.')
         return;
     }
-
-    // TODO DB에 저장돼있는 비밀번호와 틀려도 동일하다고 뜸 고쳐야함
     if (password === newPassword) {
         alert('현재 비밀번호와 동일합니다. 다른 비밀번호를 입력해주세요.')
         return;

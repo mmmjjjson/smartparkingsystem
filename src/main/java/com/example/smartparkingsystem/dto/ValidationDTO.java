@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ValidationDTO {
-//    private String no; // TODO 인덱스 (사용안함 주석)
     private String adminId; // PK 관리자 아이디
     private String otpCode; // OTP
     private String uuid; // 재설정 비밀번호 (DTO전용 SMTP)

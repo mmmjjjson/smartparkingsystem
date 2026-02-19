@@ -21,21 +21,6 @@ public enum AdminService {
         modelMapper = MapperUtil.INSTANCE.getInstance();
     }
 
-    // TODO 사용안했음 (제거?)
-    // 전체 조회
-    public List<AdminDTO> getAdminAll() {
-        List<AdminDTO> adminDTOList = new ArrayList<>();
-
-
-
-        List<AdminVO> adminVOList = adminDAO.selectAllAdmin();
-
-        for (AdminVO adminVO : adminVOList) {
-            adminDTOList.add(modelMapper.map(adminVO, AdminDTO.class));
-        }
-        return adminDTOList;
-    }
-
     // 아이디로 하나 조회
     public AdminDTO getAdminById(String adminId) {
         AdminVO adminVO = adminDAO.selectAdminById(adminId);
@@ -56,21 +41,9 @@ public enum AdminService {
         adminDAO.updateLog(adminId, lastLoginIp);
     }
 
-    // TODO 사용안함 주석 (제거?)
-    // 비밀번호 변경
-//    public void changePassword(String adminId, String password) {
-//        adminDAO.updatePassword(password, adminId);
-//    }
-
     // 계정 정보 수정
     public void modifyAdmin(AdminDTO adminDTO) {
         AdminVO adminVO = modelMapper.map(adminDTO, AdminVO.class);
         adminDAO.updateAdmin(adminVO);
     }
-
-    // TODO 필요없을거같아서 주석 (제거?)
-    // 계정 삭제
-//    public void removeAdmin(String admin_id) {
-//        adminDAO.deleteAdmin(admin_id);
-//    }
 }

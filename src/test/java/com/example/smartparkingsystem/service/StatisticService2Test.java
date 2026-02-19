@@ -392,7 +392,7 @@ class StatisticService2Test {
     @DisplayName("피크 시간대 분석 테스트")
     void testGetPeakTimeStats() {
         // given & when
-        Map<String, Object> result = service.getPeakTimeStats();
+        Map<String, Object> result = service.getPeakTimeStats(2025, 5);
 
         // then
         assertNotNull(result, "결과는 null이면 안됨");
@@ -505,7 +505,7 @@ class StatisticService2Test {
 
         // 7. 피크 시간대
         assertDoesNotThrow(() -> {
-            Map<String, Object> result = service.getPeakTimeStats();
+            Map<String, Object> result = service.getPeakTimeStats(2025, 4);
             System.out.println("✓ 피크 시간대 조회 성공");
         });
 

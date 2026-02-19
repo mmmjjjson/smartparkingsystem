@@ -68,8 +68,6 @@ public class LoginProcessController extends HttpServlet {
         String email = req.getParameter("email");
         HttpSession session = req.getSession();
         String tempAdminId = (String) session.getAttribute("tempAdminId");
-        // TODO 이건 왜 만들었는지 기억이 안남
-//        String otpCode = validationService.getOTP(tempAdminId).getOtpCode();
 
         // step1의 임시세션에 아이디 없으면 400에러
         if (tempAdminId == null) {

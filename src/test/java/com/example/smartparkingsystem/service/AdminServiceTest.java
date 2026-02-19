@@ -17,13 +17,6 @@ class AdminServiceTest {
     }
 
     @Test
-    public void adminServiceSelect() {
-        for (AdminDTO adminDTO : adminService.getAdminAll()) {
-            log.info(adminDTO);
-        }
-    }
-
-    @Test
     public void adminServiceId() {
         log.info(adminService.getAdminById("admin"));
     }

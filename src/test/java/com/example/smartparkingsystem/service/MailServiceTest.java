@@ -9,7 +9,7 @@ class MailServiceTest {
     private MailService mailService;
     @BeforeEach
     void setUp() {
-        mailService = MailService.getINSTANCE();
+        mailService = MailService.INSTANCE;
     }
 
     @Test

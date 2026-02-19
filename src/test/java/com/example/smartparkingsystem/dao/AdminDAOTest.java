@@ -20,13 +20,6 @@ class AdminDAOTest {
     }
 
     @Test
-    public void AdminAll() {
-        for (AdminVO adminVO : adminDAO.selectAllAdmin()) {
-            log.info(adminVO);
-        }
-    }
-
-    @Test
     public void AdminById() {
         log.info(adminDAO.selectAdminById("test"));
     }
