@@ -81,7 +81,7 @@ public class LoginProcessServlet extends HttpServlet {
 
     // TODO: 나중에 DB연동시 수정
     private boolean adminDB(String adminId, String password) {
-        return "test".equals(adminId) && "1111".equals(password);
+        return "admin".equals(adminId) && "1234".equals(password);
     }
 
     private boolean emailDB(String email) {

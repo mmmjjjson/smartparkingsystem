@@ -1,7 +1,5 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.dto.MonthlyData;
-import com.example.smartparkingsystem.dto.ParkingHistoryDTO;
 import com.example.smartparkingsystem.util.ConnectionUtil;
 import com.example.smartparkingsystem.vo.PaymentHistoryVO;
 import lombok.Cleanup;
@@ -12,20 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.*;
 
 @Slf4j
 public class PaymentHistoryDAO {
-    private static PaymentHistoryDAO instance;
-
-    private PaymentHistoryDAO() {}
-
-    public static PaymentHistoryDAO getInstance() {
-        if (instance == null) {
-            instance = new PaymentHistoryDAO();
-        }
-        return instance;
-    }
 
     public void insertPaymentHistory(PaymentHistoryVO paymentHistoryVO) {
         log.info("insertPaymentHistory: ");
@@ -60,7 +47,7 @@ public class PaymentHistoryDAO {
 
     public PaymentHistoryVO selectRecentPayment(String carNum) {
         PaymentHistoryVO paymentHistoryVO = null;
-        String sql = "SELECT * FROM payment_history WHERE car_num = ? " +
+        String sql = "SELECT * FROM payment_history WHERE car_num = ?" +
                 "ORDER BY entry_time DESC LIMIT 1";
 
         try {

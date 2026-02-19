@@ -28,7 +28,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
 // 3. 전송 전 콤마 제거 함수 (서버 에러 방지)
 function prepareSubmit() {
-    alert('설정이 성공적으로 변경되었습니다.')
     moneyIds.forEach(id => {
         const input = document.getElementById(id);
         if (input) {
@@ -36,4 +35,31 @@ function prepareSubmit() {
         }
     });
     return true; // form 제출 진행
+}
+
+function clickSubmit() {
+    const form = document.forms['setting'];
+
+    moneyIds.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.value = input.value.replace(/,/g, "");
+        }
+    });
+
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+
+    fetch("/setting", {
+        method: 'POST',
+        body: params
+    })
+        .then(res => {
+            if (res.ok) {
+                alert('설정이 성공적으로 변경되었습니다.')
+                location.reload();
+            } else {
+                alert('설정이 형식에 맞지않습니다.')
+            }
+        });
 }
