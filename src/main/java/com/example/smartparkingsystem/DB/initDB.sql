@@ -1,12 +1,12 @@
-CREATE DATABASE IF NOT EXISTS `smart-_parking_system`;
+CREATE DATABASE IF NOT EXISTS `smart_parking_system`;
 
 -- 스키마 생성
 CREATE DATABASE IF NOT EXISTS `smart_parking_system`;
 
 -- 사용자 생성, 권한 부여
-CREATE USER IF NOT EXISTS 'sps_user'@'localhost' IDENTIFIED BY '0220';
+CREATE USER IF NOT EXISTS 'system_user'@'localhost' IDENTIFIED BY '0220';
 
-GRANT ALL PRIVILEGES ON `smart_parking_system`.* TO 'sps_user'@'localhost';
+GRANT ALL PRIVILEGES ON `smart_parking_system`.* TO 'system_user'@'localhost';
 
 -- 권한 다시 로드, 즉시 적용하기 위해 넣음
 FLUSH PRIVILEGES;
@@ -16,7 +16,7 @@ USE `smart_parking_system`;
 CREATE TABLE IF NOT EXISTS `admin`
 (
     admin_id            VARCHAR(20) PRIMARY KEY COMMENT '관리자 아이디',
-    password            VARCHAR(100) NOT NULL COMMENT '관리자 비밀번호',
+    password            VARCHAR(60) NOT NULL COMMENT '관리자 비밀번호',
     admin_name          VARCHAR(20)  NOT NULL COMMENT '관리자 이름',
 #     birth         VARCHAR(6)  NOT NULL COMMENT '관리자 생년월일 6자리',
     admin_email         VARCHAR(50)  NOT NULL UNIQUE COMMENT '이메일',
