@@ -43,19 +43,19 @@ public class PaymentHistoryService {
         return instance;
     }
 
-    // 변수 선언
-    private final LocalDateTime exitTime = LocalDateTime.now(); // 출차 시간
+    // 출차 시간(현재)
+    private final LocalDateTime exitTime = LocalDateTime.now();
 
-    public long getTotalMinutes(String carNum) { // 총 주차시간 계산 메서드
+    // 총 주차시간 계산 메서드
+    public long getTotalMinutes(String carNum) {
         LocalDateTime entryTime = parkingHistoryDAO.selectRecentParking(carNum).getEntryTime(); // 입차 시간
 
-        // 입차 시간 - 출차 시간
-        return Duration.between(entryTime, exitTime).toMinutes();
+        return Duration.between(entryTime, exitTime).toMinutes(); // 입차 시간 - 출차 시간
     }
 
+    // 총 요금 계산 메서드 (total_charge)
     private int calculateTotalCharge(String carNum) {
         log.info("calculateTotalCharge");
-        // 총 요금 (total_charge)
         // 정책
         int freeTime = paymentInfoVO.getFreeTime(); // 무료 회차 시간
         int basicCharge = paymentInfoVO.getBasicCharge(); // 기본 요금
@@ -86,7 +86,8 @@ public class PaymentHistoryService {
         return totalCharge;
     }
 
-    private int calculateDiscountAmount(String carNum) { // 할인 금액 계산(discount_amount), 멤버인지 확인 후 멤버면 0원
+    // 할인 금액 계산 메서드(discount_amount)
+    private int calculateDiscountAmount(String carNum) {
         log.info("calculateDiscountAmount");
 
         int totalCharge = calculateTotalCharge(carNum);
@@ -110,8 +111,10 @@ public class PaymentHistoryService {
         return discountAmount;
     }
 
+    // 최종 결제 금액, VO에 입력 메서드
+    // 잘못된 차량번호 조회시 return, 멤버이면 총요금, 할인금액, 최종금액 0원 처리 후 return
     public void calculateFinalCharge(String carNum) { // PaymentHistoryVO에 넣는 메서드
-        // 잘못된 차량번호 조회?
+        // 잘못된 차량번호 조회
         if (parkingHistoryDAO.selectRecentParking(carNum).getCarNum() == null) {
             return;
         }
@@ -154,6 +157,7 @@ public class PaymentHistoryService {
          paymentHistoryDAO.insertPaymentHistory(paymentHistoryVO);
     }
 
+    // VO를 DTO로 변경 메서드
     public PaymentHistoryDTO getRecentPayment(String carNum) {
         PaymentHistoryVO paymentHistoryVO = paymentHistoryDAO.selectRecentPayment(carNum);
         if (paymentHistoryVO == null) {

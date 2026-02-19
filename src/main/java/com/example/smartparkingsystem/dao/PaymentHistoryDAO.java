@@ -25,6 +25,7 @@ public class PaymentHistoryDAO {
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            connection.setAutoCommit(false);
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, paymentHistoryVO.getParkingArea());
             preparedStatement.setString(2, paymentHistoryVO.getCarNum());
