@@ -15,7 +15,7 @@ public enum ConnectionUtil {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.mariadb.jdbc.Driver");
         config.setJdbcUrl("jdbc:mariadb://localhost:3306/smart_parking_system");
-        config.setUsername("sps_user");
+        config.setUsername("system_user");
         config.setPassword("0220");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
