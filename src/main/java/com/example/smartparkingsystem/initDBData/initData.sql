@@ -1,8 +1,13 @@
 
+-- admin: 1234, test: 1111, test1: test1
 INSERT INTO admin
-(admin_id, password, admin_name, birth, admin_email, is_active, last_login_ip)
-VALUES
-    ('admin1', '1234', '관리자', '850101', 'admin@parking.com', TRUE, '127.0.0.1');
+(admin_id, password, admin_name, admin_email, is_active, last_login, last_login_ip, created_at)
+VALUES ('admin', '$2a$12$hvk0XVGUYQk2BwV4SZ9Sz.xCrkCOCgQ3KGCv.QI77JGdJZ9Ri2usW', '관리자', 'admin@naver.com', true, NULL,
+        NULL, NOW()),
+       ('test', '$2a$12$D0Tcf..4G2y8woY2HgB9veF.yjdoUeiI2yMymm8xVIOLB8yv7mjmO', 'Test', 'test@naver.com', false, NULL,
+        NULL, NOW()),
+       ('test1', '$2a$12$teiNyPb2nUP6vMA9aoQL/OeXC01FtycxknhHtm10CSj4SU/VqQIG6', 'Test1', 'test1@naver.com', true, NULL,
+        NULL, NOW());
 
 
 
@@ -28,7 +33,7 @@ FROM (
 INSERT INTO payment_info
 (free_time, basic_time, extra_time, basic_charge, extra_charge, max_charge, small_car_discount, disabled_discount, is_active, admin_id, member_charge)
 VALUES
-    (10, 60, 30, 2000, 1000, 15000, 0.3, 0.5, TRUE, 'admin1', 100000);
+    (10, 60, 30, 2000, 1000, 15000, 0.3, 0.5, TRUE, 'admin', 100000);
 
 
 
