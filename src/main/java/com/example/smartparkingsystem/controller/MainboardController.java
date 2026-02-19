@@ -21,14 +21,14 @@ public class MainboardController extends HttpServlet {
     // 현황 조회
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 1. 로그인 정보 없을 시 접근 제한
-        HttpSession session = req.getSession();
-        String adminId = (String) session.getAttribute("adminId");
-
-        if (adminId == null || adminId.trim().isEmpty()) {
-            resp.sendRedirect("/login");
-            return;
-        }
+//        // 1. 로그인 정보 없을 시 접근 제한
+//        HttpSession session = req.getSession();
+//        String adminId = (String) session.getAttribute("adminId");
+//
+//        if (adminId == null || adminId.trim().isEmpty()) {
+//            resp.sendRedirect("/login");
+//            return;
+//        }
 
         // 2. 로그인이 완료된 경우
         log.info("/main get...");

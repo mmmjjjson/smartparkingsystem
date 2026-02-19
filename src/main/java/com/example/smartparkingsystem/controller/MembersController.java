@@ -110,26 +110,6 @@ public class MembersController extends HttpServlet {
                 requestDispatcher.forward(req, resp);
             }
 
-            case "/member_check.do" -> { // 기존 회원 여부 확인
-                log.info("기존 회원 여부 확인");
-
-                String carNum = req.getParameter("carNum");
-
-                MembersDTO membersDTO = membersService.getMemberOne(carNum);
-
-                if (membersDTO != null) {
-                    // 기존 회원 있음
-                    session.setAttribute("checkResult", "found");
-                    session.setAttribute("memberDTO", membersDTO);
-                } else {
-                    // 기존 회원 없음
-                    session.setAttribute("checkResult", "notFound");
-                    session.setAttribute("searchCarNum", carNum);
-                }
-
-                resp.sendRedirect("/member_list.do?pageNum=1");
-            }
-
             case "/member_add.do" -> { // 신규 회원 등록
                 log.info("신규 회원 등록");
 

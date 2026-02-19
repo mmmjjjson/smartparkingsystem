@@ -26,97 +26,16 @@
     <%--    <%@include file="/web/main/main_process.jsp"%>--%>
 
     <meta charset="UTF-8">
-    <link rel="stylesheet" as="style" crossorigin
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <title>반월당 스마트 주차 관리 시스템</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- 메인보드 css -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/mainboard.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/css/mainboard.css">
 
     <!-- 영수증 css -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/receipt.css">
-    <style>
-        /* 입차 모달 전용 스타일 */
-        #input-carNum:focus {
-            border-color: #0d6efd !important;
-            box-shadow: 0 0 0 0.25 margin-bottom rgba(13, 110, 253, 0.1) !important;
-        }
-
-        /* 라디오 버튼(차종 선택) 커스텀 */
-        .btn-check:checked + .btn-outline-primary {
-            background-color: #e7f1ff !important;
-            color: #0d6efd !important;
-            border-color: #0d6efd !important;
-            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.1);
-        }
-
-        .btn-outline-primary {
-            border: 2px solid #eee !important;
-            color: #666;
-            transition: all 0.2s ease;
-        }
-
-        .btn-outline-primary:hover {
-            background-color: #f8f9fa !important;
-            border-color: #ccc !important;
-            color: #333;
-        }
-
-        /* 모달 내부 간격 및 스타일 개선 */
-        #parkingModal .modal-body {
-            padding: 2rem !important; /* 내부 여백 대폭 확대 */
-        }
-
-        /* 출차 정보 리스트 (Table 대체 스타일) */
-        .info-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px; /* 항목 간 간격 */
-            margin-bottom: 20px;
-        }
-
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 10px;
-        }
-
-        .info-label {
-            margin-top: 15px;
-            display: block;
-            font-size: 1.15rem !important;
-            font-weight: 650 !important;
-            color: #333 !important;
-            margin-bottom: 12px !important;
-        }
-
-        .info-value {
-            font-weight: 600;
-            text-align: right;
-        }
-
-        .info-value
-            /* 총 요금 강조 */
-        #info-totalPrice {
-            font-size: 1.4rem;
-            letter-spacing: -0.5px;
-        }
-
-        /* 버튼 디자인 개선 */
-        .modal-footer {
-            border-top: none !important;
-            padding: 0 2rem 2rem 2rem !important;
-        }
-
-        .modal-footer .btn {
-            padding: 12px 25px;
-            border-radius: 12px;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/css/receipt.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/css/mainModal.css">
 </head>
 <body>
 <!-- 공통 header 구역 -->
@@ -259,8 +178,8 @@
 </div>
 
 <!-- 주차 상태 처리 모달 -->
-<%@ include file="/web/main/parking_modal.jsp" %>
-<%--<%@include file="/web/main/membershipPayModal.jsp"%>--%>
+<%@ include file="/web/main/parking_modal.jsp"%>
+<%--<%@include file="/web/main/@membershipPayModal.jsp"%>--%>
 
 <!-- 공통 footer 구역 -->
 <%@ include file="/web/common/footer.jsp" %>
@@ -272,18 +191,18 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <!-- 함수(날짜 형식, 주차 현황 숫자) 로직 JS -->
-<script src="${pageContext.request.contextPath}/web/main/main_function.js"></script>
+<script src="${pageContext.request.contextPath}/web/main/js/main_function.js"></script>
 
 <!-- 검색 모달 JS -->
-<script src="${pageContext.request.contextPath}/web/main/main_search.js"></script>
+<script src="${pageContext.request.contextPath}/web/main/js/main_search.js"></script>
 
 <!-- 요금 계산 로직 JS -->
-<script src="${pageContext.request.contextPath}/web/main/main_parking_charge_logic.js"></script>
+<script src="${pageContext.request.contextPath}/web/main/js/main_parking_charge_logic.js"></script>
 
 <!-- 메인 모달 JS -->
-<script src="${pageContext.request.contextPath}/web/main/main_modal.js"></script>
+<script src="${pageContext.request.contextPath}/web/main/js/main_modal.js"></script>
 
 <!-- 회원권 결제 모달 JS -->
-<%--<script src="${pageContext.request.contextPath}/web/main/main_membershipPay.js"></script>--%>
+<%--<script src="${pageContext.request.contextPath}/web/main/@@main_membershipPay.js"></script>--%>
 </body>
 </html>

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/DB/initDB.sql" value="0d1258d4-7104-4109-b892-df883085d6ed" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/initDBData/member.sql" value="0d1258d4-7104-4109-b892-df883085d6ed" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/DB/initDB.sql" value="6864dd43-ea6c-47fb-a8b4-ba360ea65f82" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/6864dd43-ea6c-47fb-a8b4-ba360ea65f82/console.sql" value="6864dd43-ea6c-47fb-a8b4-ba360ea65f82" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/6864dd43-ea6c-47fb-a8b4-ba360ea65f82/console_1.sql" value="6864dd43-ea6c-47fb-a8b4-ba360ea65f82" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/6864dd43-ea6c-47fb-a8b4-ba360ea65f82/console_2.sql" value="6864dd43-ea6c-47fb-a8b4-ba360ea65f82" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/6864dd43-ea6c-47fb-a8b4-ba360ea65f82/console_3.sql" value="6864dd43-ea6c-47fb-a8b4-ba360ea65f82" />
   </component>
 </project>

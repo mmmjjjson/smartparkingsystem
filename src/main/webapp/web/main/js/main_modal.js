@@ -2,8 +2,8 @@ let modal;
 
 document.addEventListener('DOMContentLoaded', () => {
     /* 모달 관련 객체 선언
-모달 객체 불러와 정보 가져오기 (주차 구역, 차량 번호, 주차 시간, 주차 구역 상태)
-*/
+    모달 객체 불러와 정보 가져오기 (주차 구역, 차량 번호, 주차 시간, 주차 구역 상태)
+    */
     modal = new bootstrap.Modal(document.getElementById('parkingModal'));
     const modalTitle = document.getElementById('modal-id');
     const modalAction = document.getElementById('modal-action');
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     isCenter ? carNum.replace(/([가-힣])(\d)/, '$1\n$2') : carNum;
                 window.currentCard.querySelector('.box-time').innerText = "00:00";
 
-                alert(`${carNum} 차량 입차 완료!`)
+                alert(`${carNum} 차량 입차 완료!`);
 
                 document.getElementById('parkingModal').querySelector('.btn-close').blur();
                 document.body.focus(); //**
@@ -235,7 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. UI 초기화
             window.currentCard.classList.replace('occupied', 'available');
-            window.currentCard.querySelector('.box-car').innerText = "사용 가능";
+            const isCenter = window.currentCard.closest('.center-row') !== null;
+            window.currentCard.querySelector('.box-car').innerText = isCenter ? "사용\n가능" : "사용 가능";
             window.currentCard.querySelector('.box-time').innerText = "";
 
             // 3. 모달 닫기
@@ -276,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 2. 중앙구역 차량번호, '사용가능' 줄바꿈 유지
+            // 2. 중앙구역 차량번호 줄바꿈 유지
             const centerOccupied = document.querySelectorAll('.center-row .parking-card.occupied');
             centerOccupied.forEach(card => {
                 const boxCar = card.querySelector('.box-car');

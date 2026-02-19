@@ -38,44 +38,35 @@ public class ParkingController extends HttpServlet {
     }
 
     private void handleEntry(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-//        HttpSession session = req.getSession();
-//        String adminId = (String) session.getAttribute("adminId");
-//
-//        if (adminId == null || adminId.trim().isEmpty()) {
-//            resp.sendRedirect("/login");
-//            return;
-//        }
-
         String parkingArea = req.getParameter("parkingArea");
         String carNum = req.getParameter("carNum");
         String carType = req.getParameter("carType");
 
         try {
-            // 1. [체크] DB에 넣기 전에 "먼저" 확인해야 함
             ParkingHistoryDTO existing = parkingService.getRecentParking(carNum);
 
-            // 이미 주차 중인 차량이면 중단
+            // 이미 주차 중인 차량
             if (existing != null) {
                 resp.getWriter().write("{\"success\": false, \"message\": \"이미 주차 중인 차량입니다.\"}");
                 return;
             }
 
-            // 2. [등록] 중복이 없으니 그제서야 DB에 저장
+            // DB 저장
             ParkingHistoryDTO parkingHistoryDTO = ParkingHistoryDTO.builder()
                     .parkingArea(parkingArea).carNum(carNum).carType(carType).build();
             parkingService.registerEntry(parkingHistoryDTO);
 
-            // 3. [조회] 방금 저장된 따끈따끈한 정보를 다시 가져옴 (ID, 시간 필요)
+            // 저장 정보 다시 가져오기
             ParkingHistoryDTO saved = parkingService.getRecentParking(carNum);
 
             if (saved == null) {
-                // 여기가 터지면 DB Insert는 됐는데 Select가 안되는 상황
+                // DB Insert는 됐는데 Select가 안되는 경우
                 resp.setStatus(500);
                 resp.getWriter().write("{\"success\": false, \"message\": \"DB 조회 실패\"}");
                 return;
             }
 
-            // 4. [응답] 날짜 변환 및 JSON 전송
+            // 날짜 변환 및 JSON 전송
             String entryTimeStr = String.valueOf(saved.getEntryTime()).replace(" ", "T");
             resp.getWriter().write(
                     "{\"success\": true" +
@@ -84,7 +75,7 @@ public class ParkingController extends HttpServlet {
             );
 
         } catch (Exception e) {
-            log.error("입차 처리 중 진짜 에러 발생: ", e); // 이 로그가 서버 콘솔에 찍힙니다.
+            log.error("입차 처리 중 진짜 에러 발생: ", e);
             resp.setStatus(500);
             try { resp.getWriter().write("{\"success\": false, \"message\": \"서버 내부 오류\"}"); } catch(Exception ex){}
         }
@@ -141,13 +132,12 @@ public class ParkingController extends HttpServlet {
         PaymentInfoDTO paymentInfoDTO = paymentInfoService.getInfo();
 
         if (paymentHistoryDTO == null) {
-            // 여기가 터지면 DB Insert는 됐는데 Select가 안되는 상황
             resp.setStatus(500);
             resp.getWriter().write("{\"success\": false, \"message\": \"결제 정보 조회 실패\"}");
             return;
         }
 
-        // 4. [응답] 날짜 변환 및 JSON 전송
+        // 날짜 변환 및 JSON 전송
         resp.getWriter().write(
                 "{\"success\": true" +
 //                            ", \"payNo\": \"" + paymentHistoryDTO.getPayNo() + "\"" +
