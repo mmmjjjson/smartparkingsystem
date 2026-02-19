@@ -18,7 +18,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 @Log4j2
-@WebServlet(name = "membersController", value = {"*.do"})
+@WebServlet(name = "membersController", value = {
+        "/member_list",
+        "/member_check",
+        "/member_add",
+        "/member_modify"
+})
 public class MembersController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -41,7 +46,7 @@ public class MembersController extends HttpServlet {
         String adminId = (String) session.getAttribute("adminId");
 
         switch (command) {
-            case "/member_list.do" -> { // 회원 관리 메인 목록
+            case "/member_list" -> { // 회원 관리 메인 목록
                 log.info("회원 메인 목록");
 
                 // 로그인을 안 했을 시
@@ -60,7 +65,7 @@ public class MembersController extends HttpServlet {
                     String from = req.getParameter("from");
                     String carNum = req.getParameter("carNum");
 
-                    StringBuilder redirectURL = new StringBuilder("/member_list.do?pageNum=1");
+                    StringBuilder redirectURL = new StringBuilder("/member_list?pageNum=1");
 
                     if (status != null) redirectURL.append("&status=").append(status);
                     if (searchType != null) redirectURL.append("&searchType=").append(searchType);
@@ -68,7 +73,7 @@ public class MembersController extends HttpServlet {
                     if (from != null) redirectURL.append("&from=").append(from);
                     if (carNum != null) redirectURL.append("&carNum=").append(carNum);
 
-                    resp.sendRedirect(redirectURL.toString());
+                    resp.sendRedirect(req.getContextPath() + redirectURL.toString());
                     return;
                 }
 
@@ -110,7 +115,27 @@ public class MembersController extends HttpServlet {
                 requestDispatcher.forward(req, resp);
             }
 
-            case "/member_add.do" -> { // 신규 회원 등록
+            case "/member_check" -> { // 기존 회원 여부 확인
+                log.info("기존 회원 여부 확인");
+
+                String carNum = req.getParameter("carNum");
+
+                MembersDTO membersDTO = membersService.getMemberOne(carNum);
+
+                if (membersDTO != null) {
+                    // 기존 회원 있음
+                    session.setAttribute("checkResult", "found");
+                    session.setAttribute("memberDTO", membersDTO);
+                } else {
+                    // 기존 회원 없음
+                    session.setAttribute("checkResult", "notFound");
+                    session.setAttribute("searchCarNum", carNum);
+                }
+
+                resp.sendRedirect(req.getContextPath() + "/member_list?pageNum=1");
+            }
+
+            case "/member_add" -> { // 신규 회원 등록
                 log.info("신규 회원 등록");
 
                 String carNum = req.getParameter("carNum");
@@ -136,10 +161,10 @@ public class MembersController extends HttpServlet {
                         : "회원이 등록되었습니다.";
                 session.setAttribute("flashMsg", message);
 
-                resp.sendRedirect("/member_list.do");
+                resp.sendRedirect(req.getContextPath() + "/member_list");
             }
 
-            case "/member_modify.do" -> { // 회원 정보 수정
+            case "/member_modify" -> { // 회원 정보 수정
                 log.info("회원 정보 수정");
 
                 Long mno = Long.parseLong(req.getParameter("mno"));
@@ -159,7 +184,7 @@ public class MembersController extends HttpServlet {
                 session = req.getSession();
                 session.setAttribute("flashMsg", "회원 정보가 수정되었습니다.");
 
-                resp.sendRedirect("/member_list.do");
+                resp.sendRedirect(req.getContextPath() + "/member_list");
             }
         }
     }

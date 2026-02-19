@@ -70,14 +70,14 @@
 </head>
 <body class="bg-light">
 <!-- 헤드 -->
-<%@ include file="../../web/common/header_main.jsp" %>
+<%@ include file="/web/common/header_main.jsp" %>
 <div class="container-fluid mt-4 pb-2">
     <!-- 콘텐츠 -->
     <div class="content">
         <div class="section-header d-flex justify-content-between align-items-center mb-3">
             <h3 class="section-title mb-0"><b>회원 관리</b> - 월정액 회원 정보 관리</h3>
             <!-- 회원 정보 검색 -->
-            <form method="get" action="/member_list.do" class="d-flex justify-content-end align-items-center">
+            <form method="get" action="<%=request.getContextPath()%>/member_list" class="d-flex justify-content-end align-items-center">
                 <input type="hidden" name="pageNum" value="1">
                 <input type="hidden" name="status"
                        value="<%= request.getParameter("status") == null ? "" : request.getParameter("status") %>">
@@ -108,9 +108,9 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <!-- 회원 / 만료 회원 버튼 -->
             <div>
-                <a href="./member_list.do"
+                <a href="<%=request.getContextPath()%>/member_list"
                    class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
-                <a href="./member_list.do?status=expired"
+                <a href="<%=request.getContextPath()%>/member_list?status=expired"
                    class="btn btn-outline-primary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료
                     회원</a>
             </div>
@@ -199,7 +199,7 @@
                 <%
                     if (firstPage > 1) { // 화면의 첫 번째 페이지 번호가 1보다 크면
                 %>
-                <a href="./member_list.do?pageNum=<%=(firstPage - 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>"
+                <a href="<%=request.getContextPath()%>/member_list?pageNum=<%=(firstPage - 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>"
                    class="text-decoration-none fs-6 fw-semibold px-2"
                    style="color:#1e3a8a;">[
                     이전 ]</a>
@@ -209,7 +209,7 @@
                 <%
                     for (int i = firstPage; i <= lastPage; i++) {
                 %>
-                <a href="./member_list.do?pageNum=<%=i%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>"
+                <a href="<%=request.getContextPath()%>/member_list?pageNum=<%=i%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>"
                    class="text-decoration-none fs-6 fw-semibold text-success px-2">
                     <%
                         if (pageNum == i) {
@@ -231,7 +231,7 @@
                 <%
                     if (lastPage < totalPage) { // 화면의 마지막 페이지 번호가 총 페이지 수보다 작으면
                 %>
-                <a href="./member_list.do?pageNum=<%=(lastPage + 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>"
+                <a href="<%=request.getContextPath()%>/member_list?pageNum=<%=(lastPage + 1)%>&searchType=<%=searchType%>&keyword=<%=keyword%>&status=<%=status%>"
                    class="text-decoration-none fs-6 fw-semibold px-2"
                    style="color:#1e3a8a;">[
                     다음 ]</a>
@@ -248,7 +248,7 @@
 <div class="modal fade" id="newMemberModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <form action="/member_add.do" method="post" onsubmit="return handleNewMemberSubmit()">
+            <form action="<%=request.getContextPath()%>/member_add" method="post" onsubmit="return handleNewMemberSubmit()">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">회원 정보 입력</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -308,12 +308,6 @@
         </div>
     </div>
 </div>
-
-<!-- ===================== 신규 회원 등록 모달 자동 오픈 ===================== -->
-<%--<div id="memberPageData"--%>
-<%--     data-open-modal="${openNewMemberModal}"--%>
-<%--     data-prefill-car="${prefillCarNum}">--%>
-<%--</div>--%>
 
 <!-- ===================== 회원 상세 정보 모달 ===================== -->
 <div class="modal fade" id="viewMemberModal" tabindex="-1">
@@ -454,7 +448,7 @@
 
                 <div class="modal-footer" id="mem-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <form id="newMemberForm" action="/member_add.do" method="post">
+                    <form id="newMemberForm" action="<%=request.getContextPath()%>/member_add" method="post">
                         <input type="hidden" name="carNum" id="newCarNumberHidden">
                         <input type="hidden" name="memberName" id="newNameHidden">
                         <input type="hidden" name="memberPhone" id="newPhoneHidden">
@@ -474,7 +468,7 @@
 <div class="modal fade" id="editMemberModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <form action="/member_modify.do" method="post" onsubmit="return handleEditSubmit()">
+            <form action="<%=request.getContextPath()%>/member_modify" method="post" onsubmit="return handleEditSubmit()">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">회원 정보 수정</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -526,7 +520,7 @@
     }
 %>
 <footer>
-    <%@ include file="../../web/common/footer.jsp" %>
+    <%@ include file="/web/common/footer.jsp" %>
 </footer>
 </body>
 </html>
