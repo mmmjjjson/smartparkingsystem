@@ -48,7 +48,7 @@ public class PaymentHistoryDAO {
 
     public PaymentHistoryVO selectRecentPayment(String carNum) {
         PaymentHistoryVO paymentHistoryVO = null;
-        String sql = "SELECT * FROM payment_history WHERE car_num = ? AND exit_time IS NULL " +
+        String sql = "SELECT * FROM payment_history WHERE car_num = ?" +
                 "ORDER BY entry_time DESC LIMIT 1";
 
         try {

@@ -20,7 +20,7 @@
     <form name="setting" action="/setting" method="post" class="setup-area" onsubmit="return prepareSubmit()">
         <div class="title-bar">
             설정 관리 - 요금 및 할인 정책
-            <button class="save-btn" type="submit">저장하기</button>
+            <button class="save-btn" type="button" onclick="clickSubmit()">저장하기</button>
         </div>
 
         <div class="card">
@@ -29,16 +29,16 @@
                 <div class="input-item">
                     <label>기본 주차 요금(원)</label>
                     <input type="text" id="in-base-fee" value="<%=paymentInfoDTO.getBasicCharge()%>"
-                           name="basic_charge">
+                           name="basicCharge">
                 </div>
                 <div class="input-item">
                     <label>기본 주차 시간(분)</label>
-                    <input type="text" id="in-base-time" value="<%=paymentInfoDTO.getBasicTime()%>" name="basic_time">
+                    <input type="text" id="in-base-time" value="<%=paymentInfoDTO.getBasicTime()%>" name="basicTime">
                 </div>
                 <div class="input-item">
                     <label>일일 최대 요금(원)</label>
                     <input type="text" id="in-day-max-fee" value="<%=paymentInfoDTO.getMaxCharge()%>"
-                           name="max_charge">
+                           name="maxCharge">
                 </div>
             </div>
         </div>
@@ -48,16 +48,16 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>무료 회차 시간(분)</label>
-                    <input type="text" id="in-free-time" value="<%=paymentInfoDTO.getFreeTime()%>" name="free_time">
+                    <input type="text" id="in-free-time" value="<%=paymentInfoDTO.getFreeTime()%>" name="freeTime">
                 </div>
                 <div class="input-item">
                     <label>추가 요금(원)</label>
                     <input type="text" id="in-add-fee" value="<%=paymentInfoDTO.getExtraCharge()%>"
-                           name="extra_charge">
+                           name="extraCharge">
                 </div>
                 <div class="input-item">
                     <label>추가 요금 기준 시간(분)</label>
-                    <input type="text" id="in-add-time" value="<%=paymentInfoDTO.getExtraTime()%>" name="extra_time">
+                    <input type="text" id="in-add-time" value="<%=paymentInfoDTO.getExtraTime()%>" name="extraTime">
                 </div>
             </div>
         </div>
@@ -68,17 +68,17 @@
                 <div class="input-item">
                     <label>경차 할인율</label>
                     <input type="text" id="in-light-dis" value="<%=paymentInfoDTO.getSmallCarDiscount()%>"
-                           name="small_car_discount">
+                           name="smallCarDiscount">
                 </div>
                 <div class="input-item">
                     <label>장애인 할인율</label>
                     <input type="text" id="in-disabled-dis" value="<%=paymentInfoDTO.getDisabledDiscount()%>"
-                           name="disabled_discount">
+                           name="disabledDiscount">
                 </div>
                 <div class="input-item">
                     <label>월 정액권(원)</label>
                     <input type="text" id="in-monthly-fee" value="<%=paymentInfoDTO.getMemberCharge()%>"
-                           name="member_charge">
+                           name="memberCharge">
                 </div>
             </div>
         </div>
