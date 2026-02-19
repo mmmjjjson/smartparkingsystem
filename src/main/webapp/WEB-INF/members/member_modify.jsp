@@ -1,22 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.example.smartparkingsystem.member.model.*" %>
+<%@ page import="com.example.smartparkingsystem.*" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
 <%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
-<%-- 회원 정보 수정 --%>
+<%@ page import="com.example.smartparkingsystem.vo.MembersVO" %>
+<%@ page import="com.example.smartparkingsystem.service.MembersService" %>
 <%
-    String originCarNum = request.getParameter("originCarNum");
-
     MembersDTO membersDTO = MembersDTO.builder()
+            .mno(Long.parseLong(request.getParameter("mno")))
             .carNum(request.getParameter("carNum"))
             .memberName(request.getParameter("memberName"))
             .memberPhone(request.getParameter("memberPhone"))
-            .startDate(LocalDate.parse(request.getParameter("startDate")).atStartOfDay())
-            .endDate(LocalDate.parse(request.getParameter("endDate")).atStartOfDay())
             .build();
 
-    MembersDAO membersDAO = new MembersDAO();
-    membersDAO.updateMember(originCarNum, membersDTO);
-
-    response.sendRedirect("member.jsp");
+    MembersService membersService = MembersService.INSTANCE;
+    membersService.modifyMember(membersDTO);
 %>

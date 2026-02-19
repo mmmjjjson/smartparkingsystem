@@ -26,7 +26,8 @@
     <%--    <%@include file="/web/main/main_process.jsp"%>--%>
 
     <meta charset="UTF-8">
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link rel="stylesheet" as="style" crossorigin
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
     <title>반월당 스마트 주차 관리 시스템</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -98,8 +99,7 @@
         }
 
         .info-value
-
-        /* 총 요금 강조 */
+            /* 총 요금 강조 */
         #info-totalPrice {
             font-size: 1.4rem;
             letter-spacing: -0.5px;
@@ -120,7 +120,7 @@
 </head>
 <body>
 <!-- 공통 header 구역 -->
-<%@ include file="/web/common/header_main.jsp"%>
+<%@ include file="/web/common/header_main.jsp" %>
 
 <!-- 메인 페이지 -->
 <div class="container-fluid mt-4">
@@ -145,7 +145,7 @@
         <div class="layout-wrapper">
             <!-- 좌측 주차 구역 A1 ~ A5 (세로 정렬) -->
             <div class="column">
-                <% for(int i=1;i<=5;i++){
+                <% for (int i = 1; i <= 5; i++) {
                     String currentId = "A-" + i;
                     ParkingHistoryDTO occupiedInfo = occupiedMap.get(currentId);
                     request.setAttribute("id", currentId);
@@ -175,7 +175,7 @@
                 <div class="central-column">
                     <!-- 중앙 상단 주차 구역 A6 ~ A10 -->
                     <div class="center-row">
-                        <% for(int i=6;i<=10;i++){
+                        <% for (int i = 6; i <= 10; i++) {
                             String currentId = "A-" + i;
                             ParkingHistoryDTO occupiedInfo = occupiedMap.get(currentId);
                             request.setAttribute("id", currentId);
@@ -201,7 +201,7 @@
                     </div>
                     <!-- 중앙 주차 하단 구역 A11 ~ A15 -->
                     <div class="center-row">
-                        <% for(int i=11;i<=15;i++){
+                        <% for (int i = 11; i <= 15; i++) {
                             String currentId = "A-" + i;
                             ParkingHistoryDTO occupiedInfo = occupiedMap.get(currentId);
                             request.setAttribute("id", currentId);
@@ -230,7 +230,7 @@
 
             <!-- 우측 주차 구역 A16 ~ A20 -->
             <div class="column">
-                <% for (int i = 16; i <= 20; i++){
+                <% for (int i = 16; i <= 20; i++) {
                     String currentId = "A-" + i;
                     ParkingHistoryDTO occupiedInfo = occupiedMap.get(currentId);
                     request.setAttribute("id", currentId);
@@ -259,11 +259,11 @@
 </div>
 
 <!-- 주차 상태 처리 모달 -->
-<%@ include file="/web/main/parking_modal.jsp"%>
-<%@include file="/web/main/membershipPayModal.jsp"%>
+<%@ include file="/web/main/parking_modal.jsp" %>
+<%--<%@include file="/web/main/membershipPayModal.jsp"%>--%>
 
 <!-- 공통 footer 구역 -->
-<%@ include file="/web/common/footer.jsp"%>
+<%@ include file="/web/common/footer.jsp" %>
 
 <!-- bootstrap JS (모달 동작용) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -284,6 +284,6 @@
 <script src="${pageContext.request.contextPath}/web/main/main_modal.js"></script>
 
 <!-- 회원권 결제 모달 JS -->
-<%--<script src="${pageContext.request.contextPath}/web/main/@main_membershipPay.js"></script>--%>
+<%--<script src="${pageContext.request.contextPath}/web/main/main_membershipPay.js"></script>--%>
 </body>
 </html>

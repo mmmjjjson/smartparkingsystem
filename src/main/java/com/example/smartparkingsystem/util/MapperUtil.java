@@ -14,6 +14,7 @@ public enum MapperUtil {
                 .setFieldMatchingEnabled(true)
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
+        // STRICT: 엄격모드. 필드명과 타입이 모두 일치해야 매핑
     }
 
     public ModelMapper getInstance() {

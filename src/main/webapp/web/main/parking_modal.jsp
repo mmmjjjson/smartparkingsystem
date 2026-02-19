@@ -13,30 +13,19 @@
                 <p id="modal-id" class="fw-bold fs-5"></p> <!-- 구역 -->
                 <!-- 입차 모달 -->
                 <div id="section-entry" style="display: none;">
-                    <div class="info-list">
-                        <div class="mb-4">
-                            <label class="info-label mb-2 d-block">차량 번호</label>
-                            <input type="text" id="input-carNum" class="form-control form-control-lg"
-                                   placeholder="전체 차량번호를 정확히 입력해 주세요."
-                                   style="border-radius: 12px; border: 2px solid #eee; font-size: 17px;">
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="info-label mb-3 d-block">차종 선택</label>
-                            <div class="row g-2" role="group">
-                                <div class="col">
-                                    <input type="radio" class="btn-check" name="carType" id="type1" value="일반" checked>
-                                    <label class="btn btn-outline-primary w-100 py-3 fw-bold" for="type1" style="border-radius: 12px;">일반</label>
-                                </div>
-                                <div class="col">
-                                    <input type="radio" class="btn-check" name="carType" id="type2" value="경차">
-                                    <label class="btn btn-outline-primary w-100 py-3 fw-bold" for="type2" style="border-radius: 12px;">경차</label>
-                                </div>
-                                <div class="col">
-                                    <input type="radio" class="btn-check" name="carType" id="type3" value="장애인">
-                                    <label class="btn btn-outline-primary w-100 py-3 fw-bold" for="type3" style="border-radius: 12px;">장애인</label>
-                                </div>
-                            </div>
+                    <div class="mb-3">
+                        <label class="form-label">차량 번호</label>
+                        <input type="text" id="input-carNum" class="form-control" placeholder="전체 차량번호를 입력하세요.">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">차종 선택</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="carType" id="type1" value="일반" checked>
+                            <label class="btn btn-outline-primary" for="type1">일반</label>
+                            <input type="radio" class="btn-check" name="carType" id="type2" value="경차">
+                            <label class="btn btn-outline-primary" for="type2">경차</label>
+                            <input type="radio" class="btn-check" name="carType" id="type3" value="장애인">
+                            <label class="btn btn-outline-primary" for="type3">장애인</label>
                         </div>
                     </div>
                 </div>
@@ -50,7 +39,8 @@
                         </div>
                         <div class="info-item">
                             <span class="info-label">차종</span>
-                            <span class="info-value text-muted"><span id="info-type" style="font-size: 1.2rem; font-weight: 700;"></span></span>
+                            <span class="info-value text-muted"><span id="info-type"
+                                                                      style="font-size: 1.2rem; font-weight: 700;"></span></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">입차시간</span>
@@ -120,7 +110,9 @@
 
             <!-- 모달 버튼 -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning me-auto" id="btnMembershipPay" style="display: none;" onclick="moveMembershipPage()">회원권 결제</button>
+                <button type="button" class="btn btn-warning me-auto" id="btnMembershipPay" style="display: none;"
+                        onclick="moveMembershipPage()">회원권 결제
+                </button>
                 <button type="button" class="btn btn-success" id="modal-action"></button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
             </div>

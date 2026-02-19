@@ -17,6 +17,7 @@ public enum ConnectionUtil {
         config.setJdbcUrl("jdbc:mariadb://localhost:3306/smart_parking_system");
         config.setUsername("system_user");
         config.setPassword("0220");
+
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
