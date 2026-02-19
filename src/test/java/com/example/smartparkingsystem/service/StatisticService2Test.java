@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StatisticService2Test {
 
-    private StatisticService2 service;
+    private StatisticService service;
 
     @BeforeEach
     void setUp() {
-        service = StatisticService2.INSTANCE;
+        service = StatisticService.INSTANCE;
         // 테스트 전 캐시 초기화
         service.refreshCache();
     }

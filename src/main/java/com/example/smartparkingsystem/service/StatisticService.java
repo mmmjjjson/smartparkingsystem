@@ -10,20 +10,19 @@ import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 
 @Log4j2
-public enum StatisticService2 {
+public enum StatisticService {
     INSTANCE;
 
     // DAO 객체들
     private final PaymentHistoryDAO paymentHistoryDAO;
     private final MembersDAO membersDAO;
     private final ParkingHistoryDAO parkingHistoryDAO;
-    private final PaymentInfoDAO paymentInfoDAO = PaymentInfoDAO.getInstance();
+    private final PaymentInfoDAO paymentInfoDAO = new PaymentInfoDAO();
 
     // ========== 캐싱 변수 ==========
     private Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> cachedPaymentData = null;
@@ -33,7 +32,7 @@ public enum StatisticService2 {
     // ========== 회원권 가격 상수 ==========
     private final int MEMBERSHIP_PRICE_PER_30DAYS = paymentInfoDAO.selectInfo().getMemberCharge();
 
-    StatisticService2() {
+    StatisticService() {
         paymentHistoryDAO = new PaymentHistoryDAO();
         membersDAO = new MembersDAO();
         parkingHistoryDAO = new ParkingHistoryDAO();

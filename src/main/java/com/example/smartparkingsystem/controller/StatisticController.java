@@ -1,7 +1,6 @@
 package com.example.smartparkingsystem.controller;
 
-import com.example.smartparkingsystem.service.StatisticService2;
-
+import com.example.smartparkingsystem.service.StatisticService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -23,7 +22,7 @@ import java.util.Map;
 public class StatisticController extends HttpServlet {
 
 
-    private final StatisticService2 statisticService = StatisticService2.INSTANCE;
+    private final StatisticService statisticService = StatisticService.INSTANCE;
     private final ObjectMapper objectMapper;
 
     public StatisticController() {
