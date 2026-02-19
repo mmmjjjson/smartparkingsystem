@@ -17,6 +17,6 @@ class PaymentHistoryServiceTest {
 
     @Test
     public void calculateFinalChargeTest() {
-         paymentHistoryService.calculateFinalCharge("33가3007");
+         paymentHistoryService.calculateFinalCharge("35가3946");
     }
 }

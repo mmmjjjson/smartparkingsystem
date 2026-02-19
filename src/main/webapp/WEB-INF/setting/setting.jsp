@@ -12,7 +12,7 @@
     <title>스마트 주차 관리 시스템 - 설정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/web/setting/setting.css">
-
+    <script src="/web/setting/setting.js"></script>
 </head>
 <body>
 <%@ include file="/web/common/header_other.jsp" %>
@@ -84,48 +84,6 @@
         </div>
     </form>
 </div>
-
-<script>
-    // 콤마를 적용할 대상 ID들 리스트
-    const moneyIds = ['in-base-fee', 'in-day-max-fee', 'in-add-fee', 'in-monthly-fee'];
-
-    // 1. 숫자에 콤마를 추가하는 함수
-    function formatNumber(e) {
-        let value = e.target.value.replace(/[^\d]/g, ""); // 숫자 외 제거
-        if (value) {
-            e.target.value = Number(value).toLocaleString('ko-KR');
-        } else {
-            e.target.value = "";
-        }
-    }
-
-    // 2. 페이지 로드 시 초기값 설정 및 이벤트 바인딩
-    window.addEventListener('DOMContentLoaded', function() {
-        moneyIds.forEach(id => {
-            const input = document.getElementById(id);
-            if (input) {
-                // 초기값 콤마 처리
-                if (input.value) {
-                    input.value = Number(input.value.replace(/[^\d]/g, "")).toLocaleString('ko-KR');
-                }
-                // 입력 시 실시간 처리
-                input.addEventListener('input', formatNumber);
-            }
-        });
-    });
-
-    // 3. 전송 전 콤마 제거 함수 (서버 에러 방지)
-    function prepareSubmit() {
-        alert('설정이 성공적으로 변경되었습니다.')
-        moneyIds.forEach(id => {
-            const input = document.getElementById(id);
-            if (input) {
-                input.value = input.value.replace(/,/g, ""); // 콤마 제거 후 전송
-            }
-        });
-        return true; // form 제출 진행
-    }
-</script>
 
 </body>
 </html>

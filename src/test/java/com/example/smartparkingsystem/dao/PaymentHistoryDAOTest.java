@@ -13,7 +13,7 @@ class PaymentHistoryDAOTest {
 
     @BeforeEach
     public void ready() {
-        paymentHistoryDAO = PaymentHistoryDAO.getInstance();
+        paymentHistoryDAO = new PaymentHistoryDAO();
     }
 
     @Test
@@ -26,8 +26,8 @@ class PaymentHistoryDAOTest {
                 .exitTime(LocalDateTime.now())
                 .totalMinutes(2026021112)
                 .totalCharge(10000)
-                .mno(2L)
-                .pno(5)
+                .mno(null)
+                .pno(1)
                 .parkNo(1)
                 .discountAmount(2000)
                 .finalCharge(8000)

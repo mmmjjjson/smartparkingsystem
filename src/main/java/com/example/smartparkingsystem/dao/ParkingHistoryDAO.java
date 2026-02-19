@@ -172,6 +172,7 @@ public class ParkingHistoryDAO {
     public void insertTestData(ParkingHistoryVO parkingHistoryVO) {
         String sql = "INSERT INTO parking_history (parking_area, car_num, car_type, is_member, entry_time, exit_time, total_minutes) " +
                 "VALUES (?, ?, ?, EXISTS(SELECT 1 FROM members WHERE car_num = ?) , ?, ?, ?)";
+
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);

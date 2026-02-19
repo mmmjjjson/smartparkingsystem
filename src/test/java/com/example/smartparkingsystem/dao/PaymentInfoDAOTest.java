@@ -12,7 +12,7 @@ class PaymentInfoDAOTest {
     @BeforeEach
     public void ready() {
         // 모든 테스트 전에 TodoDAO 타입의 객체를 생성
-        paymentInfoDAO = PaymentInfoDAO.getInstance();
+        paymentInfoDAO = new PaymentInfoDAO();
     }
 
     @Test
