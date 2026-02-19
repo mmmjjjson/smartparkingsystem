@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS `smart-_parking_system`;
+CREATE DATABASE IF NOT EXISTS `smart_parking_system`;
 
 USE `smart-_parking_system`;
 

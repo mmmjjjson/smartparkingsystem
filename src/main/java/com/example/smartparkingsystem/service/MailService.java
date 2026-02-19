@@ -62,7 +62,25 @@ public enum MailService {
 
 
         String subject = "[스마트 주차시스템] OTP 인증 번호";
-        String content = "OTP 인증번호 : " + otpCode;
+        String content =
+                "<div style='font-family:Arial, sans-serif; max-width:600px; margin:0 auto;'>" +
+
+                        "<h2 style='color:#2c3e50;'>스마트 주차관리 시스템</h2>" +
+
+                        "<p>아래 OTP 인증번호를 입력하여 본인 확인을 완료해주세요.</p>" +
+
+                        "<div style='padding:20px; background:#f4f4f4; text-align:center; " +
+                        "font-size:32px; font-weight:bold; letter-spacing:8px; border-radius:8px;'>"
+                        + otpCode +
+                        "</div>" +
+
+                        "<p style='font-size:13px; color:gray; margin-top:20px;'>※ 인증번호는 4분간 유효합니다.</p>" +
+                        "<p style='font-size:13px; color:gray;'>※ 본인이 요청하지 않은 경우 이 메일을 무시하세요.</p>" +
+
+                        "<hr style='margin-top:30px;'>" +
+                        "<p style='font-size:12px; color:#aaa;'>© 스마트 주차관리 시스템</p>" +
+
+                        "</div>";
 
         // 메일 발송을 시도.
         try {
@@ -104,7 +122,26 @@ public enum MailService {
 
 
         String subject = "[스마트 주차시스템] 재설정 비밀번호";
-        String content = "재설정 된 비밀번호 : " + pw;
+        String content =
+                "<div style='font-family:Arial, sans-serif; max-width:600px; margin:0 auto;'>" +
+
+                        "<h2 style='color:#2c3e50;'>스마트 주차관리 시스템</h2>" +
+
+                        "<p>요청하신 임시 비밀번호가 발급되었습니다.</p>" +
+                        "<p>아래 비밀번호로 로그인 후 반드시 새로운 비밀번호로 변경해주세요.</p>" +
+
+                        "<div style='padding:20px; background:#f4f4f4; text-align:center; " +
+                        "font-size:26px; font-weight:bold; letter-spacing:3px; border-radius:8px;'>"
+                        + pw +
+                        "</div>" +
+
+                        "<p style='font-size:13px; color:gray; margin-top:20px;'>※ 보안을 위해 로그인 후 즉시 비밀번호를 변경해주세요.</p>" +
+                        "<p style='font-size:13px; color:gray;'>※ 본인이 요청하지 않은 경우 고객센터에 문의하세요.</p>" +
+
+                        "<hr style='margin-top:30px;'>" +
+                        "<p style='font-size:12px; color:#aaa;'>© 스마트 주차관리 시스템</p>" +
+
+                        "</div>";
 
         try {
             Message message = new MimeMessage(session);
