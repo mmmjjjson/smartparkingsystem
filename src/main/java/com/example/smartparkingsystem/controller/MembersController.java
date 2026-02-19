@@ -33,6 +33,7 @@ public class MembersController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         MembersService membersService = MembersService.INSTANCE;
+        PaymentInfoDAO paymentInfoDAO = new PaymentInfoDAO();
         String requestURI = req.getRequestURI(); // 요청 URI
         String contextPath = req.getContextPath(); // 컨텍스트 경로
         String command = requestURI.substring(contextPath.length()); // 요청 URI에서 컨텍스트 경로를 제거한 명령어
@@ -108,7 +109,7 @@ public class MembersController extends HttpServlet {
                 req.setAttribute("prefillCarNum", carNum);
 
                 // 결제 정보 가져오기
-                int memberCharge = PaymentInfoDAO.getInstance().selectInfo().getMemberCharge();
+                int memberCharge = paymentInfoDAO.selectInfo().getMemberCharge();
                 req.setAttribute("memberCharge", memberCharge);
 
                 RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/members/member_list.jsp");

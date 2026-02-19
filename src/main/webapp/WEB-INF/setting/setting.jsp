@@ -11,12 +11,12 @@
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
     <title>스마트 주차 관리 시스템 - 설정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/web/setting/setting.css">
-    <script src="/web/setting/setting.js"></script>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/web/setting/setting.css">
+    <script src="<%=request.getContextPath()%>/web/setting/setting.js"></script>
 </head>
 <body>
 <%@ include file="/web/common/header_main.jsp" %>
-<div class="container">
+<div class="container" id="container">
     <form name="setting" action="/setting" method="post" class="setup-area" onsubmit="return prepareSubmit()">
         <div class="title-bar">
             설정 관리 - 요금 및 할인 정책

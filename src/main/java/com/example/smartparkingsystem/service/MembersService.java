@@ -18,7 +18,7 @@ public enum MembersService {
     INSTANCE;
 
     private final MembersDAO membersDAO;
-    private final PaymentInfoDAO paymentInfoDAO = PaymentInfoDAO.getInstance();
+    private final PaymentInfoDAO paymentInfoDAO = new PaymentInfoDAO();
     private final ModelMapper modelMapper = MapperUtil.INSTANCE.getInstance();
     private final int pagePerCount = 10;
 
