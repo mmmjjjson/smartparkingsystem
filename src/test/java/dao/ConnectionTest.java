@@ -17,9 +17,9 @@ public class ConnectionTest {
 
             String url = "jdbc:mariadb://localhost:3306/smart-_parking_system";
             String user = "root";
-            String password = "5506";
+            String pass = "4165";
 
-            Connection connection = DriverManager.getConnection(url, user, password);
+            Connection connection = DriverManager.getConnection(url, user, pass);
             // 변수가 null이 아닌지 확인 -> null이 아니면 객체를 참조하고 있음.
             Assertions.assertNotNull(connection);
             connection.close();
@@ -34,7 +34,7 @@ public class ConnectionTest {
         config.setDriverClassName("org.mariadb.jdbc.Driver");
         config.setJdbcUrl("jdbc:mariadb://localhost:3306/smart-_parking_system");
         config.setUsername("root");
-        config.setPassword("5506");
+        config.setPassword("4165");
 
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -42,11 +42,11 @@ public class ConnectionTest {
 
         HikariDataSource dataSource = new HikariDataSource(config);
         try (Connection connection = dataSource.getConnection()) {
-            System.out.println("Connection success: " + connection);
-            // 변수가 null이 아닌지 확인 -> null이 아니면 객체를 참조하고 있음.
+            System.out.println("Connected to database successfully: " + connection);
             Assertions.assertNotNull(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 }

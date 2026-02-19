@@ -11,6 +11,7 @@ public enum ConnectionUtil {
 
     private final HikariDataSource dataSource;
 
+    // 공통 사용자 추가(DB 수정)
     ConnectionUtil() {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.mariadb.jdbc.Driver");

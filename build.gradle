@@ -61,6 +61,16 @@ dependencies {
 
     // JUnit5
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+
+    //암호화 기능
+    // Source: https://mvnrepository.com/artifact/org.mindrot/jbcrypt
+    implementation 'org.mindrot:jbcrypt:0.4'
+
+    //메일 발송을 위한 api
+    // Source: https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api
+    implementation 'jakarta.mail:jakarta.mail-api:2.1.3'
+    // Jakarta Mail API + Implementation (Angus Mail)
+    implementation 'org.eclipse.angus:jakarta.mail:2.0.4'
 }
 
 test {
