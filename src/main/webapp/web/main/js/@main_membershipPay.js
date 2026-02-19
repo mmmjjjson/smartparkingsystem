@@ -51,7 +51,7 @@ document.getElementById('btn-check-member').addEventListener('click', () => {
     //     document.getElementById('mem-name').focus();
     // }
 
-    axios.get('/member_check.do', {
+    axios.get('/member_check', {
         params: { carNum: carNum }
     })
         .then(response => {

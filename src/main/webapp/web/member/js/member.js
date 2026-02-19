@@ -95,24 +95,27 @@ function handlePageLoadCheckResult() {
 
 // ===================== 회원 확인 결과 처리 =====================
 function handleMemberCheckResult(result) {
-    const modal = new bootstrap.Modal(document.getElementById(ELEMENTS.newMemberModal));
+    const modalEl = document.getElementById(ELEMENTS.newMemberModal);
+    const modal = new bootstrap.Modal(modalEl);
     const isFound = result === 'found';
 
     if (isFound) {
-        fillExistingMemberData(); // 기존 회원 데이터 입력
+        fillExistingMemberData();
     } else {
-        fillNewMemberData(); // 신규 회원 데이터 입력
+        fillNewMemberData();
     }
 
     document.getElementById(ELEMENTS.isExistingMember).value = isFound;
+
+    const message = isFound
+        ? '등록된 회원 정보가 있습니다. 기존 정보로 입력을 진행합니다.'
+        : '등록된 정보가 없습니다. 신규 회원 정보를 입력해주세요.';
+
     modal.show();
 
-    const message = isFound ? '등록된 회원 정보가 있습니다. 기존 정보로 입력을 진행합니다.' : '등록된 정보가 없습니다. 신규 회원 정보를 입력해주세요.';
-    alert(message);
-
-    if (!isFound) {
-        document.getElementById('newName').focus();
-    }
+    setTimeout(() => {
+        alert(message);
+    }, 0);
 }
 
 // ===================== 기존 회원 데이터 입력 =====================
@@ -164,7 +167,7 @@ function handleMemberCheck() {
         return;
     }
 
-    submitForm('/member_check.do', {carNum});
+    submitForm('/member_check', {carNum});
 }
 
 // ===================== 회원권 결제 모달 =====================
@@ -384,7 +387,9 @@ function clearNewMemberInputs() {
 function showFlashMessage() {
     const flash = document.getElementById(ELEMENTS.flashMessage);
     if (flash?.dataset.msg) {
-        alert(flash.dataset.msg);
+        setTimeout(() => {
+            alert(flash.dataset.msg);
+        }, 100);  // 100~200ms 정도면 충분
     }
 }
 
@@ -413,7 +418,7 @@ function handleAutoOpenNewMemberModal() {
         modal.show();
 
         // 주소 정리 (새로고침 시 다시 안 뜨게)
-        window.history.replaceState({}, document.title, '/member_list.do?pageNum=1');
+        window.history.replaceState({}, document.title, '/member_list?pageNum=1');
     }
 }
 
