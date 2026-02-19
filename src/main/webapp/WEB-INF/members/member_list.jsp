@@ -41,11 +41,11 @@
   <!-- Custom CSS -->
   <%--    <link rel="stylesheet" href="css/member.css">--%>
   <%--    <link rel="stylesheet" href="../../login/css/styles.css">--%>
-  <link rel="stylesheet" href="../../web/main/mainboard.css">
-  <link rel="stylesheet" href="../../web/main/receipt.css">
+  <link rel="stylesheet" href="../../web/main/css/mainboard.css">
+  <link rel="stylesheet" href="../../web/main/css/receipt.css">
 
   <script src="<%=request.getContextPath()%>/web/member/js/member.js" defer></script>
-  <script src="../../web/main/main_membershipPay.js" defer></script>
+  <script src="../../web/main/js/main_membershipPay.js" defer></script>
 
   <style>
     .custom-table thead th {

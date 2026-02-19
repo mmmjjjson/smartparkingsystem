@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json()) // 서버의 응답을 JSON으로 변환
             .then(data => { // 서버가 보낸 응답 객체
                 if (!data.success) {
+                    console.log(data);
                     alert('입차 등록 실패! ' + data.message);
                     return;
                 }
@@ -139,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     isCenter ? carNum.replace(/([가-힣])(\d)/, '$1\n$2') : carNum;
                 window.currentCard.querySelector('.box-time').innerText = "00:00";
 
-                alert(`${carNum} 차량 입차 완료!`)
+                alert(`${carNum} 차량 입차 완료!`);
 
                 document.getElementById('parkingModal').querySelector('.btn-close').blur();
                 document.body.focus(); //**
@@ -235,7 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. UI 초기화
             window.currentCard.classList.replace('occupied', 'available');
-            window.currentCard.querySelector('.box-car').innerText = "사용 가능";
+            const isCenter = window.currentCard.closest('.center-row') !== null;
+            window.currentCard.querySelector('.box-car').innerText = isCenter ? "사용\n가능" : "사용 가능";
             window.currentCard.querySelector('.box-time').innerText = "";
 
             // 3. 모달 닫기
@@ -276,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 2. 중앙구역 차량번호, '사용가능' 줄바꿈 유지
+            // 2. 중앙구역 차량번호 줄바꿈 유지
             const centerOccupied = document.querySelectorAll('.center-row .parking-card.occupied');
             centerOccupied.forEach(card => {
                 const boxCar = card.querySelector('.box-car');
