@@ -92,6 +92,12 @@ public class MembersController extends HttpServlet {
                 PageResponseDTO pageResponseDTO = membersService.getMemberList(pageRequestDTO);
                 req.setAttribute("pageResponseDTO", pageResponseDTO);
 
+                String openNewMemberModal = req.getParameter("openNewMemberModal");
+                String carNum = req.getParameter("carNum");
+
+                req.setAttribute("openNewMemberModal", openNewMemberModal);
+                req.setAttribute("prefillCarNum", carNum);
+
                 // 결제 정보 가져오기
                 int memberCharge = PaymentInfoDAO.getInstance().selectInfo().getMemberCharge();
                 req.setAttribute("memberCharge", memberCharge);
