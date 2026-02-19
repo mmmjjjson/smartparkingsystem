@@ -18,3 +18,5 @@ VALUES
     (10, 60, 30, 3000, 2000, 15000, 0.3, 0.5, TRUE, 'admin1');
 
 UPDATE payment_info SET member_charge = 100000 where pno = 2;
+
+

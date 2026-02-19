@@ -14,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.Map;
 
 
@@ -41,7 +42,7 @@ public class StatisticController extends HttpServlet {
         // API 요청인 경우
         if (pathInfo != null && pathInfo.startsWith("/api/")) {
             handleApiRequest(request, response, pathInfo);
-            return;  // ✅ 여기서 종료!
+            return;
         }
 
         // 일반 페이지 요청만 JSP로 포워딩
@@ -219,8 +220,20 @@ public class StatisticController extends HttpServlet {
      * 피크 시간대 API
      */
     private Map<String, Object> handlePeakTime(HttpServletRequest request) {
-        log.info("피크 시간대 조회");
-        return statisticService.getPeakTimeStats();
+        int year = getIntParameter(request, "year", LocalDate.now().getYear());
+
+        String monthParam = request.getParameter("month");
+        Integer month = null;
+        if (monthParam != null && !monthParam.isEmpty() && !monthParam.equals("all")) {
+            try {
+                month = Integer.parseInt(monthParam);
+            } catch (NumberFormatException e) {
+                log.warn("잘못된 month 파라미터: {}", monthParam);
+            }
+        }
+
+        log.info("피크 시간대 조회: year={}, month={}", year, month);
+        return statisticService.getPeakTimeStats(year, month);
     }
 
     /**

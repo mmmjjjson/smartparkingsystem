@@ -24,6 +24,5 @@ public class PaymentInfoDTO {
     private double disabledDiscount; // 장애인 할인율
     private String adminId; //정책 수정한 관리자 아이디
     private LocalDateTime updatedAt; // 관리자 정책 수정일
-    private int member_charge; // 회원권카격
-
+    private int member_charge; // 회원권가격
 }

@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `smart-_parking_system`;
 
 USE `smart-_parking_system`;
+USE `smartparkingsystem`;
 
 CREATE TABLE IF NOT EXISTS `admin`
 (
