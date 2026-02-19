@@ -20,4 +20,7 @@ public class ParkingHistoryDTO {
     private LocalDateTime entryTime;
     private LocalDateTime exitTime;
     private int totalMinutes;
+
+    public void setFinalCharge(int finalCharge) {
+    }
 }

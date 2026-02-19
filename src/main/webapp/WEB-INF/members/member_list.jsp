@@ -45,7 +45,7 @@
     <link rel="stylesheet" href="../../web/main/receipt.css">
 
     <script src="<%=request.getContextPath()%>/web/member/js/member.js" defer></script>
-    <script src="../../web/main/main_membershipPay.js" defer></script>
+<%--    <script src="../../web/main/main_membershipPay.js" defer></script>--%>
 
     <style>
         .custom-table thead th {

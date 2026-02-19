@@ -5,12 +5,12 @@ import com.example.smartparkingsystem.vo.ParkingHistoryVO;
 import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 public class ParkingHistoryDAO {
