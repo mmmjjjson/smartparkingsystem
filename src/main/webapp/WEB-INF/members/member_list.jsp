@@ -301,10 +301,10 @@
 </div>
 
 <!-- ===================== 신규 회원 등록 모달 자동 오픈 ===================== -->
-<div id="memberPageData"
-     data-open-modal="${openNewMemberModal}"
-     data-prefill-car="${prefillCarNum}">
-</div>
+<%--<div id="memberPageData"--%>
+<%--     data-open-modal="${openNewMemberModal}"--%>
+<%--     data-prefill-car="${prefillCarNum}">--%>
+<%--</div>--%>
 
 <!-- ===================== 회원 상세 정보 모달 ===================== -->
 <div class="modal fade" id="viewMemberModal" tabindex="-1">

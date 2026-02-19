@@ -57,12 +57,16 @@ public class MembersController extends HttpServlet {
                     String status = req.getParameter("status");
                     String searchType = req.getParameter("searchType");
                     String keyword = req.getParameter("keyword");
+                    String from = req.getParameter("from");
+                    String carNum = req.getParameter("carNum");
 
                     StringBuilder redirectURL = new StringBuilder("/member_list.do?pageNum=1");
 
                     if (status != null) redirectURL.append("&status=").append(status);
                     if (searchType != null) redirectURL.append("&searchType=").append(searchType);
                     if (keyword != null) redirectURL.append("&keyword=").append(keyword);
+                    if (from != null) redirectURL.append("&from=").append(from);
+                    if (carNum != null) redirectURL.append("&carNum=").append(carNum);
 
                     resp.sendRedirect(redirectURL.toString());
                     return;

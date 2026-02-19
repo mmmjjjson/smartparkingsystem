@@ -391,11 +391,9 @@ function showFlashMessage() {
 // ===================== 외부 페이지에서 신규회원 모달 자동 오픈 =====================
 function handleAutoOpenNewMemberModal() {
 
-    const pageData = document.getElementById('memberPageData');
-    if (!pageData) return;
-
-    const openModal = pageData.dataset.openModal;
-    const carNum = pageData.dataset.prefillCar;
+    const params = new URLSearchParams(window.location.search);
+    const openModal = params.get('openNewMemberModal');
+    const carNum = params.get('carNum');
 
     if (openModal === 'true') {
 
@@ -406,14 +404,16 @@ function handleAutoOpenNewMemberModal() {
 
         // 차량번호 자동 입력
         if (carNum) {
-            const carInput = document.getElementById(ELEMENTS.newCarNumber);
-            if (carInput) {
-                carInput.value = carNum;
-                isMemberChecked = false;
-            }
+            document.getElementById(ELEMENTS.newCarNumber).value = carNum;
         }
 
+        fillNewMemberData();
+        isMemberChecked = true;
+
         modal.show();
+
+        // 주소 정리 (새로고침 시 다시 안 뜨게)
+        window.history.replaceState({}, document.title, '/member_list.do?pageNum=1');
     }
 }
 
