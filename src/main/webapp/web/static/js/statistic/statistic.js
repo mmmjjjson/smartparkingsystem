@@ -13,9 +13,9 @@
     }
 
     // 그래프 링크 삭제
-    // Highcharts.setOptions({
-    //     credits: { enabled: false }
-    // });
+    Highcharts.setOptions({
+        credits: { enabled: false }
+    });
 
 
     // ========================================

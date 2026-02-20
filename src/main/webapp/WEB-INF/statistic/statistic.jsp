@@ -16,12 +16,11 @@
 <!-- 헤더 불러오기 -->
 <%@ include file="/WEB-INF/common/header_main.jsp" %>
 
-
 <div class="content">
-
     <!-- 필터 폼 (AJAX 방식으로 변경) -->
     <div class="filter-container">
         <div class="filter-row">
+<%--            <h3><b>통계</b></h3>--%>
             <label>통계 유형</label>
             <select id="chartType">
                 <option value="monthly_sales">년도 / 월별 매출</option>
@@ -57,10 +56,6 @@
     </div>
 
 
-
-
-
-
     <div class="info-box2">
 
 
@@ -86,6 +81,9 @@
     <script src="${pageContext.request.contextPath}/web/static/js/statistic/statistic.js"></script>
 
 </div>
+<footer>
+    <%@ include file="/WEB-INF/common/footer.jsp" %>
+</footer>
 </body>
 
 
