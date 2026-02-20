@@ -2,11 +2,13 @@ package com.example.smartparkingsystem.service.main;
 
 import com.example.smartparkingsystem.dao.main.ParkingHistoryDAO;
 import com.example.smartparkingsystem.dto.main.ParkingHistoryDTO;
+import com.example.smartparkingsystem.service.statistic.StatisticService;
 import com.example.smartparkingsystem.util.MapperUtil;
 import com.example.smartparkingsystem.vo.main.ParkingHistoryVO;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,10 @@ public enum ParkingHistoryService {
         ParkingHistoryVO parkingHistoryVO = modelMapper.map(parkingHistoryDTO, ParkingHistoryVO.class);
         log.info(parkingHistoryVO);
         parkingHistoryDAO.insertEntry(parkingHistoryVO);
+
+        // 입차 캐시 갱신
+        LocalDateTime now = LocalDateTime.now();
+        StatisticService.INSTANCE.onParkingDataChanged(now.getYear(), now.getMonthValue());
     }
 
     /* 기록 조회 */
@@ -71,7 +77,14 @@ public enum ParkingHistoryService {
                     .entryTime(dbVO.getEntryTime())
                     .build();
         }
-        parkingHistoryDAO.updateExit(parkingHistoryVO);
-    }
 
+        // 입차 시간 기준으로 캐시 갱신 (출차가 다음 달로 넘어가는 경우를 방지)
+        int entryYear = parkingHistoryVO.getEntryTime().getYear();
+        int entryMonth = parkingHistoryVO.getEntryTime().getMonthValue();
+
+        parkingHistoryDAO.updateExit(parkingHistoryVO);
+
+        // 출차 캐시 갱신
+        StatisticService.INSTANCE.onParkingDataChanged(entryYear, entryMonth);
+    }
 }
