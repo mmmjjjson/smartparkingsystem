@@ -7,10 +7,12 @@ import com.example.smartparkingsystem.service.auth.ValidationService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+@Log4j2
 @WebServlet("/login")
 public class LoginProcessController extends HttpServlet {
     private final AdminService adminService = AdminService.INSTANCE;
@@ -26,6 +28,7 @@ public class LoginProcessController extends HttpServlet {
         String step = req.getParameter("step");
 
         if (step == null) {
+            log.warn("Step null");
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 (값 자체가 없음, 요청 자체가 이상할때만)
             return;
         }
@@ -36,40 +39,52 @@ public class LoginProcessController extends HttpServlet {
             case "3" -> step3(req, resp);
             default -> resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 (정보를 찾을 수 없음)
         }
+        log.info("step: {}", step);
     }
 
     // Step1 세션
     private void step1(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        log.info("Step1");
         String adminId = req.getParameter("adminId");
         String password = req.getParameter("password");
+        log.info("adminId: {}", adminId);
+        log.info("password: {}", password);
 
         // 로그인 실패
         if (!adminDB(adminId, password)) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 (실패)
+            log.warn("Step1 401");
             return;
         }
 
         // 사용여부 False
         if (!adminService.getAdminById(adminId).isActive()) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 (접근 제한)
+            log.warn("Step1 403");
             return;
         }
 
         // 로그인 성공시 임시 세션생성
         HttpSession session = req.getSession();
         session.setAttribute("tempAdminId", adminId);
+        log.info("session: {}", session.getId());
+        log.info("Step2 go");
         resp.setStatus(HttpServletResponse.SC_OK); // 200 (승인)
     }
 
     // Step2 등록된 이메일 확인
     private void step2(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        log.info("Step2");
         String email = req.getParameter("email");
         HttpSession session = req.getSession();
         String tempAdminId = (String) session.getAttribute("tempAdminId");
 
+        log.info("tempAdminId: {}", tempAdminId);
+        log.info("email: {}", email);
         // step1의 임시세션에 아이디 없으면 400에러
         if (tempAdminId == null) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
+            log.warn("Step2 400");
             return;
         }
 
@@ -79,7 +94,7 @@ public class LoginProcessController extends HttpServlet {
             // Step2에서 Step3로 넘어오려면 인증하기 버튼을 눌러야하기 때문에
             // Step3로 들어갈때 바로 발송
             validationService.otpShipment(tempAdminId);
-
+            log.info("Step3 go");
             resp.setStatus(HttpServletResponse.SC_OK);
         } else {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -88,35 +103,48 @@ public class LoginProcessController extends HttpServlet {
 
     // Step3 OTP 확인
     private void step3(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        log.info("Step3");
         HttpSession session = req.getSession();
         String tempAdminId = (String) session.getAttribute("tempAdminId"); // 임시 세션
         String otpCode = req.getParameter("otpCode");
-        System.out.println("Step3 otpCode: " + otpCode);
+        log.info("Step3 otpCode: {}", otpCode);
 
         String resultOTP = otpDB(tempAdminId, otpCode); // 문자열로 결과 받는 변수
 
         // OTP 완료시 임시 세션 변경
-        if ("Success".equals(resultOTP)) {
+        switch (resultOTP) {
+            case "Success" -> {
+                log.warn("OTP Success");
 
-            // adminId로 변경
-            session.setAttribute("adminId", tempAdminId); // 최종 로그인 세션 적용
-            session.removeAttribute("tempAdminId"); // 임시 세션 제거
-            adminService.renewalLog(tempAdminId, req.getRemoteAddr()); // 로그인 날짜, IP
-            String adminId = (String) session.getAttribute("adminId");
+                // adminId로 변경
+                session.setAttribute("adminId", tempAdminId); // 최종 로그인 세션 적용
 
-            System.out.println("Controller step3 adminId 세션 생성 완료: " + session.getId());
-            System.out.println("Controller step3 adminId 값 " + adminId);
+                session.removeAttribute("tempAdminId"); // 임시 세션 제거
 
-            if (adminService.getAdminById(adminId).isPasswordReset()) {
-                resp.sendRedirect("/main/mypage");
+                adminService.renewalLog(tempAdminId, req.getRemoteAddr()); // 로그인 날짜, IP
+
+                String adminId = (String) session.getAttribute("adminId");
+
+                log.info("Controller step3 adminId 세션 생성 완료: {}", session.getId());
+                log.info("Controller step3 adminId 값 {}", adminId);
+
+                if (adminService.getAdminById(adminId).isPasswordReset()) {
+                    resp.sendRedirect("/main/mypage");
+                }
+                resp.setStatus(HttpServletResponse.SC_OK);
             }
-            resp.setStatus(HttpServletResponse.SC_OK);
-        } else if ("Expired".equals(resultOTP)) {
-            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        } else if ("Fail".equals(resultOTP)) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        } else {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            case "Expired" -> {
+                log.warn("OTP Expired");
+                resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            }
+            case "Fail" -> {
+                log.warn("OTP Fail");
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
+            default -> {
+                log.warn("OTP Error");
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
         }
     }
 
@@ -132,7 +160,6 @@ public class LoginProcessController extends HttpServlet {
     // OTP 인증, 발송 헬퍼 메서드
     private String otpDB(String adminId, String otpCode) {
         ValidationDTO validationDTO = validationService.getOTP(adminId);
-//        String otp = validationDTO.getOtpCode();
 
         if (LocalDateTime.now().isAfter(validationDTO.getExpiredTime())) {
             return "Expired"; // 만료

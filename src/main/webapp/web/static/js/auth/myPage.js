@@ -28,12 +28,12 @@ function updatePassword(event) {
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: "box=2&password=" + password + "&newPassword=" + newPassword + "&newPasswordCheck=" + newPasswordCheck
+        body: "password=" + password + "&newPassword=" + newPassword + "&newPasswordCheck=" + newPasswordCheck // box=2
     })
         .then(res => {
             if (res.status === 200) {
                 alert("정보 수정 완료")
-                window.location.href = "/main" // 변경시 수정
+                window.location.href = "/main"
             } else {
                 alert("정보가 일치 하지 않습니다.")
             }
@@ -45,7 +45,7 @@ function openEmailVerification() {
     const newEmail = document.getElementById("email").value;
 
     // TODO 변경시 경로 수정
-    const url = "/web/emailVerification.jsp?email=" + newEmail; // 파라미터 전달
+    const url = "/main/mypage/email?email=" + newEmail; // 파라미터 전달
 
     // 유효성 검사 (이메일 입력시 @가 있는지 없는지 검사)
     if (!newEmail || !newEmail.includes('@')) {
@@ -55,7 +55,7 @@ function openEmailVerification() {
 
     showLoading()
 
-    fetch("/main/mypage", {
+    fetch("/main/mypage/email", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -96,12 +96,12 @@ function submitUpdateEmail(event) {
 
     const newEmail = document.getElementById("email").value;
 
-    fetch("/main/mypage", {
+    fetch("/main/mypage/email", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: "box=1&newEmail=" + newEmail
+        body: "box=1&newEmail=" + newEmail // box=1
     })
         .then(res => {
             if (res.status === 200) {

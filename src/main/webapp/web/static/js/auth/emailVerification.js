@@ -53,7 +53,7 @@ function verifyOTP(event) {
         return;
     }
 
-    fetch("/main/mypage", {
+    fetch("/main/mypage/email", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -83,7 +83,7 @@ function returnOTP() {
     if (confirm('인증번호 재전송하시겠습니까?')) {
 
         showLoading()
-        fetch('/main/mypage', {
+        fetch('/main/mypage/email', {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"

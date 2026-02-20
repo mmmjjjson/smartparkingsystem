@@ -34,13 +34,13 @@ public class LoginPasswordController extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
             return;
         }
-        log.info("step: {}", step);
         switch (step) {
             case "1" -> step1(req, resp);
             case "2" -> step2(req, resp);
             case "3" -> step3(req, resp);
             default -> resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
+        log.info("step: {}", step);
     }
 
     // DB에 아이디가 있는지 확인 (없어도 넘어감)

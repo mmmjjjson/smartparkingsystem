@@ -6,12 +6,14 @@ import com.example.smartparkingsystem.dto.auth.AdminDTO;
 import com.example.smartparkingsystem.dto.auth.ValidationDTO;
 import com.example.smartparkingsystem.util.MapperUtil;
 import com.example.smartparkingsystem.vo.auth.ValidationVO;
+import lombok.extern.log4j.Log4j2;
 import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Log4j2
 public enum ValidationService {
     INSTANCE;
 
@@ -41,6 +43,7 @@ public enum ValidationService {
         String adminEmail = adminService.getAdminById(adminId).getAdminEmail();
 
         String otpCode = randomOTP();
+        log.info("OTP : {}", otpCode);
 
         // TODO 테스트할때는 수정
         mailService.sendAuthEmail(adminEmail, otpCode);
@@ -59,6 +62,7 @@ public enum ValidationService {
         String adminEmail = adminService.getAdminById(adminId).getAdminEmail();
         String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         String BCryptUuid = BCrypt.hashpw(uuid, BCrypt.gensalt(12));
+        log.info("UUID : {}", uuid);
 
         // TODO 테스트할때는 수정
         mailService.sendAuthPw(adminEmail, uuid);

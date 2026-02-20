@@ -29,13 +29,16 @@
         .row {
             margin-top: 30px;
         }
+        h4 {
+            margin-top: 25px;
+        }
     </style>
 </head>
 <link rel="icon" href="data:,">
 <body>
 <%@include file="/WEB-INF/common/header_main.jsp"%>
 <div class="container-fluid px-4">
-    <h3>마이페이지</h3>
+    <h4><b>마이페이지</b></h4>
     <%
         if (adminService.getAdminById(adminId).isPasswordReset()) {
     %>

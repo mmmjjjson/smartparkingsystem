@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <title>통계 | 스마트 주차 관리 시스템</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/web/static/css/statistic.css">
 
     <!-- Highcharts 라이브러리 -->
