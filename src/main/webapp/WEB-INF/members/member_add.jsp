@@ -2,10 +2,10 @@
 <%@ page import="com.example.smartparkingsystem.*" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.LocalDate" %>
-<%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
-<%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
-<%@ page import="com.example.smartparkingsystem.vo.MembersVO" %>
-<%@ page import="com.example.smartparkingsystem.service.MembersService" %>
+<%@ page import="com.example.smartparkingsystem.dao.member.MembersDAO" %>
+<%@ page import="com.example.smartparkingsystem.dto.member.MembersDTO" %>
+<%@ page import="com.example.smartparkingsystem.vo.member.MembersVO" %>
+<%@ page import="com.example.smartparkingsystem.service.member.MembersService" %>
 <%-- 신규 회원 등록 --%>
 <%
     MembersService membersService = MembersService.INSTANCE;

@@ -1,4 +1,4 @@
-<%@ page import="com.example.smartparkingsystem.service.AdminService" %>
+<%@ page import="com.example.smartparkingsystem.service.auth.AdminService" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
@@ -15,11 +15,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>반월당 스마트 주차 관리 시스템 - 마이페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/web/css/styles.css" rel="stylesheet"/>
+    <link href="${pageContext.request.contextPath}/web/static/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <script src="/web/js/f12Ban.js"></script>
-    <script src="/web/js/loading.js"></script>
-    <script src="/web/js/myPage.js"></script>
+    <script src="${pageContext.request.contextPath}/web/static/js/auth/f12Ban.js"></script>
+    <script src="${pageContext.request.contextPath}/web/static/js/auth/loading.js"></script>
+    <script src="${pageContext.request.contextPath}/web/static/js/auth/myPage.js"></script>
 
     <style>
         #margin {
@@ -33,7 +33,7 @@
 </head>
 <link rel="icon" href="data:,">
 <body>
-<%@include file="/web/common/header_other.jsp"%>
+<%@include file="/WEB-INF/common/header_main.jsp"%>
 <div class="container-fluid px-4">
     <h3>마이페이지</h3>
     <%
@@ -128,5 +128,8 @@
         </div>
     </div>
 </div>
+<footer>
+    <%@ include file="/WEB-INF/common/footer.jsp" %>
+</footer>
 </body>
 </html>

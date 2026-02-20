@@ -1,10 +1,10 @@
 package com.example.smartparkingsystem.dao;
 
+import com.example.smartparkingsystem.dao.member.MembersDAO;
+import com.example.smartparkingsystem.vo.member.MembersVO;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MembersDAOTest {
     @Test
@@ -29,7 +29,7 @@ class MembersDAOTest {
             }
 
             dao.insertMember(
-                    com.example.smartparkingsystem.vo.MembersVO.builder()
+                    MembersVO.builder()
                             .carNum(carNum)
                             .memberName(memberName)
                             .memberPhone(memberPhone)

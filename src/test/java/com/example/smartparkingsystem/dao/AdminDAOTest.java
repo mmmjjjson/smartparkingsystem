@@ -1,14 +1,10 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.vo.AdminVO;
-import com.example.smartparkingsystem.vo.ValidationVO;
+import com.example.smartparkingsystem.dao.auth.AdminDAO;
+import com.example.smartparkingsystem.vo.auth.AdminVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
 class AdminDAOTest {

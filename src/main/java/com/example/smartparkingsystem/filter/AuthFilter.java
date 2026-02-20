@@ -1,6 +1,6 @@
 package com.example.smartparkingsystem.filter;
 
-import com.example.smartparkingsystem.service.AdminService;
+import com.example.smartparkingsystem.service.auth.AdminService;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;

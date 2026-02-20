@@ -1,6 +1,7 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.vo.ValidationVO;
+import com.example.smartparkingsystem.dao.auth.ValidationDAO;
+import com.example.smartparkingsystem.vo.auth.ValidationVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

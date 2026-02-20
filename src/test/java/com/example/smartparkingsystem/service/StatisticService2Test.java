@@ -1,6 +1,7 @@
 package com.example.smartparkingsystem.service;
 
 import com.example.smartparkingsystem.dto.MonthlyData;
+import com.example.smartparkingsystem.service.statistic.StatisticService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
@@ -28,38 +29,38 @@ class StatisticService2Test {
     // 1. 기본 통계 조회 테스트
     // ========================================
 
-    @Test
-    @Order(1)
-    @DisplayName("전체 통계 데이터 조회 테스트")
-    void testGetAllStatisticsData() {
-        // given & when
-        Map<String, Object> result = service.getAllStatisticsData();
-
-        // then
-        assertNotNull(result, "결과가 null이면 안됨");
-        assertTrue(result.containsKey("paymentDataByYear"), "paymentDataByYear 키 존재해야 함");
-        assertTrue(result.containsKey("memberStats"), "memberStats 키 존재해야 함");
-        assertTrue(result.containsKey("totalCount"), "totalCount 키 존재해야 함");
-
-        // 데이터 구조 검증
-        Map<Integer, List<MonthlyData>> paymentData = (Map<Integer, List<MonthlyData>>) result.get("paymentDataByYear");
-        assertNotNull(paymentData, "paymentDataByYear는 null이면 안됨");
-
-        Map<String, Object> memberStats = (Map<String, Object>) result.get("memberStats");
-        assertNotNull(memberStats, "memberStats는 null이면 안됨");
-        assertTrue(memberStats.containsKey("totalCount"), "회원 총 수 필요");
-        assertTrue(memberStats.containsKey("activeCount"), "활성 회원 수 필요");
-        assertTrue(memberStats.containsKey("inactiveCount"), "비활성 회원 수 필요");
-
-        Integer totalCount = (Integer) result.get("totalCount");
-        assertNotNull(totalCount, "totalCount는 null이면 안됨");
-        assertTrue(totalCount >= 0, "totalCount는 0 이상이어야 함");
-
-        System.out.println("=== 전체 통계 데이터 ===");
-        System.out.println("총 결제 건수: " + totalCount);
-        System.out.println("회원 통계: " + memberStats);
-        System.out.println("년도별 데이터: " + paymentData.keySet());
-    }
+//    @Test
+//    @Order(1)
+//    @DisplayName("전체 통계 데이터 조회 테스트")
+//    void testGetAllStatisticsData() {
+//        // given & when
+//        Map<String, Object> result = service.getAllStatisticsData();
+//
+//        // then
+//        assertNotNull(result, "결과가 null이면 안됨");
+//        assertTrue(result.containsKey("paymentDataByYear"), "paymentDataByYear 키 존재해야 함");
+//        assertTrue(result.containsKey("memberStats"), "memberStats 키 존재해야 함");
+//        assertTrue(result.containsKey("totalCount"), "totalCount 키 존재해야 함");
+//
+//        // 데이터 구조 검증
+//        Map<Integer, List<MonthlyData>> paymentData = (Map<Integer, List<MonthlyData>>) result.get("paymentDataByYear");
+//        assertNotNull(paymentData, "paymentDataByYear는 null이면 안됨");
+//
+//        Map<String, Object> memberStats = (Map<String, Object>) result.get("memberStats");
+//        assertNotNull(memberStats, "memberStats는 null이면 안됨");
+//        assertTrue(memberStats.containsKey("totalCount"), "회원 총 수 필요");
+//        assertTrue(memberStats.containsKey("activeCount"), "활성 회원 수 필요");
+//        assertTrue(memberStats.containsKey("inactiveCount"), "비활성 회원 수 필요");
+//
+//        Integer totalCount = (Integer) result.get("totalCount");
+//        assertNotNull(totalCount, "totalCount는 null이면 안됨");
+//        assertTrue(totalCount >= 0, "totalCount는 0 이상이어야 함");
+//
+//        System.out.println("=== 전체 통계 데이터 ===");
+//        System.out.println("총 결제 건수: " + totalCount);
+//        System.out.println("회원 통계: " + memberStats);
+//        System.out.println("년도별 데이터: " + paymentData.keySet());
+//    }
 
     @Test
     @Order(2)

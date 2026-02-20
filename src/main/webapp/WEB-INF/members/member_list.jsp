@@ -1,6 +1,6 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.example.smartparkingsystem.dto.PageResponseDTO" %>
-<%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
+<%@ page import="com.example.smartparkingsystem.dto.member.PageResponseDTO" %>
+<%@ page import="com.example.smartparkingsystem.dto.member.MembersDTO" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
@@ -49,7 +49,7 @@
     <%--    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/mainboard.css">--%>
     <%--    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/receipt.css">--%>
 
-    <script src="<%=request.getContextPath()%>/web/member/js/member.js" defer></script>
+    <script src="${pageContext.request.contextPath}/web/static/js/member/member.js" defer></script>
     <%--    <script src="../../web/main/main_membershipPay.js" defer></script>--%>
 
     <style>
@@ -70,7 +70,7 @@
 </head>
 <body class="bg-light">
 <!-- 헤드 -->
-<%@ include file="/web/common/header_main.jsp" %>
+<%@include file="/WEB-INF/common/header_main.jsp"%>
 <div class="container-fluid mt-4 pb-2">
     <!-- 콘텐츠 -->
     <div class="content">
@@ -520,7 +520,7 @@
     }
 %>
 <footer>
-    <%@ include file="/web/common/footer.jsp" %>
+    <%@ include file="/WEB-INF/common/footer.jsp" %>
 </footer>
 </body>
 </html>

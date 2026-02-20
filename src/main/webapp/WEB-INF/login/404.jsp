@@ -8,7 +8,7 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>404 오류 - 주차관리시스템</title>
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="${pageContext.request.contextPath}/web/static/css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body>

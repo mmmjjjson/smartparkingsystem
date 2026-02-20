@@ -1,11 +1,11 @@
-<%@ page import="com.example.smartparkingsystem.dto.ParkingHistoryDTO" %>
+<%@ page import="com.example.smartparkingsystem.dto.main.ParkingHistoryDTO" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.example.smartparkingsystem.service.ParkingHistoryService" %>
+<%@ page import="com.example.smartparkingsystem.service.main.ParkingHistoryService" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
-<%@ page import="com.example.smartparkingsystem.service.MembersService" %>
-<%@ page import="com.example.smartparkingsystem.dao.MembersDAO" %>
-<%@ page import="com.example.smartparkingsystem.dto.MembersDTO" %>
+<%@ page import="com.example.smartparkingsystem.service.member.MembersService" %>
+<%@ page import="com.example.smartparkingsystem.dao.member.MembersDAO" %>
+<%@ page import="com.example.smartparkingsystem.dto.member.MembersDTO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     ParkingHistoryService parkingHistoryService = ParkingHistoryService.INSTANCE;
@@ -31,15 +31,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- 메인보드 css -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/css/mainboard.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/static/css/mainboard.css">
 
     <!-- 영수증 css -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/css/receipt.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/css/mainModal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/static/css/receipt.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/static/css/mainModal.css">
 </head>
 <body>
 <!-- 공통 header 구역 -->
-<%@ include file="/web/common/header_main.jsp" %>
+<%@include file="/WEB-INF/common/header_main.jsp"%>
 
 <!-- 메인 페이지 -->
 <div class="container-fluid mt-4">
@@ -85,7 +85,7 @@
                         request.setAttribute("isMember", null);
                     }
                 %>
-                <%@ include file="/web/main/parking_card.jsp" %>
+                <%@ include file="/WEB-INF/main/parking_card.jsp" %>
                 <% } %>
             </div>
 
@@ -115,7 +115,7 @@
                                 request.setAttribute("isMember", null);
                             }
                         %>
-                        <%@ include file="/web/main/parking_card.jsp" %>
+                        <%@ include file="/WEB-INF/main/parking_card.jsp" %>
                         <% } %>
                     </div>
                     <!-- 중앙 주차 하단 구역 A11 ~ A15 -->
@@ -141,7 +141,7 @@
                                 request.setAttribute("isMember", null);
                             }
                         %>
-                        <%@ include file="/web/main/parking_card.jsp" %>
+                        <%@ include file="/WEB-INF/main/parking_card.jsp" %>
                         <% } %>
                     </div>
                 </div>
@@ -170,7 +170,7 @@
                         request.setAttribute("isMember", null);
                     }
                 %>
-                <%@ include file="/web/main/parking_card.jsp" %>
+                <%@ include file="/WEB-INF/main/parking_card.jsp" %>
                 <% } %>
             </div>
         </div>
@@ -178,11 +178,13 @@
 </div>
 
 <!-- 주차 상태 처리 모달 -->
-<%@ include file="/web/main/parking_modal.jsp"%>
+<%@ include file="/WEB-INF/main/parking_modal.jsp"%>
 <%--<%@include file="/web/main/@membershipPayModal.jsp"%>--%>
 
 <!-- 공통 footer 구역 -->
-<%@ include file="/web/common/footer.jsp" %>
+<footer>
+    <%@ include file="/WEB-INF/common/footer.jsp" %>
+</footer>
 
 <!-- bootstrap JS (모달 동작용) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -191,16 +193,16 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <!-- 함수(날짜 형식, 주차 현황 숫자) 로직 JS -->
-<script src="${pageContext.request.contextPath}/web/main/js/main_function.js"></script>
+<script src="${pageContext.request.contextPath}/web/static/js/main/main_function.js"></script>
 
 <!-- 검색 모달 JS -->
-<script src="${pageContext.request.contextPath}/web/main/js/main_search.js"></script>
+<script src="${pageContext.request.contextPath}/web/static/js/main/main_search.js"></script>
 
 <!-- 요금 계산 로직 JS -->
-<script src="${pageContext.request.contextPath}/web/main/js/main_parking_charge_logic.js"></script>
+<script src="${pageContext.request.contextPath}/web/static/js/main/main_parking_charge_logic.js"></script>
 
 <!-- 메인 모달 JS -->
-<script src="${pageContext.request.contextPath}/web/main/js/main_modal.js"></script>
+<script src="${pageContext.request.contextPath}/web/static/js/main/main_modal.js"></script>
 
 <!-- 회원권 결제 모달 JS -->
 <%--<script src="${pageContext.request.contextPath}/web/main/@@main_membershipPay.js"></script>--%>

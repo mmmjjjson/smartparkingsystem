@@ -1,9 +1,8 @@
 package com.example.smartparkingsystem.service;
 
+import com.example.smartparkingsystem.service.auth.MailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MailServiceTest {
     private MailService mailService;

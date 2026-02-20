@@ -1,11 +1,10 @@
 package com.example.smartparkingsystem.service;
 
-import com.example.smartparkingsystem.dto.MembersDTO;
+import com.example.smartparkingsystem.dto.member.MembersDTO;
+import com.example.smartparkingsystem.service.member.MembersService;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MembersServiceTest {
     public MembersService membersService = MembersService.INSTANCE;

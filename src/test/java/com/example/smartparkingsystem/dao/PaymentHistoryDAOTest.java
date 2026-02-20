@@ -1,6 +1,7 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.vo.PaymentHistoryVO;
+import com.example.smartparkingsystem.dao.payment.PaymentHistoryDAO;
+import com.example.smartparkingsystem.vo.payment.PaymentHistoryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

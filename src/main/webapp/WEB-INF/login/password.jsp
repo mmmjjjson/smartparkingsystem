@@ -8,10 +8,10 @@
     <title>비밀번호 재설정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <link href="/web/css/styles.css" rel="stylesheet"/>
-    <script src="/web/js/f12Ban.js"></script>
-    <script src="/web/js/loading.js"></script>
-    <script src="/web/js/password.js"></script>
+    <link href="${pageContext.request.contextPath}/web/static/css/styles.css" rel="stylesheet"/>
+    <script src="${pageContext.request.contextPath}/web/static/js/auth/f12Ban.js"></script>
+    <script src="${pageContext.request.contextPath}/web/static/js/auth/loading.js"></script>
+    <script src="${pageContext.request.contextPath}/web/static/js/auth/password.js"></script>
 </head>
 <link rel="icon" href="data:,">
 

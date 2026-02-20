@@ -1,14 +1,12 @@
 package com.example.smartparkingsystem.initDBData;
 
-import com.example.smartparkingsystem.dao.ParkingHistoryDAO;
-import com.example.smartparkingsystem.vo.ParkingHistoryVO;
+import com.example.smartparkingsystem.dao.main.ParkingHistoryDAO;
+import com.example.smartparkingsystem.vo.main.ParkingHistoryVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class initParkingHistoryData {
     private ParkingHistoryDAO parkingHistoryDAO;

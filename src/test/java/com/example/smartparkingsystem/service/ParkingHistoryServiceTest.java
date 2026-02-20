@@ -1,6 +1,7 @@
 package com.example.smartparkingsystem.service;
 
-import com.example.smartparkingsystem.dto.ParkingHistoryDTO;
+import com.example.smartparkingsystem.dto.main.ParkingHistoryDTO;
+import com.example.smartparkingsystem.service.main.ParkingHistoryService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

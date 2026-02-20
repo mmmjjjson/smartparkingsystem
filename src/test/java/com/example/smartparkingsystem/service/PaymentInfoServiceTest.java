@@ -1,6 +1,7 @@
 package com.example.smartparkingsystem.service;
 
-import com.example.smartparkingsystem.dto.PaymentInfoDTO;
+import com.example.smartparkingsystem.dto.setting.PaymentInfoDTO;
+import com.example.smartparkingsystem.service.setting.PaymentInfoService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

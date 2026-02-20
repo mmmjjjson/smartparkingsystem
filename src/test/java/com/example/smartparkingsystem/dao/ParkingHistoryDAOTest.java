@@ -1,17 +1,10 @@
 package com.example.smartparkingsystem.dao;
 
-import com.example.smartparkingsystem.vo.ParkingHistoryVO;
+import com.example.smartparkingsystem.dao.main.ParkingHistoryDAO;
+import com.example.smartparkingsystem.vo.main.ParkingHistoryVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Random;
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
 class ParkingHistoryDAOTest {
