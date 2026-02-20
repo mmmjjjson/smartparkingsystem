@@ -13,7 +13,11 @@ VALUES ('admin', '$2a$12$hvk0XVGUYQk2BwV4SZ9Sz.xCrkCOCgQ3KGCv.QI77JGdJZ9Ri2usW',
 
 INSERT INTO members (car_num, member_name, member_phone, start_date, end_date, member_charge)
 SELECT
-    CONCAT(LPAD(FLOOR(RAND() * 100), 2, '0'), CHAR(FLOOR(RAND() * 26) + 65), FLOOR(RAND() * 9000 + 1000)),
+    CONCAT(
+            LPAD(FLOOR(RAND() * 100), 2, '0'),
+            ELT(FLOOR(RAND() * 14) + 1, '가','나','다','라','마','바','사','아','자','차','카','타','파','하'),
+            LPAD(FLOOR(RAND() * 9000 + 1000), 4, '0')
+    ),
     CONCAT('회원', FLOOR(RAND() * 1000)),
     CONCAT('010-', LPAD(FLOOR(RAND()*10000),4,'0'), '-', LPAD(FLOOR(RAND()*10000),4,'0')),
     start_date,
@@ -21,19 +25,18 @@ SELECT
     100000
 FROM (
          SELECT
-             -- 2024-01-01부터 2026-02-11까지 (약 772일)
              '2024-01-01' + INTERVAL FLOOR(RAND() * 772) DAY AS start_date,
              1 AS months_purchased
          FROM information_schema.tables t1, information_schema.tables t2
-             LIMIT 800
+         LIMIT 800
      ) AS derived;
 
 
 -- 기본 정책
 INSERT INTO payment_info
-(free_time, basic_time, extra_time, basic_charge, extra_charge, max_charge, small_car_discount, disabled_discount, is_active, admin_id, member_charge)
+(free_time, basic_time, extra_time, basic_charge, extra_charge, max_charge, small_car_discount, disabled_discount, admin_id, member_charge)
 VALUES
-    (10, 60, 30, 2000, 1000, 15000, 0.3, 0.5, TRUE, 'admin', 100000);
+    (10, 60, 30, 2000, 1000, 15000, 0.3, 0.5, 'admin', 100000);
 
 
 

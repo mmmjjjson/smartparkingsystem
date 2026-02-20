@@ -33,7 +33,7 @@ public class ParkingHistoryDAO {
     }
 
     /* isMember 상태 변경
-    * 출차하지 않은 isMember=0 차량이 members 테이블에 등록되었을 때 */
+     * 출차하지 않은 isMember=0 차량이 members 테이블에 등록되었을 때 */
     public void updateIsMember(ParkingHistoryVO parkingHistoryVO) {
         ParkingHistoryVO dbVO = selectParkingHistory(parkingHistoryVO.getParkNo());
         if (dbVO == null || dbVO.getEntryTime() == null) {
@@ -190,7 +190,7 @@ public class ParkingHistoryDAO {
     }
 
     /*
-     * 전체 주차 기록 개수 조회
+     * 통계용 전체 주차 기록 개수 조회
      */
     public int getTotalCount() {
         String sql = "SELECT COUNT(*) as total FROM parking_history";
@@ -210,6 +210,10 @@ public class ParkingHistoryDAO {
         }
     }
 
+
+    /*
+     * 통계용 날짜로 검색
+     */
     public List<ParkingHistoryVO> selectByDate(LocalDate date) {
         List<ParkingHistoryVO> ParkingHistoryVOList = new ArrayList<>();
         String sql = "SELECT * FROM parking_history WHERE DATE(entry_time) = ?";
@@ -234,6 +238,27 @@ public class ParkingHistoryDAO {
                 ParkingHistoryVOList.add(parkingHistoryVO);
             }
             return ParkingHistoryVOList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /*
+     * 비회원 조회 메서드 (26-02-20추가)
+     */
+    public int getNonMemberCountByPeriod(LocalDate startDate, LocalDate endDate) {
+        String sql = "SELECT COUNT(DISTINCT car_num) FROM parking_history " +
+                "WHERE is_member = FALSE " +
+                "AND entry_time >= ? AND entry_time < ?";
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setDate(1, java.sql.Date.valueOf(startDate));
+            ps.setDate(2, java.sql.Date.valueOf(endDate.plusDays(1)));
+            @Cleanup ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+            return 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

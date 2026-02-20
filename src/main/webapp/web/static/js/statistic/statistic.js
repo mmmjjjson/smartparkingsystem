@@ -17,6 +17,11 @@
         credits: { enabled: false }
     });
 
+    // 제목
+    function setSectionTitle(text) {
+        document.querySelector('.section-title').innerHTML = '<b>' + text + '</b>';
+    }
+
 
     // ========================================
     // 필터 초기화
@@ -93,18 +98,8 @@
         const dateFilterRow = document.getElementById('dateFilterRow');
         const membershipLabel = document.getElementById('membershipLabel');
         const searchBtn = document.getElementById('searchBtn');
-        const yearSelect = document.getElementById('year');
-        const monthSelect = document.getElementById('month');
-
-        // 회원 통계: 필터 전체 숨김 (조회 버튼 포함)
-        if (chartType === 'member_stats') {
-            dateFilterRow.style.display = 'none';
-            return;
-        }
 
         dateFilterRow.style.display = '';
-        yearSelect.style.display = '';
-        monthSelect.style.display = '';
         searchBtn.style.display = '';
 
         // 회원권 매출 포함: 매출 유형에만 표시
@@ -165,100 +160,123 @@
     // 1. 월별 매출 통계
     // ========================================
     function loadMonthlySales(year, month, includeMembership) {
-    const monthParam = month === 'all' ? '' : month;
-    const url = (CONTEXT_PATH === '' ? '' : CONTEXT_PATH) +
-    '/statistic/api/monthly-sales?year=' + year +
-    '&month=' + monthParam +
-    '&includeMembership=' + includeMembership;
+        const monthParam = month === 'all' ? '' : month;
+        const url = (CONTEXT_PATH === '' ? '' : CONTEXT_PATH) +
+            '/statistic/api/monthly-sales?year=' + year +
+            '&month=' + monthParam +
+            '&includeMembership=' + includeMembership;
 
-    console.log('API 호출:', url);
-    console.log('파라미터:', {year, month, monthParam, includeMembership});
+        console.log('API 호출:', url);
+        console.log('파라미터:', {year, month, monthParam, includeMembership});
 
-    fetch(url)
-    .then(response => {
-    console.log('응답 상태:', response.status);
-    if (!response.ok) {
-    throw new Error('HTTP error! status: ' + response.status);
-}
-    return response.json();
-})
-    .then(data => {
-    console.log('월별 매출 데이터:', data);
-    drawMonthlySalesChart(data);
-})
-    .catch(error => {
-    console.error('월별 매출 로드 실패:', error);
-    showError('월별 매출 데이터를 불러오는데 실패했습니다. ' + error.message);
-});
-}
+        fetch(url)
+            .then(response => {
+                console.log('응답 상태:', response.status);
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('월별 매출 데이터:', data);
+                drawMonthlySalesChart(data);
+            })
+            .catch(error => {
+                console.error('월별 매출 로드 실패:', error);
+                showError('월별 매출 데이터를 불러오는데 실패했습니다. ' + error.message);
+            });
+    }
     function drawMonthlySalesChart(data) {
-    console.log("받은 데이터:", data);
-    if (data.error) {
-    showError('서버 오류: ' + data.message + ' (' + data.cause + ')');
-    return;
-}
-    // 데이터 없음 체크
-    if (!data.categories || data.categories.length === 0) {
-    showError('해당 기간의 데이터가 없습니다.');
-    return;
-}
-    // normalSales가 없거나 빈 배열인 경우
-    if (!data.normalSales || data.normalSales.length === 0) {
-    showError('매출 데이터가 없습니다.');
-    return;
-}
+        console.log("받은 데이터:", data);
+        if (data.error) {
+            showError('서버 오류: ' + data.message + ' (' + data.cause + ')');
+            return;
+        }
+        // 데이터 없음 체크
+        if (!data.categories || data.categories.length === 0) {
+            showError('해당 기간의 데이터가 없습니다.');
+            return;
+        }
+        // normalSales가 없거나 빈 배열인 경우
+        if (!data.normalSales || data.normalSales.length === 0) {
+            showError('매출 데이터가 없습니다.');
+            return;
+        }
 
-    const series = [];
+        const series = [];
 
-    // 일반 매출
-    series.push({
-    name: '일반 매출',
-    data: data.normalSales,
-    color: '#4472C4'
-});
+        // 일반 매출
+        series.push({
+            name: '일반 매출',
+            data: data.normalSales,
+            color: '#4472C4'
+        });
 
-    // 회원권 매출 (포함된 경우)
-    if (data.includeMembership) {
-    series.push({
-    name: '회원권 매출',
-    data: data.memberSales,
-    color: '#70AD47'
-});
-}
-
-    Highcharts.chart('chart_container', {
-    chart: {
-    type: 'column'
-},
-    title: {
-    text: data.categories.length > 12 ? '일별 매출 현황' : '월별 매출 현황'
-},
-    xAxis: {
-    categories: data.categories
-},
-    yAxis: {
-    min: 0,
-    title: {
-    text: '매출액 (원)'
-}
-},
-    tooltip: {
-    pointFormat: '<b>{point.y:,.0f}원</b>'
-},
-    plotOptions: {
-    column: {
-    stacking: 'normal'
-}
-},
-    series: series
-});
+        // 회원권 매출 (포함된 경우)
+        if (data.includeMembership) {
+            series.push({
+                name: '회원권 매출',
+                data: data.memberSales,
+                color: '#70AD47'
+            });
+        }
+        setSectionTitle(data.categories.length > 12 ? '일별 매출 현황' : '월별 매출 현황');
+        Highcharts.chart('chart_container', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            xAxis: {
+                categories: data.categories
+            },
+            yAxis: {
+                min: 0,
+                title: { text: '매출액 (원)' },
+                labels: {
+                    formatter: function() {
+                        if (this.value >= 100000000) {
+                            return (this.value / 100000000) + '억';
+                        } else if (this.value >= 10000) {
+                            return (this.value / 10000) + '만';
+                        }
+                        return this.value;
+                    }
+                }
+            },
+            tooltip: {
+                shared: true,
+                formatter: function() {
+                    let s = '<b>' + this.x + '</b><br/>';
+                    let total = 0;
+                    this.points.forEach(function(point) {
+                        s += point.series.name + ': ' + point.y.toLocaleString('ko-KR') + '원<br/>';
+                        total += point.y;
+                    });
+                    s += '<b>총 매출: ' + total.toLocaleString('ko-KR') + '원</b>';
+                    return s;
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal'
+                }
+            },
+            series: series
+        });
         showMonthlySalesSummary(data);
-}
+    }
 
     // ========================================
     // 2. 누적 매출 통계
     // ========================================
     function loadCumulativeSales(year, month, includeMembership) {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1;
+        const currentDay = now.getDate();
+
         const monthParam = month === 'all' ? '' : month;
         const url = CONTEXT_PATH + '/statistic/api/cumulative-sales?year=' + year +
             '&month=' + monthParam + '&includeMembership=' + includeMembership;
@@ -273,8 +291,14 @@
             if (m === 1) { prevYear = year - 1; prevMonth = 12; }
             else { prevYear = year; prevMonth = m - 1; }
         }
+
+        // 현재 선택된 기간이 이번 달이면 → 이전 달도 같은 일수까지만 비교
+        const isCurrentMonth = (year === currentYear && parseInt(month) === currentMonth);
+        const limitDay = isCurrentMonth ? currentDay : '';
+
         const prevUrl = CONTEXT_PATH + '/statistic/api/cumulative-sales?year=' + prevYear +
-            '&month=' + prevMonth + '&includeMembership=' + includeMembership;
+            '&month=' + prevMonth + '&includeMembership=' + includeMembership +
+            '&limitDay=' + limitDay; // ← 추가
 
         showLoading();
 
@@ -283,122 +307,141 @@
             fetch(prevUrl).then(r => r.ok ? r.json() : null).catch(() => null)
         ])
             .then(([currentData, prevData]) => {
-                drawCumulativeSalesChart(currentData, prevData);
+                drawCumulativeSalesChart(currentData, prevData, year, month);
             })
             .catch(error => {
                 showError('누적 매출 데이터를 불러오는데 실패했습니다. ' + error.message);
             });
     }
 
-    function drawCumulativeSalesChart(data, prevData) {
-    if (!data.categories || data.categories.length === 0) {
-    showError('해당 기간의 데이터가 없습니다.');
-    return;
-}
+    function drawCumulativeSalesChart(data, prevData, year, month) {
+        if (!data.categories || data.categories.length === 0) {
+            showError('해당 기간의 데이터가 없습니다.');
+            return;
+        }
 
-    const series = [];
+        // 제목 생성
+        let title;
+        if (month && month !== 'all') {
+            title = year + '년 ' + month + '월 누적 매출 현황';
+        } else {
+            title = year + '년 누적 매출 현황';
+        }
+        setSectionTitle(title);
 
-    // 일반 누적 매출
-    series.push({
-    name: '일반 누적',
-    data: data.cumulativeNormal,
-    color: '#4472C4'
-});
+        const series = [];
+        series.push({
+            name: '일반 누적',
+            data: data.cumulativeNormal,
+            color: '#4472C4'
+        });
+        if (data.includeMembership) {
+            series.push({
+                name: '회원 누적',
+                data: data.cumulativeMember,
+                color: '#70AD47'
+            });
+        }
+        Highcharts.chart('chart_container', {
+            chart: { type: 'column' }, // ← line에서 column으로
+            title: { text: '' },
+            xAxis: { categories: data.categories },
+            yAxis: {
+                min: 0,
+                title: { text: '매출액 (원)' },
+                labels: {
+                    formatter: function() {
+                        if (this.value >= 100000000) {
+                            return (this.value / 100000000) + '억';
+                        } else if (this.value >= 10000) {
+                            return (this.value / 10000) + '만';
+                        }
+                        return this.value;
+                    }
+                }
+            },
+            tooltip: {
+                shared: true,
+                formatter: function() {
+                    let s = '<b>' + this.x + '</b><br/>';
+                    let total = 0;
+                    this.points.forEach(function(point) {
+                        s += point.series.name + ': ' + point.y.toLocaleString('ko-KR') + '원<br/>';
+                        total += point.y;
+                    });
+                    s += '<b>총 누적: ' + total.toLocaleString('ko-KR') + '원</b>';
+                    return s;
+                }
+            },
+            plotOptions: {
+                column: { stacking: 'normal' } // ← 월별 매출과 동일하게 스택형
+            },
+            series: series
+        });
 
-    // 회원 누적 매출 (포함된 경우)
-    if (data.includeMembership) {
-    series.push({
-    name: '회원 누적',
-    data: data.cumulativeMember,
-    color: '#70AD47'
-});
-}
-
-    Highcharts.chart('chart_container', {
-    chart: {
-    type: 'column'
-},
-    title: {
-    text: data.title || '누적 매출 현황'
-},
-    xAxis: {
-    categories: data.categories
-},
-    yAxis: {
-    min: 0,
-    title: {
-    text: '누적 매출액 (원)'
-}
-},
-    tooltip: {
-    pointFormat: '<b>{point.y:,.0f}원</b>'
-},
-    series: series
-});
         showCumulativeSalesSummary(data, prevData);
-
-}
+    }
 
     // ========================================
     // 3. 차종별 통계 (파이 차트)
     // ========================================
     function loadCarTypePie(year, month) {
-    const monthParam = month === 'all' ? '' : month;
-    const url = CONTEXT_PATH + '/statistic/api/car-type-stats?year=' + year +
-    '&month=' + monthParam;
+        const monthParam = month === 'all' ? '' : month;
+        const url = CONTEXT_PATH + '/statistic/api/car-type-stats?year=' + year +
+            '&month=' + monthParam;
 
-    console.log('API 호출:', url);
+        console.log('API 호출:', url);
 
-    fetch(url)
-    .then(response => {
-    if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
-    return response.json();
-})
-    .then(data => {
-    console.log('차종별 통계 데이터:', data);
-    drawCarTypePie(data);
-})
-    .catch(error => {
-    console.error('차종별 통계 로드 실패:', error);
-    showError('차종별 통계 데이터를 불러오는데 실패했습니다. ' + error.message);
-});
-}
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('차종별 통계 데이터:', data);
+                drawCarTypePie(data);
+            })
+            .catch(error => {
+                console.error('차종별 통계 로드 실패:', error);
+                showError('차종별 통계 데이터를 불러오는데 실패했습니다. ' + error.message);
+            });
+    }
 
     function drawCarTypePie(data) {
-    if (!data.data || data.data.length === 0) {
-    showError('해당 기간의 데이터가 없습니다.');
-    return;
-}
+        if (!data.data || data.data.length === 0) {
+            showError('해당 기간의 데이터가 없습니다.');
+            return;
+        }
         hideSummary();
-
-    Highcharts.chart('chart_container', {
-    chart: {
-    type: 'pie'
-},
-    title: {
-    text: '차종별 통계'
-},
-    tooltip: {
-    pointFormat: '<b>{point.y}대 ({point.percentage:.1f}%)</b>'
-},
-    subtitle: { text: '총 ' + data.total + '대' },
-    plotOptions: {
-    pie: {
-    allowPointSelect: true,
-    cursor: 'pointer',
-    dataLabels: {
-    enabled: true,
-        format: '<b>{point.name}</b><br>{point.y}대 ({point.percentage:.1f}%)'
-}
-}
-},
-    series: [{
-    name: '차종',
-    colorByPoint: true,
-    data: data.data
-}]
-});
-}
+        setSectionTitle('차종별 통계');
+        Highcharts.chart('chart_container', {
+            chart: {
+                type: 'pie'
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y}대 ({point.percentage:.1f}%)</b>'
+            },
+            subtitle: { text: '총 ' + data.total + '대' },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b><br>{point.y}대 ({point.percentage:.1f}%)'
+                    }
+                }
+            },
+            series: [{
+                name: '차종',
+                colorByPoint: true,
+                data: data.data
+            }]
+        });
+    }
 
     // ========================================
     // 4. 피크 시간대 분석
@@ -424,99 +467,132 @@
     }
 
     function drawPeakTimeChart(data) {
-    Highcharts.chart('chart_container', {
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '시간대별 입차 현황'
-        },
-        xAxis: {
-            categories: data.categories
-        },
-        yAxis: {
-            min: 0,
+        setSectionTitle('시간대별 입차 현황');
+        Highcharts.chart('chart_container', {
+            chart: {
+                type: 'column'
+            },
             title: {
-                text: '입차 대수'
-            }
-        },
-        tooltip: {
-            pointFormat: '<b>{point.y}대</b>'
-        },
-        series: [{
-            name: '입차 대수',
-            data: data.hourlyCount,
-            color: '#ED7D31'
-        }]
-    });
+                text: ''
+            },
+            xAxis: {
+                categories: data.categories
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '입차 대수'
+                }
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y}대</b>'
+            },
+            series: [{
+                name: '입차 대수',
+                data: data.hourlyCount,
+                color: '#ED7D31'
+            }]
+        });
         showPeakTimeSummary(data);
-}
+    }
 
     // ========================================
     // 5. 회원 통계
     // ========================================
     function loadMemberStats() {
-    const url = CONTEXT_PATH + '/statistic/api/member-stats';
+        const year = parseInt(document.getElementById('year').value);
+        const month = document.getElementById('month').value;
+        const monthParam = month === 'all' ? '' : month;
+        const url = CONTEXT_PATH + '/statistic/api/member-stats?year=' + year + '&month=' + monthParam;
 
-    console.log('API 호출:', url);
-
-    fetch(url)
-    .then(response => {
-    if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
-    return response.json();
-})
-    .then(data => {
-    console.log('회원 통계 데이터:', data);
-    drawMemberStatsChart(data);
-})
-    .catch(error => {
-    console.error('회원 통계 로드 실패:', error);
-    showError('회원 통계 데이터를 불러오는데 실패했습니다. ' + error.message);
-});
-}
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('회원 통계 데이터:', data);
+                drawMemberStatsChart(data);
+            })
+            .catch(error => {
+                console.error('회원 통계 로드 실패:', error);
+                showError('회원 통계 데이터를 불러오는데 실패했습니다. ' + error.message);
+            });
+    }
 
     function drawMemberStatsChart(data) {
-    hideSummary();
-    const pieData = [
-{
-    name: '활성 회원',
-    y: data.activeCount,
-    color: '#70AD47'
-},
-{
-    name: '비활성 회원',
-    y: data.inactiveCount,
-    color: '#FFC000'
-}
-    ];
+        hideSummary();
 
-    Highcharts.chart('chart_container', {
-    chart: {
-    type: 'pie'
-},
-    title: {
-    text: '회원 현황 (총 ' + data.totalCount + '명)'
-},
-    tooltip: {
-    pointFormat: '<b>{point.y}명 ({point.percentage:.1f}%)</b>'
-},
-    plotOptions: {
-    pie: {
-    allowPointSelect: true,
-    cursor: 'pointer',
-    dataLabels: {
-    enabled: true,
-    format: '<b>{point.name}</b>: {point.y}명 ({point.percentage:.1f}%)'
-}
-}
-},
-    series: [{
-    name: '회원',
-    colorByPoint: true,
-    data: pieData
-}]
-});
-}
+        // chart_container 안에 두 차트 영역 생성
+        document.getElementById('chart_container').innerHTML = `
+        <div style="display:flex; width:100%; height:100%;">
+            <div id="chart_member_usage" style="flex:1.3; min-height:380px;"></div>
+            <div id="chart_member_status" style="flex:1; min-height:380px;"></div>
+        </div>
+    `;
+        setSectionTitle('회원 현황');
+        // 좌측 차트 (강조): 활성 회원 vs 비회원 이용
+        Highcharts.chart('chart_member_usage', {
+            credits: { enabled: false },
+            chart: { type: 'pie' },
+            title: { text: '회원 vs 비회원 이용 현황', style: { fontSize: '15px', fontWeight: 'bold' } },
+            subtitle: { text: '총 이용 ' + (data.activeCount + data.nonMemberUsageCount).toLocaleString('ko-KR') + '건' },
+            tooltip: {
+                pointFormat: '<b>{point.y}건 ({point.percentage:.1f}%)</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    size: '80%',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b><br>{point.y}건 ({point.percentage:.1f}%)',
+                        style: { fontSize: '13px' }
+                    }
+                }
+            },
+            series: [{
+                name: '이용 현황',
+                colorByPoint: true,
+                data: [
+                    { name: '활성 회원', y: data.activeCount, color: '#4472C4' },
+                    { name: '비회원 이용', y: data.nonMemberUsageCount, color: '#ED7D31' }
+                ]
+            }]
+        });
+
+        // 우측 차트: 활성 회원 vs 비활성 회원
+        Highcharts.chart('chart_member_status', {
+            credits: { enabled: false },
+            chart: { type: 'pie' },
+            title: { text: '회원 활성 현황', style: { fontSize: '14px' } },
+            subtitle: { text: '총 회원 ' + data.totalCount + '명' },
+            tooltip: {
+                pointFormat: '<b>{point.y}명 ({point.percentage:.1f}%)</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    size: '70%',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b><br>{point.y}명 ({point.percentage:.1f}%)',
+                        style: { fontSize: '12px' }
+                    }
+                }
+            },
+            series: [{
+                name: '회원 현황',
+                colorByPoint: true,
+                data: [
+                    { name: '활성 회원', y: data.activeCount, color: '#70AD47' },
+                    { name: '비활성 회원', y: data.inactiveCount, color: '#FFC000' }
+                ]
+            }]
+        });
+    }
 
     // ========================================
     // 통계 요약 함수들

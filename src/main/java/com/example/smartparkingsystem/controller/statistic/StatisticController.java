@@ -239,8 +239,20 @@ public class StatisticController extends HttpServlet {
      * 회원 통계 API
      */
     private Map<String, Object> handleMemberStats(HttpServletRequest request) {
-        log.info("회원 통계 조회");
-        return statisticService.getMemberStats();
+        int year = getIntParameter(request, "year", LocalDate.now().getYear());
+
+        String monthParam = request.getParameter("month");
+        Integer month = null;
+        if (monthParam != null && !monthParam.isEmpty() && !monthParam.equals("all")) {
+            try {
+                month = Integer.parseInt(monthParam);
+            } catch (NumberFormatException e) {
+                log.warn("잘못된 month 파라미터: {}", monthParam);
+            }
+        }
+
+        log.info("회원 통계 조회: year={}, month={}", year, month);
+        return statisticService.getMemberStats(year, month);
     }
 
     /**

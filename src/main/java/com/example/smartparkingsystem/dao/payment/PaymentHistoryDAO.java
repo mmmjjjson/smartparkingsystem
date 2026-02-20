@@ -82,6 +82,11 @@ public class PaymentHistoryDAO {
         return paymentHistoryVO;
     }
 
+
+
+    /*
+     * 통계용 결제 대이터 조회
+     */
     public Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> selectOrderByYearMonth() {
         Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> result = new TreeMap<>(Collections.reverseOrder());
 
