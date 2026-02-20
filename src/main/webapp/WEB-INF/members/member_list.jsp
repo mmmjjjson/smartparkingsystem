@@ -40,17 +40,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <link rel="stylesheet" as="style" crossorigin
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
 
     <!-- Custom CSS -->
-    <%--        <link rel="stylesheet" href="${pageContext.request.contextPath}/web/member/css/member.css">--%>
-    <%--    <link rel="stylesheet" href="../../login/css/styles.css">--%>
-    <%--    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/mainboard.css">--%>
-    <%--    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/main/receipt.css">--%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/static/css/mainboard.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web/static/css/membership_receipt.css">
 
     <script src="${pageContext.request.contextPath}/web/static/js/member/member.js" defer></script>
-    <%--    <script src="../../web/main/main_membershipPay.js" defer></script>--%>
 
     <style>
         body > * {
@@ -70,14 +66,15 @@
 </head>
 <body class="bg-light">
 <!-- 헤드 -->
-<%@include file="/WEB-INF/common/header_main.jsp"%>
+<%@include file="/WEB-INF/common/header_main.jsp" %>
 <div class="container-fluid mt-4 pb-2">
     <!-- 콘텐츠 -->
     <div class="content">
         <div class="section-header d-flex justify-content-between align-items-center mb-3">
             <h3 class="section-title mb-0"><b>회원 관리</b> - 월정액 회원 정보 관리</h3>
             <!-- 회원 정보 검색 -->
-            <form method="get" action="<%=request.getContextPath()%>/member_list" class="d-flex justify-content-end align-items-center">
+            <form method="get" action="<%=request.getContextPath()%>/member_list"
+                  class="d-flex justify-content-end align-items-center">
                 <input type="hidden" name="pageNum" value="1">
                 <input type="hidden" name="status"
                        value="<%= request.getParameter("status") == null ? "" : request.getParameter("status") %>">
@@ -108,11 +105,12 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <!-- 회원 / 만료 회원 버튼 -->
             <div>
-                <a href="<%=request.getContextPath()%>/member_list"
-                   class="btn btn-outline-primary <%= request.getParameter("status") == null ? "active" : "" %>">회원</a>
-                <a href="<%=request.getContextPath()%>/member_list?status=expired"
-                   class="btn btn-outline-primary <%= "expired".equals(request.getParameter("status")) ? "active" : "" %>">만료
-                    회원</a>
+                <a href="<%=request.getContextPath()%>/member_list?pageNum=1&searchType=<%=searchType%>&keyword=<%=keyword%>"
+                   class="btn btn-outline-primary <%= (status == null || status.isEmpty()) ? "active" : "" %>">전체</a>
+                <a href="<%=request.getContextPath()%>/member_list?pageNum=1&status=active&searchType=<%=searchType%>&keyword=<%=keyword%>"
+                   class="btn btn-outline-primary <%= "active".equals(status) ? "active" : "" %>">유효</a>
+                <a href="<%=request.getContextPath()%>/member_list?pageNum=1&status=expired&searchType=<%=searchType%>&keyword=<%=keyword%>"
+                   class="btn btn-outline-primary <%= "expired".equals(status) ? "active" : "" %>">만료</a>
             </div>
 
             <!-- 신규 회원 등록 버튼 -->
@@ -169,6 +167,9 @@
                     <td><%=member.getStartDate()%>
                     </td>
                     <td><%=member.getEndDate()%>
+                        <% if (member.getEndDate().isBefore(java.time.LocalDate.now())) { %>
+                        <span class="text-danger fw-semibold" style="position: absolute; right: 60px;">(만료)</span>
+                        <% } %>
                     </td>
                 </tr>
                 <%
@@ -248,7 +249,8 @@
 <div class="modal fade" id="newMemberModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <form action="<%=request.getContextPath()%>/member_add" method="post" onsubmit="return handleNewMemberSubmit()">
+            <form action="<%=request.getContextPath()%>/member_add" method="post"
+                  onsubmit="return handleNewMemberSubmit()">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">회원 정보 입력</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -468,7 +470,8 @@
 <div class="modal fade" id="editMemberModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <form action="<%=request.getContextPath()%>/member_modify" method="post" onsubmit="return handleEditSubmit()">
+            <form action="<%=request.getContextPath()%>/member_modify" method="post"
+                  onsubmit="return handleEditSubmit()">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">회원 정보 수정</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
