@@ -31,7 +31,51 @@ class MembersDAOTest {
         Assertions.assertEquals("테스트회원", result.getMemberName());
     }
 
+    @Test
+    public void selectOneMemberTest() {
+        MembersDAO dao = new MembersDAO();
 
+        MembersVO result = dao.selectOneMember("12가9999");
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("테스트회원", result.getMemberName());
+    }
+
+    @Test
+    public void updateMemberTest() {
+        MembersDAO dao = new MembersDAO();
+
+        MembersVO membersVO = dao.selectOneMember("12가9999");
+        Assertions.assertNotNull(membersVO);
+
+        MembersVO updatedVO = MembersVO.builder()
+                .memberName("수정회원")
+                .build();
+
+        dao.updateMember(updatedVO);
+
+        MembersVO updated = dao.selectOneMember("12가9999");
+
+        Assertions.assertEquals("수정회원", updated.getMemberName());
+    }
+
+    @Test
+    public void selectMemberCountTest() {
+        MembersDAO dao = new MembersDAO();
+
+        int count = dao.selectMemberCount(null, null, "active");
+
+        Assertions.assertTrue(count > 0);
+    }
+
+    @Test
+    public void selectMemberListPagingTest() {
+        MembersDAO dao = new MembersDAO();
+
+        var list = dao.selectMemberList(null, null, null, 0, 10);
+
+        Assertions.assertEquals(10, list.size());
+    }
 
 
 //    @Test
