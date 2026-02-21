@@ -44,16 +44,4 @@ class AdminServiceTest {
         String lastLoginIp = "192.168.0.1";
         adminService.renewalLog(adminId, lastLoginIp);
     }
-
-//    @Test
-//    public void adminPw() {
-//        String adminId = "test";
-//        String password = "test";
-//        adminService.changePassword(adminId, password);
-//    }
-
-//    @Test
-//    public void adminServiceDelete() {
-//        adminService.removeAdmin("test1");
-//    }
 }

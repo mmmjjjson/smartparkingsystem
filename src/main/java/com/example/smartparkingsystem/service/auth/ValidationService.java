@@ -41,11 +41,22 @@ public enum ValidationService {
     public void otpShipment(String adminId) {
         // 발송할 이메일
         String adminEmail = adminService.getAdminById(adminId).getAdminEmail();
-
         String otpCode = randomOTP();
         log.info("OTP : {}", otpCode);
 
-        // TODO 테스트할때는 수정
+        if (adminId.equals("demo")) { // 포트폴리오용
+            log.info("[ 테스트 ] 데모계정 OTP: 123456");
+            otpCode = "123456";
+            ValidationVO validationVO = ValidationVO.builder()
+                    .adminId(adminId)
+                    .otpCode(otpCode)
+                    .adminEmail(adminEmail)
+                    .expiredTime(LocalDateTime.now())
+                    .build();
+            validationDAO.logOTP(validationVO);
+            return;
+        }
+
         mailService.sendAuthEmail(adminEmail, otpCode);
         ValidationVO validationVO = ValidationVO.builder()
                 .adminId(adminId)

@@ -105,7 +105,12 @@ public class EmailVerifyController extends HttpServlet {
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
-    // OTP 인증 헬퍼 메서드
+    /**
+     * OTP 인증, 발송 헬퍼 메서드
+     * @param adminId 관리자 아이디
+     * @param otpCode OTP 인증코드
+     * @return 인증여부(문자열로 인증받음)
+     */
     private String validateOtp(String adminId, String otpCode) {
         ValidationDTO validationDTO = validationService.getOTP(adminId);
         if (LocalDateTime.now().isAfter(validationDTO.getExpiredTime())) {

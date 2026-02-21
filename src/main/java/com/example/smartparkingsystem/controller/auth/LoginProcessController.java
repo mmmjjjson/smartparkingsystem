@@ -148,16 +148,33 @@ public class LoginProcessController extends HttpServlet {
         }
     }
 
+    /**
+     * 관리자계정 인증, 헬퍼 메서드
+     * @param adminId 관리자 아이디
+     * @param password 관리자 비밀번호
+     * @return 인증여부
+     */
     private boolean adminDB(String adminId, String password) {
         return adminService.AuthenticateAdmin(adminId, password);
     }
 
+    /**
+     * 이메일 인증, 헬퍼 메서드
+     * @param adminId 관리자 아이디
+     * @param email 관리자 이메일
+     * @return 등록된 이메일 인증여부
+     */
     private boolean emailDB(String adminId, String email) {
         AdminDTO admin = adminService.getAdminById(adminId);
         return admin != null && admin.getAdminEmail().equals(email);
     }
 
-    // OTP 인증, 발송 헬퍼 메서드
+    /**
+     * OTP 인증, 발송 헬퍼 메서드
+     * @param adminId 관리자 아이디
+     * @param otpCode OTP 인증코드
+     * @return 인증여부(문자열로 인증받음)
+     */
     private String otpDB(String adminId, String otpCode) {
         ValidationDTO validationDTO = validationService.getOTP(adminId);
 

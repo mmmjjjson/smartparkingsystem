@@ -178,6 +178,13 @@
                                 🔒 보안을 위해 단계별 인증이 활성화되어 있습니다
                             </div>
 
+                            <!-- 데모 관리자 계정 (실제 사용시 주석) -->
+                            <div class="alert alert-info mt-3 mb-0">
+                                <strong>포트폴리오 데모 계정</strong><br>
+                                아이디: <code>demo</code> / 비밀번호: <code>demo1234</code><br>
+                                이메일: <code>demo@example.com</code><br>
+                                OTP: <code>123456</code>
+                            </div>
                         </div>
                     </div>
                 </div>
