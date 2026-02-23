@@ -82,10 +82,8 @@ public class PaymentHistoryDAO {
         return paymentHistoryVO;
     }
 
-
-
     /*
-     * 통계용 결제 대이터 조회
+     * 통계용 결제 데이터 전체 조회 (초기 캐시 로드용)
      */
     public Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> selectOrderByYearMonth() {
         Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> result = new TreeMap<>(Collections.reverseOrder());
@@ -107,16 +105,7 @@ public class PaymentHistoryDAO {
                 int year = resultSet.getInt("year");
                 int month = resultSet.getInt("month");
 
-                PaymentHistoryDTO record = new PaymentHistoryDTO();
-                record.setPayNo(resultSet.getLong("pay_no"));
-                record.setParkingArea(resultSet.getString("parking_area"));
-                record.setCarNum(resultSet.getString("car_num"));
-                record.setEntryTime(resultSet.getTimestamp("entry_time").toLocalDateTime());
-                record.setExitTime(resultSet.getTimestamp("exit_time").toLocalDateTime());
-                record.setTotalMinutes(resultSet.getInt("total_minutes"));
-                record.setFinalCharge(resultSet.getInt("final_charge"));
-                Long mno = resultSet.getObject("mno", Long.class);
-                record.setMno(mno);
+                PaymentHistoryDTO record = buildDTO(resultSet);
 
                 result.computeIfAbsent(year, k -> new TreeMap<>(Collections.reverseOrder()))
                         .computeIfAbsent(month, k -> new ArrayList<>())
@@ -128,4 +117,46 @@ public class PaymentHistoryDAO {
         }
     }
 
+    /*
+     * 통계용 특정 연월 결제 데이터 조회
+     */
+    public List<PaymentHistoryDTO> selectByYearMonth(int year, int month) {
+        List<PaymentHistoryDTO> result = new ArrayList<>();
+
+        String sql = "SELECT pay_no, parking_area, car_num, entry_time, exit_time, " +
+                "total_minutes, final_charge, mno " +
+                "FROM payment_history " +
+                "WHERE is_paid = TRUE " +
+                "AND YEAR(entry_time) = ? AND MONTH(entry_time) = ? " +
+                "ORDER BY entry_time DESC";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, year);
+            preparedStatement.setInt(2, month);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                result.add(buildDTO(resultSet));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private PaymentHistoryDTO buildDTO(ResultSet resultSet) throws SQLException {
+        PaymentHistoryDTO record = new PaymentHistoryDTO();
+        record.setPayNo(resultSet.getLong("pay_no"));
+        record.setParkingArea(resultSet.getString("parking_area"));
+        record.setCarNum(resultSet.getString("car_num"));
+        record.setEntryTime(resultSet.getTimestamp("entry_time").toLocalDateTime());
+        record.setExitTime(resultSet.getTimestamp("exit_time").toLocalDateTime());
+        record.setTotalMinutes(resultSet.getInt("total_minutes"));
+        record.setFinalCharge(resultSet.getInt("final_charge"));
+        Long mno = resultSet.getObject("mno", Long.class);
+        record.setMno(mno);
+        return record;
+    }
 }

@@ -9,8 +9,7 @@ import java.sql.*;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Log4j2
 public class ParkingHistoryDAO {
@@ -210,7 +209,6 @@ public class ParkingHistoryDAO {
         }
     }
 
-
     /*
      * 통계용 날짜로 검색
      */
@@ -243,7 +241,6 @@ public class ParkingHistoryDAO {
         }
     }
 
-
     /*
      * 비회원 조회 메서드 (26-02-20추가)
      */
@@ -259,6 +256,77 @@ public class ParkingHistoryDAO {
             @Cleanup ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt(1);
             return 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /*
+     * 통계용 전체 입출차 데이터 연월별 조회 (초기 캐시 로드용) - 신규 추가
+     */
+    public Map<Integer, Map<Integer, List<ParkingHistoryVO>>> selectAllByYearMonth() {
+        Map<Integer, Map<Integer, List<ParkingHistoryVO>>> result = new TreeMap<>(Collections.reverseOrder());
+        String sql = "SELECT * FROM parking_history ORDER BY entry_time DESC";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                ParkingHistoryVO vo = ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build();
+
+                int year = vo.getEntryTime().getYear();
+                int month = vo.getEntryTime().getMonthValue();
+
+                result.computeIfAbsent(year, k -> new TreeMap<>(Collections.reverseOrder()))
+                        .computeIfAbsent(month, k -> new ArrayList<>())
+                        .add(vo);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /*
+     * 통계용 특정 연월 입출차 데이터 조회 (이벤트 기반 부분 캐시 갱신용) - 신규 추가
+     */
+    public List<ParkingHistoryVO> selectByYearMonth(int year, int month) {
+        List<ParkingHistoryVO> result = new ArrayList<>();
+        String sql = "SELECT * FROM parking_history " +
+                "WHERE YEAR(entry_time) = ? AND MONTH(entry_time) = ? " +
+                "ORDER BY entry_time DESC";
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, year);
+            preparedStatement.setInt(2, month);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                result.add(ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build());
+            }
+            return result;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

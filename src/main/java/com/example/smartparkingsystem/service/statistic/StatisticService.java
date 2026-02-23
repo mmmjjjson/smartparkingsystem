@@ -18,18 +18,18 @@ import java.util.*;
 public enum StatisticService {
     INSTANCE;
 
-    // DAO 객체들
     private final PaymentHistoryDAO paymentHistoryDAO;
     private final MembersDAO membersDAO;
     private final ParkingHistoryDAO parkingHistoryDAO;
     private final PaymentInfoDAO paymentInfoDAO = new PaymentInfoDAO();
 
-    // ========== 캐싱 변수 ==========
+    // ========== 캐시 ==========
+    // 결제 테이블 기반 캐시: 월별 매출, 누적 매출, 피크 시간대
     private Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> cachedPaymentData = null;
-    private long lastCacheTime = 0;
-    private static final long CACHE_DURATION = 5 * 60 * 1000; // 5분 캐시 유지
 
-    // ========== 회원권 가격 상수 ==========
+    // 입출차 테이블 기반 캐시: 차종별 통계
+    private Map<Integer, Map<Integer, List<ParkingHistoryVO>>> cachedParkingData = null;
+
     private final int MEMBERSHIP_PRICE_PER_30DAYS = paymentInfoDAO.selectInfo().getMemberCharge();
 
     StatisticService() {
@@ -38,33 +38,64 @@ public enum StatisticService {
         parkingHistoryDAO = new ParkingHistoryDAO();
     }
 
+    // ========================================================
+    // 이벤트 기반 캐시 갱신 메서드
+    // ========================================================
+
     /**
-     * 캐싱된 결제 데이터 조회 (5분마다 갱신)
+     * 결제 데이터 변경 시 호출 (결제 완료 시)
+     * 해당 연/월 결제 캐시만 갱신
      */
-    private Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> getCachedPaymentData() {
-        long currentTime = System.currentTimeMillis();
-        if (cachedPaymentData == null || (currentTime - lastCacheTime) > CACHE_DURATION) {
-            log.info("캐시 갱신 - DB에서 데이터 조회");
+    public void onPaymentDataChanged(int year, int month) {
+        log.info("결제 캐시 갱신: {}년 {}월", year, month);
+        if (cachedPaymentData == null) {
+            cachedPaymentData = new TreeMap<>(Collections.reverseOrder());
+        }
+        List<PaymentHistoryDTO> freshData = paymentHistoryDAO.selectByYearMonth(year, month);
+        cachedPaymentData
+                .computeIfAbsent(year, k -> new TreeMap<>(Collections.reverseOrder()))
+                .put(month, freshData);
+    }
+
+    /**
+     * 입출차 데이터 변경 시 호출 (입차/출차 시)
+     * 해당 연/월 입출차 캐시만 갱신
+     */
+    public void onParkingDataChanged(int year, int month) {
+        log.info("입출차 캐시 갱신: {}년 {}월", year, month);
+        if (cachedParkingData == null) {
+            cachedParkingData = new TreeMap<>(Collections.reverseOrder());
+        }
+        List<ParkingHistoryVO> freshData = parkingHistoryDAO.selectByYearMonth(year, month);
+        cachedParkingData
+                .computeIfAbsent(year, k -> new TreeMap<>(Collections.reverseOrder()))
+                .put(month, freshData);
+    }
+
+    // ========================================================
+    // 캐시 초기화 (최초 조회 시 전체 로드)
+    // ========================================================
+
+    private Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> getPaymentData() {
+        if (cachedPaymentData == null) {
+            log.info("결제 캐시 초기화 - 전체 데이터 로드");
             cachedPaymentData = paymentHistoryDAO.selectOrderByYearMonth();
-            lastCacheTime = currentTime;
-        } else {
-            log.info("캐시 사용 - DB 조회 생략");
         }
         return cachedPaymentData;
     }
 
-    /**
-     * 캐시 강제 갱신
-     */
-    public void refreshCache() {
-        log.info("캐시 강제 갱신");
-        cachedPaymentData = null;
-        lastCacheTime = 0;
+    private Map<Integer, Map<Integer, List<ParkingHistoryVO>>> getParkingData() {
+        if (cachedParkingData == null) {
+            log.info("입출차 캐시 초기화 - 전체 데이터 로드");
+            cachedParkingData = parkingHistoryDAO.selectAllByYearMonth();
+        }
+        return cachedParkingData;
     }
 
-    /**
-     * 회원권 매출 계산 (30일당 요금)
-     */
+    // ========================================================
+    // 회원권 매출 계산
+    // ========================================================
+
     private int calculateMembershipRevenue(LocalDate startDate, LocalDate endDate) {
         long days = ChronoUnit.DAYS.between(startDate, endDate);
         int periods = (int) Math.ceil(days / 30.0);
@@ -76,68 +107,10 @@ public enum StatisticService {
     // ========================================================
 
     /**
-     * 통계 페이지용 전체 데이터 조회
-     */
-    public Map<String, Object> getAllStatisticsData() {
-        log.info("전체 통계 데이터 조회 시작");
-
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentDataByYear = getCachedPaymentData();
-        List<MembersVO> allMembers = membersDAO.selectAllMembers();
-
-        int totalCount = 0;
-        for (Map<Integer, List<PaymentHistoryDTO>> monthMap : paymentDataByYear.values()) {
-            for (List<PaymentHistoryDTO> records : monthMap.values()) {
-                totalCount += records.size();
-            }
-        }
-
-        log.info("총 데이터: " + totalCount + "건");
-        log.info("회원: " + allMembers.size() + "명");
-
-        Map<String, Object> memberStats = calculateMemberStats(allMembers);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("paymentDataByYear", paymentDataByYear);
-        result.put("memberStats", memberStats);
-        result.put("totalCount", totalCount);
-
-        log.info("전체 통계 데이터 조회 완료");
-        return result;
-    }
-
-    /**
-     * 회원 통계 계산
-     */
-    private Map<String, Object> calculateMemberStats(List<MembersVO> members) {
-        log.info("회원 통계 계산 시작");
-
-        LocalDate today = LocalDate.now();
-        int totalCount = members.size();
-        int activeCount = 0;
-
-        for (MembersVO member : members) {
-            LocalDate endDate = member.getEndDate();
-            if (endDate.isAfter(today) || endDate.isEqual(today)) {
-                activeCount++;
-            }
-        }
-
-        int inactiveCount = totalCount - activeCount;
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("totalCount", totalCount);
-        result.put("activeCount", activeCount);
-        result.put("inactiveCount", inactiveCount);
-
-        log.info("회원 통계: 총 " + totalCount + "명, 활성 " + activeCount + "명, 비활성 " + inactiveCount + "명");
-        return result;
-    }
-
-    /**
-     * 오늘 날짜 요약 통계
+     * 오늘 요약 통계 - 항상 실시간 조회
      */
     public Map<String, Object> getTodaySummary() {
-        log.info("오늘 날짜 요약 통계 조회 시작");
+        log.info("오늘 날짜 요약 통계 조회");
 
         LocalDate today = LocalDate.now();
         List<ParkingHistoryVO> todayRecords = parkingHistoryDAO.selectByDate(today);
@@ -150,19 +123,16 @@ public enum StatisticService {
         summary.put("dailyCount", dailyCount);
         summary.put("totalCount", totalCount);
 
-        log.info("오늘 요약: 입차 " + dailyCount + "대, 매출 " + dailySales + "원, 누적 " + totalCount + "대");
+        log.info("오늘 요약: 입차 {}대, 매출 {}원, 누적 {}대", dailyCount, dailySales, totalCount);
         return summary;
     }
 
-    /**
-     * 오늘 매출 계산
-     */
     private int calculateDailySales(LocalDate date) {
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentDataByYear = getCachedPaymentData();
+        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentData = getPaymentData();
         int year = date.getYear();
         int month = date.getMonthValue();
 
-        Map<Integer, List<PaymentHistoryDTO>> monthMap = paymentDataByYear.get(year);
+        Map<Integer, List<PaymentHistoryDTO>> monthMap = paymentData.get(year);
         if (monthMap == null) return 0;
 
         List<PaymentHistoryDTO> records = monthMap.get(month);
@@ -178,12 +148,11 @@ public enum StatisticService {
     }
 
     /**
-     * 회원 통계만 조회 (AJAX용)
+     * 회원 통계 (AJAX용) - 실시간 조회
      */
     public Map<String, Object> getMemberStats(int year, Integer month) {
         log.info("회원 통계 조회: year={}, month={}", year, month);
 
-        // 기간 계산
         LocalDate periodStart = month != null
                 ? LocalDate.of(year, month, 1)
                 : LocalDate.of(year, 1, 1);
@@ -195,19 +164,15 @@ public enum StatisticService {
         int totalCount = allMembers.size();
         int activeCount = 0;
 
-        // 기간 내 활성 회원: 해당 기간과 멤버십 기간이 겹치는 회원
         for (MembersVO member : allMembers) {
             LocalDate startDate = member.getStartDate();
             LocalDate endDate = member.getEndDate();
-            // 멤버십 기간이 조회 기간과 겹치면 활성
             if (!startDate.isAfter(periodEnd) && !endDate.isBefore(periodStart)) {
                 activeCount++;
             }
         }
 
         int inactiveCount = totalCount - activeCount;
-
-        // 비회원 이용수 (기간 내 distinct car_num)
         int nonMemberUsageCount = parkingHistoryDAO.getNonMemberCountByPeriod(periodStart, periodEnd);
 
         Map<String, Object> result = new HashMap<>();
@@ -226,13 +191,13 @@ public enum StatisticService {
     // ========================================================
 
     /**
-     * 1. 월별 매출 통계
+     * 1. 월별 매출 통계 - 결제 캐시 사용
      */
     public Map<String, Object> getMonthlySales(int year, Integer month, boolean includeMembership) {
         log.info("월별 매출 통계 조회: year={}, month={}, includeMembership={}", year, month, includeMembership);
 
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentDataByYear = getCachedPaymentData();
-        Map<Integer, List<PaymentHistoryDTO>> yearMap = paymentDataByYear.get(year);
+        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentData = getPaymentData();
+        Map<Integer, List<PaymentHistoryDTO>> yearMap = paymentData.get(year);
 
         if (yearMap == null) {
             log.warn("해당 년도 데이터 없음: {}", year);
@@ -240,27 +205,20 @@ public enum StatisticService {
         }
 
         Map<String, Object> response = new HashMap<>();
-
         if (month == null) {
             calculateMonthlyAggregation(year, yearMap, includeMembership, response);
         } else {
             calculateDailyAggregation(year, month, yearMap, includeMembership, response);
         }
-
         return response;
     }
 
-    /**
-     * 월별 집계 (1월~12월)
-     */
     private void calculateMonthlyAggregation(int year, Map<Integer, List<PaymentHistoryDTO>> yearMap,
                                              boolean includeMembership, Map<String, Object> response) {
-
         List<String> categories = new ArrayList<>();
         List<Integer> normalSales = new ArrayList<>();
         List<Integer> memberSales = new ArrayList<>();
 
-        // 회원권 매출 계산
         Map<Integer, Integer> monthlyMembershipRevenue = new HashMap<>();
         if (includeMembership) {
             List<MembersVO> allMembers = membersDAO.selectAllMembers();
@@ -273,7 +231,6 @@ public enum StatisticService {
             }
         }
 
-        // 월 오름차순 정렬
         List<Integer> sortedMonths = new ArrayList<>(yearMap.keySet());
         Collections.sort(sortedMonths);
 
@@ -287,7 +244,6 @@ public enum StatisticService {
                     normalSum += record.getFinalCharge();
                 }
             }
-
             normalSales.add(normalSum);
             memberSales.add(monthlyMembershipRevenue.getOrDefault(m, 0));
         }
@@ -298,12 +254,8 @@ public enum StatisticService {
         response.put("includeMembership", includeMembership);
     }
 
-    /**
-     * 일별 집계 (특정 월의 1일~말일)
-     */
     private void calculateDailyAggregation(int year, int month, Map<Integer, List<PaymentHistoryDTO>> yearMap,
                                            boolean includeMembership, Map<String, Object> response) {
-
         List<PaymentHistoryDTO> records = yearMap.get(month);
         if (records == null) {
             log.warn("해당 월 데이터 없음: {}월", month);
@@ -347,13 +299,13 @@ public enum StatisticService {
     }
 
     /**
-     * 2. 누적 매출 통계
+     * 2. 누적 매출 통계 - 결제 캐시 사용
      */
     public Map<String, Object> getCumulativeSales(int year, Integer month, boolean includeMembership) {
         log.info("누적 매출 통계 조회: year={}, month={}, includeMembership={}", year, month, includeMembership);
 
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentDataByYear = getCachedPaymentData();
-        Map<Integer, List<PaymentHistoryDTO>> yearMap = paymentDataByYear.get(year);
+        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentData = getPaymentData();
+        Map<Integer, List<PaymentHistoryDTO>> yearMap = paymentData.get(year);
 
         if (yearMap == null) {
             log.warn("해당 년도 데이터 없음: {}", year);
@@ -361,7 +313,6 @@ public enum StatisticService {
         }
 
         Map<String, Object> response = new HashMap<>();
-
         if (month == null) {
             calculateMonthlyCumulative(year, yearMap, includeMembership, response);
             response.put("title", year + "년 누적 매출 현황");
@@ -369,24 +320,17 @@ public enum StatisticService {
             calculateDailyCumulative(year, month, yearMap, includeMembership, response);
             response.put("title", month + "월 일별 누적 매출 현황");
         }
-
         return response;
     }
 
-    /**
-     * 월별 누적 계산
-     */
     private void calculateMonthlyCumulative(int year, Map<Integer, List<PaymentHistoryDTO>> yearMap,
                                             boolean includeMembership, Map<String, Object> response) {
-
         List<String> categories = new ArrayList<>();
         List<Integer> cumNormal = new ArrayList<>();
         List<Integer> cumMember = new ArrayList<>();
-
         int runningNormal = 0;
         int runningMember = 0;
 
-        // 회원권 매출 계산
         Map<Integer, Integer> monthlyMembershipRevenue = new HashMap<>();
         if (includeMembership) {
             List<MembersVO> allMembers = membersDAO.selectAllMembers();
@@ -399,7 +343,6 @@ public enum StatisticService {
             }
         }
 
-        // 월 오름차순 정렬
         List<Integer> sortedMonths = new ArrayList<>(yearMap.keySet());
         Collections.sort(sortedMonths);
 
@@ -413,10 +356,8 @@ public enum StatisticService {
                     normalSum += record.getFinalCharge();
                 }
             }
-
             runningNormal += normalSum;
             runningMember += monthlyMembershipRevenue.getOrDefault(m, 0);
-
             cumNormal.add(runningNormal);
             cumMember.add(runningMember);
         }
@@ -427,12 +368,8 @@ public enum StatisticService {
         response.put("includeMembership", includeMembership);
     }
 
-    /**
-     * 일별 누적 계산
-     */
     private void calculateDailyCumulative(int year, int month, Map<Integer, List<PaymentHistoryDTO>> yearMap,
                                           boolean includeMembership, Map<String, Object> response) {
-
         List<PaymentHistoryDTO> records = yearMap.get(month);
         if (records == null) {
             log.warn("해당 월 데이터 없음: {}월", month);
@@ -469,7 +406,6 @@ public enum StatisticService {
             }
         }
 
-        // 누적 계산
         List<Integer> cumNormal = new ArrayList<>();
         List<Integer> cumMember = new ArrayList<>();
         int runningNormal = 0;
@@ -489,25 +425,34 @@ public enum StatisticService {
     }
 
     /**
-     * 3. 차종별 통계 (파이 차트)
+     * 3. 차종별 통계 - 입출차 캐시 사용
      */
     public Map<String, Object> getCarTypeStats(int year, Integer month) {
         log.info("차종별 통계 조회: year={}, month={}", year, month);
 
-        LocalDate startDate = LocalDate.of(year, month != null ? month : 1, 1);
-        LocalDate endDate = month != null ?
-                LocalDate.of(year, month, startDate.lengthOfMonth()) :
-                LocalDate.of(year, 12, 31);
+        Map<Integer, Map<Integer, List<ParkingHistoryVO>>> parkingData = getParkingData();
+        Map<Integer, List<ParkingHistoryVO>> yearMap = parkingData.get(year);
 
         Map<String, Integer> countMap = new HashMap<>();
-        int totalDays = (int) ChronoUnit.DAYS.between(startDate, endDate) + 1;
 
-        for (int i = 0; i < totalDays; i++) {
-            LocalDate date = startDate.plusDays(i);
-            List<ParkingHistoryVO> records = parkingHistoryDAO.selectByDate(date);
-            for (ParkingHistoryVO record : records) {
-                String carType = record.getCarType();
-                countMap.put(carType, countMap.getOrDefault(carType, 0) + 1);
+        if (yearMap != null) {
+            if (month != null) {
+                // 특정 월
+                List<ParkingHistoryVO> records = yearMap.get(month);
+                if (records != null) {
+                    for (ParkingHistoryVO record : records) {
+                        String carType = record.getCarType();
+                        countMap.put(carType, countMap.getOrDefault(carType, 0) + 1);
+                    }
+                }
+            } else {
+                // 전체 월
+                for (List<ParkingHistoryVO> records : yearMap.values()) {
+                    for (ParkingHistoryVO record : records) {
+                        String carType = record.getCarType();
+                        countMap.put(carType, countMap.getOrDefault(carType, 0) + 1);
+                    }
+                }
             }
         }
 
@@ -531,15 +476,15 @@ public enum StatisticService {
     }
 
     /**
-     * 4. 피크 시간대 분석
+     * 4. 피크 시간대 분석 - 결제 캐시 사용
      */
     public Map<String, Object> getPeakTimeStats(int year, Integer month) {
         log.info("피크 시간대 분석 조회: year={}, month={}", year, month);
 
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentDataByYear = getCachedPaymentData();
+        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentData = getPaymentData();
         int[] hourlyCount = new int[24];
 
-        Map<Integer, List<PaymentHistoryDTO>> yearMap = paymentDataByYear.get(year);
+        Map<Integer, List<PaymentHistoryDTO>> yearMap = paymentData.get(year);
         if (yearMap != null) {
             for (Map.Entry<Integer, List<PaymentHistoryDTO>> entry : yearMap.entrySet()) {
                 if (month != null && !entry.getKey().equals(month)) continue;
@@ -564,7 +509,7 @@ public enum StatisticService {
     }
 
     // ===============
-    // 유틸리티 메서드
+    // 유틸리티
     // ===============
 
     private List<Integer> toList(int[] array) {
