@@ -21,8 +21,9 @@
 <div class="content">
     <!-- 필터 폼 (AJAX 방식으로 변경) -->
     <div class="filter-container">
+
         <div class="filter-row">
-<%--            <h3><b>통계</b></h3>--%>
+            <h3 class="section-title"><b>통계</b></h3>
             <label>통계 유형</label>
             <select id="chartType">
                 <option value="monthly_sales">년도 / 월별 매출</option>
@@ -53,7 +54,7 @@
     </div>
 
     <div id="summarySection" style="display:none;">
-        <div class="section-title">통계 요약</div>
+        <div class="statistic-title">통계 요약</div>
         <div id="summaryCards" class="summary-cards"></div>
     </div>
 
@@ -61,16 +62,16 @@
     <div class="info-box2">
 
 
-        <div class="section-title">일일 현황</div>
+        <div class="statistic-title">일일 현황</div>
         <div class="summary">
             <div class="summary-box">
-                일일 총 매출액: <span id="dailySales">${todaySummary.dailySales}</span>원
+                일일 총 매출액: <span id="dailySales">${todaySummary.dailySales}원</span>
             </div>
             <div class="summary-box">
-                일일 입차 대수: <span id="dailyCount">${todaySummary.dailyCount}</span>대
+                일일 입차 대수: <span id="dailyCount">${todaySummary.dailyCount}대</span>
             </div>
             <div class="summary-box">
-                누적 차량 대수: <span id="totalCount">${todaySummary.totalCount}</span>대
+                누적 차량 대수: <span id="totalCount">${todaySummary.totalCount}대</span>
             </div>
         </div>
     </div>

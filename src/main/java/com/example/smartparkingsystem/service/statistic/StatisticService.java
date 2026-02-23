@@ -180,10 +180,45 @@ public enum StatisticService {
     /**
      * 회원 통계만 조회 (AJAX용)
      */
-    public Map<String, Object> getMemberStats() {
-        log.info("회원 통계 조회");
+    public Map<String, Object> getMemberStats(int year, Integer month) {
+        log.info("회원 통계 조회: year={}, month={}", year, month);
+
+        // 기간 계산
+        LocalDate periodStart = month != null
+                ? LocalDate.of(year, month, 1)
+                : LocalDate.of(year, 1, 1);
+        LocalDate periodEnd = month != null
+                ? LocalDate.of(year, month, periodStart.lengthOfMonth())
+                : LocalDate.of(year, 12, 31);
+
         List<MembersVO> allMembers = membersDAO.selectAllMembers();
-        return calculateMemberStats(allMembers);
+        int totalCount = allMembers.size();
+        int activeCount = 0;
+
+        // 기간 내 활성 회원: 해당 기간과 멤버십 기간이 겹치는 회원
+        for (MembersVO member : allMembers) {
+            LocalDate startDate = member.getStartDate();
+            LocalDate endDate = member.getEndDate();
+            // 멤버십 기간이 조회 기간과 겹치면 활성
+            if (!startDate.isAfter(periodEnd) && !endDate.isBefore(periodStart)) {
+                activeCount++;
+            }
+        }
+
+        int inactiveCount = totalCount - activeCount;
+
+        // 비회원 이용수 (기간 내 distinct car_num)
+        int nonMemberUsageCount = parkingHistoryDAO.getNonMemberCountByPeriod(periodStart, periodEnd);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalCount", totalCount);
+        result.put("activeCount", activeCount);
+        result.put("inactiveCount", inactiveCount);
+        result.put("nonMemberUsageCount", nonMemberUsageCount);
+
+        log.info("회원 통계: 총{}명, 활성{}명, 비활성{}명, 비회원이용{}건",
+                totalCount, activeCount, inactiveCount, nonMemberUsageCount);
+        return result;
     }
 
     // ========================================================

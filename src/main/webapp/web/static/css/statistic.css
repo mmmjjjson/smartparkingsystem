@@ -77,8 +77,10 @@ body {
     padding: 14px 18px;
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
     gap: 10px;
 }
+
 
 /* 차트: 왼쪽 중간 */
 #chart_container {
@@ -99,7 +101,7 @@ body {
     padding: 16px 20px;
 }
 
-#summarySection .section-title {
+#summarySection .statistic-title {
     color: var(--text-light);
     border-bottom-color: var(--border);
     margin-bottom: 12px;
@@ -160,7 +162,7 @@ body {
     overflow: hidden;
 }
 
-.info-box2 .section-title {
+.info-box2 .statistic-title {
     padding: 16px 18px 14px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 0;
@@ -203,6 +205,14 @@ body {
    섹션 타이틀 (공통)
    ======================================== */
 .section-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a1b;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.statistic-title {
     font-size: 12px;
     font-weight: 700;
     color: var(--text-light);
@@ -221,6 +231,15 @@ body {
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+}
+
+.filter-row:first-child {
+    width: 100%;
+}
+
+.filter-row:first-child > .section-title {
+    margin-right: auto;
+    margin-bottom: 0;
 }
 
 .filter-row > label:first-child {
