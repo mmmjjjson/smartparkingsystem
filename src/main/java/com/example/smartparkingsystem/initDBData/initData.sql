@@ -1,6 +1,5 @@
 
 -- admin: 1234, test: 1111, test1: test1
--- 데모 관리자 추가 포트폴리오용 (demo: demo1234)
 INSERT INTO admin
 (admin_id, password, admin_name, admin_email, is_active, last_login, last_login_ip, created_at)
 VALUES ('admin', '$2a$12$hvk0XVGUYQk2BwV4SZ9Sz.xCrkCOCgQ3KGCv.QI77JGdJZ9Ri2usW', '관리자', 'admin@naver.com', true, NULL,
@@ -8,9 +7,8 @@ VALUES ('admin', '$2a$12$hvk0XVGUYQk2BwV4SZ9Sz.xCrkCOCgQ3KGCv.QI77JGdJZ9Ri2usW',
        ('test', '$2a$12$D0Tcf..4G2y8woY2HgB9veF.yjdoUeiI2yMymm8xVIOLB8yv7mjmO', 'Test', 'test@naver.com', false, NULL,
         NULL, NOW()),
        ('test1', '$2a$12$teiNyPb2nUP6vMA9aoQL/OeXC01FtycxknhHtm10CSj4SU/VqQIG6', 'Test1', 'test1@naver.com', true, NULL,
-        NULL, NOW()),
-       ('demo', '$2a$12$GX6caaDtBQXp5CU4ainzU.ryzUdAGwm7hLRaAJGbxssXcWx.tfEbC', '데모관리자', 'demo@example.com', true, NULL,
         NULL, NOW());
+
 
 
 INSERT INTO `members` (`car_num`, `member_name`, `member_phone`, `start_date`, `end_date`, `member_charge`) VALUES
@@ -116,7 +114,6 @@ INSERT INTO `members` (`car_num`, `member_name`, `member_phone`, `start_date`, `
 ('56소7890', '탁준혁', '010-7836-2941', '2025-04-14', '2025-05-14', 100000),  -- 원본 만료일 다음날 재등록
 ('678다1234', '자연인', '011-3748-9261', '2025-10-18', '2025-11-17', 100000), -- 원본 만료일 다음날 재등록
 ('89하5678', '버드나', '010-2916-7384', '2026-02-14', '2026-03-16', 100000);  -- 원본 만료일 다음날 재등록
-
 
 
 -- 기본 정책

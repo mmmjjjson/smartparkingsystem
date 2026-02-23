@@ -128,66 +128,21 @@ public class MembersDAO {
         return null;
     }
 
-    // 전체 회원 목록 조회
-    public List<MembersVO> selectIsMembers() {
-        List<MembersVO> membersVOList = new ArrayList<>();
-
-        try {
-            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
-            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM members WHERE end_date >= CURDATE()");
-            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                MembersVO membersVO = MembersVO.builder()
-                        .mno(resultSet.getLong("mno"))
-                        .carNum(resultSet.getString("car_num"))
-                        .memberName(resultSet.getString("member_name"))
-                        .memberPhone(resultSet.getString("member_phone"))
-                        .startDate(resultSet.getDate("start_date").toLocalDate())
-                        .endDate(resultSet.getDate("end_date").toLocalDate())
-                        .memberCharge(resultSet.getInt("member_charge"))
-                        .build();
-
-                membersVOList.add(membersVO);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return membersVOList;
-    } // 필요 없으면 삭제해도 될 것 같음
-
-    // 전체 만료 회원 목록 조회
-    public List<MembersVO> selectIsNotMembers() {
-        List<MembersVO> membersVOList = new ArrayList<>();
-
-        try {
-            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
-            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM members WHERE end_date < CURDATE()");
-            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                MembersVO membersVO = MembersVO.builder()
-                        .mno(resultSet.getLong("mno"))
-                        .carNum(resultSet.getString("car_num"))
-                        .memberName(resultSet.getString("member_name"))
-                        .memberPhone(resultSet.getString("member_phone"))
-                        .startDate(resultSet.getDate("start_date").toLocalDate())
-                        .endDate(resultSet.getDate("end_date").toLocalDate())
-                        .memberCharge(resultSet.getInt("member_charge"))
-                        .build();
-
-                membersVOList.add(membersVO);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return membersVOList;
-    } // 필요 없으면 삭제해도 될 것 같음
-
     // 회원 목록 전체 개수
     public int selectMemberCount(String searchType, String keyword, String status) {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM members WHERE 1=1");
 
         // 검색 키워드 존재 여부
         boolean isSearch = keyword != null && !keyword.isEmpty() && searchType != null && !searchType.isEmpty();
+
+        // status 필터 (항상 적용)
+        if (status != null && !status.isEmpty()) {
+            if ("expired".equals(status)) {
+                sql.append(" AND end_date < CURDATE()");
+            } else if ("active".equals(status)) {
+                sql.append(" AND end_date >= CURDATE()");
+            }
+        }
 
         // 검색 키워드가 있으면 키워드 필터 추가 (회원 + 비회원 모두 조회)
         if (isSearch) {
@@ -206,15 +161,6 @@ public class MembersDAO {
                     throw new IllegalArgumentException("잘못된 검색 타입");
             }
             sql.append(" AND ").append(column).append(" LIKE ? ");
-        } else {
-            // 검색 키워드가 없으면 status 필터 적용 (회원 or 비회원 하나만 조회)
-            if (status != null) {
-                if ("expired".equals(status)) {
-                    sql.append(" AND end_date < CURDATE()");
-                } else if ("active".equals(status)) {
-                    sql.append(" AND end_date >= CURDATE()");
-                }
-            }
         }
 
         int count = 0;
@@ -243,6 +189,15 @@ public class MembersDAO {
 
         boolean isSearch = keyword != null && !keyword.isEmpty() && searchType != null && !searchType.isEmpty();
 
+        // status 필터 (항상 적용)
+        if (status != null && !status.isEmpty()) {
+            if ("expired".equals(status)) {
+                sql.append(" AND end_date < CURDATE()");
+            } else if ("active".equals(status)) {
+                sql.append(" AND end_date >= CURDATE()");
+            }
+        }
+
         if (isSearch) {
             String column;
             switch (searchType) {
@@ -259,14 +214,6 @@ public class MembersDAO {
                     throw new IllegalArgumentException("잘못된 검색 타입");
             }
             sql.append(" AND ").append(column).append(" LIKE ? ");
-        } else {
-            if (status != null) {
-                if ("expired".equals(status)) {
-                    sql.append(" AND end_date < CURDATE()");
-                } else {
-                    sql.append(" AND end_date >= CURDATE()");
-                }
-            }
         }
 
         sql.append(" ORDER BY mno DESC LIMIT ?, ?");

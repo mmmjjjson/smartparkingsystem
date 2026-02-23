@@ -42,24 +42,23 @@ public class MembersController extends HttpServlet {
         log.info("contextPath: {}", contextPath);
         log.info("command: {}", command); // 파일 경로에서 이름을 불러오기 위한 명령어
 
-        // 세션에서 로그인 여부 가져오기
         HttpSession session = req.getSession();
-        String adminId = (String) session.getAttribute("adminId");
+        // 세션에서 로그인 여부 가져오기
+//        String adminId = (String) session.getAttribute("adminId");
 
         switch (command) {
             case "/member_list" -> { // 회원 관리 메인 목록
                 log.info("회원 메인 목록");
 
-                // 로그인을 안 했을 시
-                if (adminId == null || adminId.trim().isEmpty()) {
-                    resp.sendRedirect("/login");
-                    return;
-                }
+                // 로그인을 안 했을 시 -> filter 있으므로 불필요
+//                if (adminId == null || adminId.trim().isEmpty()) {
+//                    resp.sendRedirect("/login");
+//                    return;
+//                }
 
                 String pageNumStr = req.getParameter("pageNum");
 
                 if (pageNumStr == null) {
-
                     String status = req.getParameter("status");
                     String searchType = req.getParameter("searchType");
                     String keyword = req.getParameter("keyword");
@@ -82,15 +81,17 @@ public class MembersController extends HttpServlet {
                 String keyword = req.getParameter("keyword");
                 String status = req.getParameter("status");
 
-                if (status == null || status.isEmpty()) {
-                    status = "active";
-                }
-
                 int pageNum = 1;
 
                 if (req.getParameter("pageNum") != null) {
                     pageNum = Integer.parseInt(req.getParameter("pageNum"));
                 }
+
+                // 가져온 파라미터 확인
+                log.info("pageNum: {}", pageNum);
+                log.info("searchType: {}", searchType);
+                log.info("keyword: {}", keyword);
+                log.info("status: {}", status);
 
                 PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                         .searchType(searchType)
@@ -99,8 +100,10 @@ public class MembersController extends HttpServlet {
                         .pageNum(pageNum)
                         .build();
 
+                log.info("회원 목록 조회 서비스 호출");
                 PageResponseDTO pageResponseDTO = membersService.getMemberList(pageRequestDTO);
                 req.setAttribute("pageResponseDTO", pageResponseDTO);
+                log.info("회원 목록 조회 완료 - 총 개수: {}", pageResponseDTO.getTotalCount());
 
                 String openNewMemberModal = req.getParameter("openNewMemberModal");
                 String carNum = req.getParameter("carNum");
@@ -109,8 +112,18 @@ public class MembersController extends HttpServlet {
                 req.setAttribute("prefillCarNum", carNum);
 
                 // 결제 정보 가져오기
-                int memberCharge = paymentInfoDAO.selectInfo().getMemberCharge();
-                req.setAttribute("memberCharge", memberCharge);
+                log.info("회원권 요금 조회 시도");
+
+                var paymentInfo = paymentInfoDAO.selectInfo();
+
+                if (paymentInfo != null) {
+                    int memberCharge = paymentInfo.getMemberCharge();
+                    req.setAttribute("memberCharge", memberCharge);
+                    log.info("회원권 요금 조회 성공 - {}", memberCharge);
+                } else {
+                    log.warn("결제 정보가 존재하지 않습니다.");
+                    req.setAttribute("memberCharge", 0);
+                }
 
                 RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/members/member_list.jsp");
                 requestDispatcher.forward(req, resp);
@@ -121,6 +134,7 @@ public class MembersController extends HttpServlet {
 
                 String carNum = req.getParameter("carNum");
 
+                log.info("회원 조회 요청 - 차량번호: {}", carNum);
                 MembersDTO membersDTO = membersService.getMemberOne(carNum);
 
                 if (membersDTO != null) {
@@ -131,6 +145,12 @@ public class MembersController extends HttpServlet {
                     // 기존 회원 없음
                     session.setAttribute("checkResult", "notFound");
                     session.setAttribute("searchCarNum", carNum);
+                }
+
+                if (membersDTO != null) {
+                    log.info("기존 회원 존재 - 이름: {}", membersDTO.getMemberName());
+                } else {
+                    log.info("기존 회원 없음");
                 }
 
                 resp.sendRedirect(req.getContextPath() + "/member_list?pageNum=1");
@@ -152,10 +172,14 @@ public class MembersController extends HttpServlet {
                         .endDate(endDate)
                         .build();
 
+                log.info("회원 등록 요청 - carNum: {}, name: {}, start: {}, end: {}", carNum, memberName, startDate, endDate);
+
                 membersService.addMember(membersDTO);
 
                 session = req.getSession();
                 session.removeAttribute("searchCarNum");
+
+                log.info("회원 등록 완료");
 
                 String message = "true".equals(req.getParameter("isExistingMember"))
                         ? "회원권이 연장되었습니다."
@@ -180,12 +204,21 @@ public class MembersController extends HttpServlet {
                         .memberPhone(memberPhone)
                         .build();
 
+                log.info("회원 수정 요청 - mno: {}, carNum: {}", mno, carNum);
+
                 membersService.modifyMember(membersDTO);
 
                 session = req.getSession();
                 session.setAttribute("flashMsg", "회원 정보가 수정되었습니다.");
 
+                log.info("회원 수정 완료 - mno: {}", mno);
+
                 resp.sendRedirect(req.getContextPath() + "/member_list");
+            }
+
+            default -> {
+                log.warn("정의되지 않은 요청: {}", command);
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         }
     }
