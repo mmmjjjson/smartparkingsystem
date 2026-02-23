@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 주차 구역 클릭 이벤트 (클릭 시 정보 모달 팝업)
     document.querySelectorAll('.parking-card').forEach(card => {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', async () => {
             // 클릭된 주차 구역 정보 변수 저장
             window.currentCard = card;
 
@@ -54,7 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const now = new Date();
                 const outFullTime = now.toISOString();
                 const effectiveType = (card.dataset.isMember === "true") ? "월정액" : type;
-                const chargeResult = calculateParkingCharge(inFullTime, outFullTime, effectiveType);
+                const parkNo = card.dataset.parkNo;
+                const info = await axios.get(`/parking/getPaymentInfo?parkNo=${parkNo}`);
+                const paymentInfo = info.data;
+                const chargeResult = calculateParkingCharge(inFullTime, outFullTime, effectiveType, paymentInfo);
 
                 // 데이터 매핑
                 document.getElementById('info-car').innerText = car; // 차량 번호
@@ -86,9 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const parkingArea = window.currentCard.dataset.id;
         const selectedCarType = document.querySelector('input[name="carType"]:checked');
         const carType = selectedCarType.value;
-        const carNum = inputCarNum.value.replace(/\s/g, '');
+        const carNum = inputCarNum.value.replace(/\s+/g, '');
 
         if (!carNum) {
+            alert("차량 번호를 입력해 주세요");
             alert("차량 번호를 입력해 주세요");
             return;
         }
@@ -131,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.currentCard.dataset.carNum = carNum;
                 window.currentCard.dataset.carType = carType;
                 window.currentCard.dataset.inFullTime = data.entryTime;
+                window.currentCard.dataset.isMember = data.isMember;
 
                 // UI 업데이트
                 const isCenter = window.currentCard.closest('.center-row') !== null;
@@ -140,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.currentCard.querySelector('.box-time').innerText = "00:00";
 
                 alert(`${carNum} 차량 입차 완료!`);
+                console.log('dataset isMember after set:', window.currentCard.dataset.isMember); // 여기
 
                 document.getElementById('parkingModal').querySelector('.btn-close').blur();
                 document.body.focus(); //**
@@ -151,15 +157,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 // 결제 진행 함수
-    function handlePayment() {
+    async function handlePayment() {
         // 출차 -> 영수증
         const inFullTime = window.currentCard.dataset.inFullTime;
         const outFullTime = new Date().toISOString();
         const carType = window.currentCard.dataset.carType;
         const carNum = window.currentCard.dataset.carNum;
         const effectiveType = (window.currentCard.dataset.isMember === "true") ? "월정액" : carType;
-        const chargeResult = calculateParkingCharge(inFullTime, outFullTime, effectiveType);
 
+        const parkNo = window.currentCard.dataset.parkNo;
+        const info = await axios.get(`/parking/getPaymentInfo?parkNo=${parkNo}`);
+        const paymentInfo = info.data;
+        console.log('policy: ', paymentInfo);
+        const chargeResult = calculateParkingCharge(inFullTime, outFullTime, effectiveType, paymentInfo);
+        console.log('chargeResult: ', chargeResult);
         // console.log("effectiveType:", effectiveType);
         // console.log("isMember:", currentCard.dataset.isMember);
         // console.log("chargeResult:", chargeResult);
@@ -258,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('오류 발생! ' + err);
             alert('오류 발생! 관리자에게 문의하세요.')
         } finally {
+            btnFinal.disabled = false;
             btnFinal.disabled = false;
             btnFinal.innerText = '정산 완료'
         }

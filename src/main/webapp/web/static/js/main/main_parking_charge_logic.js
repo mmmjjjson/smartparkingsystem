@@ -1,6 +1,6 @@
 /* 주차 시간(분) 통한 요금 계산 함수 */
 function calculateBaseFeeOnly(minutes, policy) {
-    if (minutes <= policy.freeTime) return 0;
+    if (minutes < policy.freeTime) return 0;
     if (minutes <= policy.basicTime) return policy.basicCharge;
     const extraMinutes = minutes - policy.basicTime;
     const extraCharge = Math.ceil(extraMinutes / policy.extraTime) * policy.extraCharge;
@@ -8,21 +8,19 @@ function calculateBaseFeeOnly(minutes, policy) {
 }
 
 /* 입차 날짜, 출차 날짜, 차종 통한 최종 요금 계산 */
-function calculateParkingCharge(inDateStr, outDateStr, carType) {
+function calculateParkingCharge(inDateStr, outDateStr, carType, policy) {
     // 1. 요금 정책
-    // *** 추후 DB(payment_info)에서 끌고 와야 함!!! ***
-    // *** freeTime, maxCharge는 테이블에 없는데 있는 게 좋을지?
-    // *** 설정 관리에 없는 옵션이라 테이블에서 뺀 건데 추후 생길 걸 예상하고 테이블에 넣어두어야 할지
-    const policy = {
-        freeTime: 10, // ***
-        basicTime: 60,
-        extraTime: 30,
-        basicCharge: 2000,
-        extraCharge: 1000,
-        smallCarDiscount: 0.3,
-        disabledDiscount: 0.5,
-        maxCharge: 15000 // ***
-    };
+    // + 02.23.) main.jsp에서 policy로 저장됨
+    // const policy = {
+    //     freeTime: 10, // ***
+    //     basicTime: 60,
+    //     extraTime: 30,
+    //     basicCharge: 2000,
+    //     extraCharge: 1000,
+    //     smallCarDiscount: 0.3,
+    //     disabledDiscount: 0.5,
+    //     maxCharge: 15000 // ***
+    // };
 
     // 2. 날짜 객체 생성
     const inDate = new Date(inDateStr);

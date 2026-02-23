@@ -138,10 +138,10 @@ public class PaymentHistoryService {
             totalCharge = 0;
             discountAmount = 0;
             finalCharge = 0;
+        } else {
+            // 최종 결제 금액
+            finalCharge = totalCharge - discountAmount;
         }
-
-        // 최종 결제 금액
-        finalCharge = totalCharge - discountAmount;
 
         ParkingHistoryVO parkingHistoryVO = parkingHistoryDAO.selectRecentParking(carNum);
 

@@ -90,7 +90,10 @@ public class ParkingHistoryDAO {
     /* 현재 주차 중인 구역 조회 */
     public List<ParkingHistoryVO> selectOccupied() {
         List<ParkingHistoryVO> occupiedList = new ArrayList<>();
-        String sql = "SELECT * FROM parking_history WHERE exit_time IS NULL";
+        String sql = "SELECT ph.*, " +
+                "CASE WHEN m.car_num IS NOT NULL AND m.end_date >= curdate() THEN 1 ELSE 0 END AS is_member_update " +
+                "FROM parking_history ph LEFT JOIN members m ON ph.car_num = m.car_num " +
+                "WHERE ph.exit_time IS NULL;";
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
@@ -103,7 +106,7 @@ public class ParkingHistoryDAO {
                         .parkingArea(resultSet.getString("parking_area"))
                         .carNum(resultSet.getString("car_num"))
                         .carType(resultSet.getString("car_type"))
-                        .isMember(resultSet.getBoolean("is_member"))
+                        .isMember(resultSet.getBoolean("is_member_update"))
                         .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
                         .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
                         .totalMinutes(resultSet.getInt("total_minutes"))
@@ -119,7 +122,7 @@ public class ParkingHistoryDAO {
     /* 최근 입차 조회 */
     public ParkingHistoryVO selectRecentParking(String carNum) {
         ParkingHistoryVO parkingHistoryVO = null;
-        String sql = "SELECT * FROM parking_history WHERE car_num = ? " +
+        String sql = "SELECT * FROM parking_history WHERE car_num = ? AND exit_time IS NULL " +
                 "ORDER BY entry_time DESC LIMIT 1";
 
         try {

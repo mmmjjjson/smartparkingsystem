@@ -1,13 +1,11 @@
 package com.example.smartparkingsystem.dao.setting;
 
+import com.example.smartparkingsystem.dto.setting.PaymentInfoDTO;
 import com.example.smartparkingsystem.util.ConnectionUtil;
 import com.example.smartparkingsystem.vo.setting.PaymentInfoVO;
 import lombok.Cleanup;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,4 +98,35 @@ public class PaymentInfoDAO {
         }
     }
 
+    public PaymentInfoVO selectInfoByEntryTime(LocalDateTime entryTime) {
+        String sql = "SELECT * from payment_info WHERE updated_at <= ? ORDER BY updated_at DESC LIMIT 1";
+        PaymentInfoVO paymentInfoVO = null;
+
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(entryTime));
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                paymentInfoVO = PaymentInfoVO.builder()
+                        .pno(resultSet.getInt("pno"))
+                        .freeTime(resultSet.getInt("free_time"))
+                        .basicTime(resultSet.getInt("basic_time"))
+                        .extraTime(resultSet.getInt("extra_time"))
+                        .basicCharge(resultSet.getInt("basic_charge"))
+                        .extraCharge(resultSet.getInt("extra_charge"))
+                        .maxCharge(resultSet.getInt("max_charge"))
+                        .memberCharge(resultSet.getInt("member_charge"))
+                        .smallCarDiscount(resultSet.getDouble("small_car_discount"))
+                        .disabledDiscount(resultSet.getDouble("disabled_discount"))
+                        .adminId(resultSet.getString("admin_id"))
+                        .updatedAt(resultSet.getObject("updated_at", LocalDateTime.class))
+                        .build();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return paymentInfoVO;
+    }
 }

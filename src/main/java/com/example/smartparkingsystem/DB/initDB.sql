@@ -1,5 +1,6 @@
 -- 스키마 생성
-CREATE DATABASE IF NOT EXISTS `smart_parking_system`;
+CREATE DATABASE IF NOT EXISTS `smart_parking_system` CHARACTER SET utf8mb4
+    COLLATE utf8mb4_general_ci;;
 
 -- 사용자 생성, 권한 부여
 CREATE USER IF NOT EXISTS 'system_user'@'localhost' IDENTIFIED BY '0220';
@@ -22,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `admin`
     last_login_ip       VARCHAR(45)  NULL COMMENT '마지막 로그인 IP (보안용)',
     `is_password_reset` BOOLEAN  DEFAULT FALSE COMMENT '재설정후 최초 로그인 여부 True 최초, False 일반',
     created_at          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '계정 생성일'
-) COMMENT '관리자';
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '관리자';
 
 CREATE TABLE IF NOT EXISTS `members`
 (
@@ -35,20 +36,19 @@ CREATE TABLE IF NOT EXISTS `members`
     `end_date`      DATE        NOT NULL COMMENT '이용 만료일',
     INDEX idx_date (`start_date`, `end_date`),
     CONSTRAINT `chk_member_charge` CHECK (`member_charge` >= 0)
-) COMMENT '회원 목록';
-
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '회원 목록';
 
 CREATE TABLE IF NOT EXISTS `parking_history`
 (
     `park_no`       BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '주차 기록 인덱스',
     `parking_area`  VARCHAR(10) NOT NULL COMMENT '주차 구역 (A1 ~ A20)',
     `car_num`       VARCHAR(10) NOT NULL COMMENT '차량번호',
-    `car_type`      ENUM ('일반', '경차', '장애인') DEFAULT '일반' COMMENT '차량 종류(일반/경차/장애인)',
+    `car_type`      ENUM ('일반', '경차', '장애인') NOT NULL COMMENT '차량 종류(일반/경차/장애인)',
     `is_member`     BOOLEAN     NOT NULL     DEFAULT FALSE COMMENT '월정액 회원 유무 (True 회원, False 비회원',
     `entry_time`    DATETIME    NOT NULL COMMENT '입차 시간',
     `exit_time`     DATETIME COMMENT '출차 시간',
     `total_minutes` INT COMMENT '총 주차 시간'
-) COMMENT '주차 기록';
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '주차 기록';
 
 
 CREATE TABLE IF NOT EXISTS `payment_info`
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `payment_info`
     CONSTRAINT `chk_small_car_discount` CHECK (`small_car_discount` >= 0),
     CONSTRAINT `chk_disabled_discount` CHECK (`disabled_discount` >= 0),
     CONSTRAINT `fk_admin_id` FOREIGN KEY (`admin_id`) REFERENCES admin (`admin_id`)
-) COMMENT '정책';
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '정책';
 
 
 CREATE TABLE IF NOT EXISTS `payment_history`
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `payment_history`
     CONSTRAINT `chk_final_charge` CHECK (`final_charge` >= 0),
     CONSTRAINT `fk_pno` FOREIGN KEY (`pno`) REFERENCES payment_info (`pno`),
     CONSTRAINT `fk_park_no` FOREIGN KEY (`park_no`) REFERENCES parking_history (`park_no`)
-) COMMENT '주차 요금';
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '주차 요금';
 
 
 CREATE TABLE IF NOT EXISTS `validation`
@@ -113,5 +113,5 @@ CREATE TABLE IF NOT EXISTS `validation`
     `expired_time` DATETIME    NOT NULL COMMENT '만료시간',
     CONSTRAINT fk_admin_id_otp
         FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`)
-)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
     COMMENT 'OTP 로그';
