@@ -144,10 +144,11 @@ public class PaymentHistoryService {
         paymentHistoryDAO.insertPaymentHistory(paymentHistoryVO);
         log.info("insert 완료");
 
-        // 결제 캐시 갱신 (입차 시간 기준 연/월)
+        // 통계용 추가. 결제 캐시 갱신 (입차 시간 기준 연/월)
         int entryYear = parkingHistoryVO.getEntryTime().getYear();
         int entryMonth = parkingHistoryVO.getEntryTime().getMonthValue();
         StatisticService.INSTANCE.onPaymentDataChanged(entryYear, entryMonth);
+
 
         PaymentHistoryVO check = paymentHistoryDAO.selectRecentPayment(carNum);
         log.info("selectRecentPayment 결과: " + check);

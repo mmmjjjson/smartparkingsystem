@@ -148,7 +148,7 @@ public enum StatisticService {
     }
 
     /**
-     * 회원 통계 (AJAX용) - 항상 실시간 조회 (데이터 크기가 작고 변경 빈도 낮음)
+     * 회원 통계 (AJAX용) - 실시간 조회
      */
     public Map<String, Object> getMemberStats(int year, Integer month) {
         log.info("회원 통계 조회: year={}, month={}", year, month);

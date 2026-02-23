@@ -30,7 +30,7 @@ public enum ParkingHistoryService {
         log.info(parkingHistoryVO);
         parkingHistoryDAO.insertEntry(parkingHistoryVO);
 
-        // 입차 캐시 갱신
+        // 통계용 추가. 입차 캐시 갱신
         LocalDateTime now = LocalDateTime.now();
         StatisticService.INSTANCE.onParkingDataChanged(now.getYear(), now.getMonthValue());
     }
@@ -78,13 +78,13 @@ public enum ParkingHistoryService {
                     .build();
         }
 
-        // 입차 시간 기준으로 캐시 갱신 (출차가 다음 달로 넘어가는 경우를 방지)
+        // 통계용 추가. 입차 시간 기준으로 캐시 갱신 (출차가 다음 달로 넘어가는 경우를 방지)
         int entryYear = parkingHistoryVO.getEntryTime().getYear();
         int entryMonth = parkingHistoryVO.getEntryTime().getMonthValue();
 
         parkingHistoryDAO.updateExit(parkingHistoryVO);
 
-        // 출차 캐시 갱신
+        // 통계용 추가. 출차 캐시 갱신
         StatisticService.INSTANCE.onParkingDataChanged(entryYear, entryMonth);
     }
 }

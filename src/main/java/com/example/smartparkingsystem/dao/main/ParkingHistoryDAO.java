@@ -31,7 +31,8 @@ public class ParkingHistoryDAO {
         }
     }
 
-    /* isMember 상태 변경 */
+    /* isMember 상태 변경
+     * 출차하지 않은 isMember=0 차량이 members 테이블에 등록되었을 때 */
     public void updateIsMember(ParkingHistoryVO parkingHistoryVO) {
         ParkingHistoryVO dbVO = selectParkingHistory(parkingHistoryVO.getParkNo());
         if (dbVO == null || dbVO.getEntryTime() == null) {
@@ -68,7 +69,16 @@ public class ParkingHistoryDAO {
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                parkingHistoryVO = buildVO(resultSet);
+                parkingHistoryVO = ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -87,7 +97,17 @@ public class ParkingHistoryDAO {
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                occupiedList.add(buildVO(resultSet));
+                ParkingHistoryVO parkingHistoryVO = ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build();
+                occupiedList.add(parkingHistoryVO);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -108,7 +128,16 @@ public class ParkingHistoryDAO {
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                parkingHistoryVO = buildVO(resultSet);
+                parkingHistoryVO = ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -159,7 +188,9 @@ public class ParkingHistoryDAO {
         }
     }
 
-    /* 통계용 전체 주차 기록 개수 조회 */
+    /*
+     * 통계용 전체 주차 기록 개수 조회
+     */
     public int getTotalCount() {
         String sql = "SELECT COUNT(*) as total FROM parking_history";
 
@@ -171,15 +202,18 @@ public class ParkingHistoryDAO {
             if (resultSet.next()) {
                 return resultSet.getInt("total");
             }
+
             return 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    /* 통계용 날짜로 검색 (오늘 요약 실시간 조회용) */
+    /*
+     * 통계용 날짜로 검색
+     */
     public List<ParkingHistoryVO> selectByDate(LocalDate date) {
-        List<ParkingHistoryVO> list = new ArrayList<>();
+        List<ParkingHistoryVO> ParkingHistoryVOList = new ArrayList<>();
         String sql = "SELECT * FROM parking_history WHERE DATE(entry_time) = ?";
 
         try {
@@ -189,15 +223,27 @@ public class ParkingHistoryDAO {
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                list.add(buildVO(resultSet));
+                ParkingHistoryVO parkingHistoryVO = ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build();
+                ParkingHistoryVOList.add(parkingHistoryVO);
             }
-            return list;
+            return ParkingHistoryVOList;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    /* 비회원 조회 */
+    /*
+     * 비회원 조회 메서드 (26-02-20추가)
+     */
     public int getNonMemberCountByPeriod(LocalDate startDate, LocalDate endDate) {
         String sql = "SELECT COUNT(DISTINCT car_num) FROM parking_history " +
                 "WHERE is_member = FALSE " +
@@ -216,11 +262,10 @@ public class ParkingHistoryDAO {
     }
 
     /*
-     * 통계용 전체 입출차 데이터 연월별 조회 (초기 캐시 로드용)
+     * 통계용 전체 입출차 데이터 연월별 조회 (초기 캐시 로드용) - 신규 추가
      */
     public Map<Integer, Map<Integer, List<ParkingHistoryVO>>> selectAllByYearMonth() {
         Map<Integer, Map<Integer, List<ParkingHistoryVO>>> result = new TreeMap<>(Collections.reverseOrder());
-
         String sql = "SELECT * FROM parking_history ORDER BY entry_time DESC";
 
         try {
@@ -229,7 +274,17 @@ public class ParkingHistoryDAO {
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                ParkingHistoryVO vo = buildVO(resultSet);
+                ParkingHistoryVO vo = ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build();
+
                 int year = vo.getEntryTime().getYear();
                 int month = vo.getEntryTime().getMonthValue();
 
@@ -244,11 +299,10 @@ public class ParkingHistoryDAO {
     }
 
     /*
-     * 통계용 특정 연월 입출차 데이터 조회 (이벤트 기반 부분 캐시 갱신용)
+     * 통계용 특정 연월 입출차 데이터 조회 (이벤트 기반 부분 캐시 갱신용) - 신규 추가
      */
     public List<ParkingHistoryVO> selectByYearMonth(int year, int month) {
         List<ParkingHistoryVO> result = new ArrayList<>();
-
         String sql = "SELECT * FROM parking_history " +
                 "WHERE YEAR(entry_time) = ? AND MONTH(entry_time) = ? " +
                 "ORDER BY entry_time DESC";
@@ -261,24 +315,20 @@ public class ParkingHistoryDAO {
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                result.add(buildVO(resultSet));
+                result.add(ParkingHistoryVO.builder()
+                        .parkNo(resultSet.getLong("park_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .carType(resultSet.getString("car_type"))
+                        .isMember(resultSet.getBoolean("is_member"))
+                        .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
+                        .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .build());
             }
             return result;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private ParkingHistoryVO buildVO(ResultSet resultSet) throws SQLException {
-        return ParkingHistoryVO.builder()
-                .parkNo(resultSet.getLong("park_no"))
-                .parkingArea(resultSet.getString("parking_area"))
-                .carNum(resultSet.getString("car_num"))
-                .carType(resultSet.getString("car_type"))
-                .isMember(resultSet.getBoolean("is_member"))
-                .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
-                .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
-                .totalMinutes(resultSet.getInt("total_minutes"))
-                .build();
     }
 }

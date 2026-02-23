@@ -118,7 +118,7 @@ public class PaymentHistoryDAO {
     }
 
     /*
-     * 통계용 특정 연월 결제 데이터 조회 (이벤트 기반 부분 캐시 갱신용)
+     * 통계용 특정 연월 결제 데이터 조회
      */
     public List<PaymentHistoryDTO> selectByYearMonth(int year, int month) {
         List<PaymentHistoryDTO> result = new ArrayList<>();
