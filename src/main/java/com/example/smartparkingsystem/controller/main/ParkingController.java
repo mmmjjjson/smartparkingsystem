@@ -1,9 +1,11 @@
 package com.example.smartparkingsystem.controller.main;
 
 import com.example.smartparkingsystem.dto.main.ParkingHistoryDTO;
+import com.example.smartparkingsystem.dto.member.MembersDTO;
 import com.example.smartparkingsystem.dto.payment.PaymentHistoryDTO;
 import com.example.smartparkingsystem.dto.setting.PaymentInfoDTO;
 import com.example.smartparkingsystem.service.main.ParkingHistoryService;
+import com.example.smartparkingsystem.service.member.MembersService;
 import com.example.smartparkingsystem.service.payment.PaymentHistoryService;
 import com.example.smartparkingsystem.service.setting.PaymentInfoService;
 import jakarta.servlet.ServletException;
@@ -14,6 +16,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Log4j2
 @WebServlet(name = "parkingController", value = "/parking/*")
@@ -21,6 +25,43 @@ public class ParkingController extends HttpServlet {
     private final ParkingHistoryService parkingService = ParkingHistoryService.INSTANCE;
     private final PaymentHistoryService paymentHistoryService = PaymentHistoryService.getInstance();
     private final PaymentInfoService paymentInfoService = PaymentInfoService.getInstance();
+    private final MembersService memberService = MembersService.INSTANCE;
+
+    // 요금 정책 불러오기
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json;charset=UTF-8");
+        String action = req.getPathInfo();
+        log.info("do get... action: {}", action);
+
+        if ("/getPaymentInfo".equals(action)) {
+            // parkNo 해당 차량 입차 시간 조회
+            Long parkNo = Long.valueOf(req.getParameter("parkNo"));
+            log.info("parkNo: {}", parkNo);
+            try {
+                ParkingHistoryDTO parkingHistoryDTO = parkingService.getParkingHistory(parkNo);
+                log.info("parking: {}", parkingHistoryDTO);
+
+                // 입차시간 기준 요금 정책 조회
+                PaymentInfoDTO dto = paymentInfoService.getInfoByEntryTime(parkingHistoryDTO.getEntryTime());
+
+                resp.getWriter().write(
+                        "{\"freeTime\": " + dto.getFreeTime() +
+                                ", \"basicTime\": " + dto.getBasicTime() +
+                                ", \"extraTime\": " + dto.getExtraTime() +
+                                ", \"basicCharge\": " + dto.getBasicCharge() +
+                                ", \"extraCharge\": " + dto.getExtraCharge() +
+                                ", \"maxCharge\": " + dto.getMaxCharge() +
+                                ", \"smallCarDiscount\": " + dto.getSmallCarDiscount() +
+                                ", \"disabledDiscount\": " + dto.getDisabledDiscount() + "}"
+                );
+            } catch (Exception e) {
+                log.error("getPaymentInfo 에러: ", e);  // 여기
+                resp.setStatus(500);
+                resp.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+            }
+        }
+    }
 
     // 입출차 처리
     @Override
@@ -43,6 +84,7 @@ public class ParkingController extends HttpServlet {
 
         try {
             ParkingHistoryDTO existing = parkingService.getRecentParking(carNum);
+            log.info(existing);
 
             // 이미 주차 중인 차량
             if (existing != null) {
@@ -65,12 +107,17 @@ public class ParkingController extends HttpServlet {
                 return;
             }
 
+            // 회원 여부 정보 가져오기
+            MembersDTO member = memberService.getMember(carNum);
+            boolean isMember = member != null && !member.getEndDate().isBefore(LocalDate.now());
+
             // 날짜 변환 및 JSON 전송
             String entryTimeStr = String.valueOf(saved.getEntryTime()).replace(" ", "T");
             resp.getWriter().write(
                     "{\"success\": true" +
                             ", \"entryTime\": \"" + entryTimeStr + "\"" +
-                            ", \"parkNo\": " + saved.getParkNo() + "}"
+                            ", \"parkNo\": " + saved.getParkNo() +
+                            ", \"isMember\": " + isMember + "}"
             );
 
         } catch (Exception e) {

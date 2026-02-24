@@ -8,6 +8,8 @@ import com.example.smartparkingsystem.vo.setting.PaymentInfoVO;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDateTime;
+
 @Log4j2
 public class PaymentInfoService {
     private final PaymentInfoDAO paymentInfoDAO = new PaymentInfoDAO();
@@ -34,5 +36,10 @@ public class PaymentInfoService {
     // setting 조회
     public PaymentInfoDTO getInfo() {
         return modelMapper.map(paymentInfoDAO.selectInfo(), PaymentInfoDTO.class);
+    }
+
+    // mainboard 요금 계산용 입차 시간 기준 정책 조회
+    public PaymentInfoDTO getInfoByEntryTime(LocalDateTime entryTime) {
+        return modelMapper.map(paymentInfoDAO.selectInfoByEntryTime(entryTime), PaymentInfoDTO.class);
     }
 }

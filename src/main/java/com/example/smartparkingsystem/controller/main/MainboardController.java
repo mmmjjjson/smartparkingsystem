@@ -35,6 +35,10 @@ public class MainboardController extends HttpServlet {
         // 1) DB에서 현재 주차 중인 차량 목록 조회
         List<ParkingHistoryDTO> occupiedList = parkingHistoryService.getOccupied();
 
+        for (ParkingHistoryDTO dto: occupiedList) {
+            log.info("carNum: {}, isMember: {}", dto.getCarNum(), dto.isMember());
+        }
+
         // 2) 조회 결과값을 main.jsp로 전달
         req.setAttribute("occupiedList", occupiedList);
 

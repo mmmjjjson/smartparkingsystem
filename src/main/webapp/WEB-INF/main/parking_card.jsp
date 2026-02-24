@@ -23,7 +23,7 @@
      data-in-full-time="<%=timer%>"
      data-car-type="<%=carType != null ? carType : ""%>"
      data-park-no="<%=parkNo != null ? parkNo : ""%>"
-     data-is-member="<%=isMember != null ? isMember : "false"%>">
+     data-is-member="<%=Boolean.TRUE.equals(isMember) ? "true" : "false"%>">
 
 
     <!-- 출력용 -->
