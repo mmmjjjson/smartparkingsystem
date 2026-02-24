@@ -40,7 +40,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+    <link rel="stylesheet" as="style" crossorigin
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/web/static/css/mainboard.css">
@@ -51,6 +52,24 @@
     <style>
         body > * {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+        }
+
+        .expire-cell {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+        }
+
+        .expire-date {
+            grid-column: 2;
+            text-align: center;
+        }
+
+        .expire-badge {
+            grid-column: 3;
+            text-align: right;
+            min-width: 60px;
+            padding-right: 40px;
         }
 
         .custom-table thead th {
@@ -125,12 +144,12 @@
                 <!-- 테이블 제목 -->
                 <thead class="table-secondary">
                 <tr>
-                    <th>번호</th>
-                    <th>차량 번호</th>
-                    <th>이름</th>
-                    <th>연락처</th>
-                    <th>시작일</th>
-                    <th>만료일</th>
+                    <th style="width:70px;">번호</th>
+                    <th style="width:130px;">차량 번호</th>
+                    <th style="width:110px;">이름</th>
+                    <th style="width:160px;">연락처</th>
+                    <th style="width:140px;">시작일</th>
+                    <th style="width:140px;">만료일</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -166,10 +185,17 @@
                     </td>
                     <td><%=member.getStartDate()%>
                     </td>
-                    <td><%=member.getEndDate()%>
-                        <% if (member.getEndDate().isBefore(java.time.LocalDate.now())) { %>
-                        <span class="text-danger fw-semibold" style="position: absolute; right: 60px;">(만료)</span>
-                        <% } %>
+                    <td>
+                        <div class="expire-cell">
+                            <span class="expire-date">
+                                <%= member.getEndDate() %>
+                            </span>
+                            <span class="expire-badge">
+                                <% if (member.getEndDate().isBefore(java.time.LocalDate.now())) { %>
+                                    <span class="badge bg-danger">만료</span>
+                                <% } %>
+                            </span>
+                        </div>
                     </td>
                 </tr>
                 <%
@@ -246,7 +272,7 @@
 
 
 <!-- ===================== 신규 회원 등록 모달 ===================== -->
-<div class="modal fade" id="newMemberModal" tabindex="-1">
+<div class="modal" id="newMemberModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <form action="<%=request.getContextPath()%>/member_add" method="post"
