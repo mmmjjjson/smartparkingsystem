@@ -108,7 +108,7 @@ public class ParkingController extends HttpServlet {
             }
 
             // 회원 여부 정보 가져오기
-            MembersDTO member = memberService.getMemberOne(carNum);
+            MembersDTO member = memberService.getMember(carNum);
             boolean isMember = member != null && !member.getEndDate().isBefore(LocalDate.now());
 
             // 날짜 변환 및 JSON 전송

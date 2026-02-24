@@ -71,6 +71,19 @@ public enum MembersService {
         return membersDTO;
     }
 
+    // 차량 번호로 특정 회원 정보 조회
+    public MembersDTO getMember(String carNum) {
+        MembersVO membersVO = membersDAO.selectOneMember(carNum);
+
+        if (membersVO == null) {
+            return null;
+        }
+
+        MembersDTO membersDTO = modelMapper.map(membersVO, MembersDTO.class);
+
+        return membersDTO;
+    }
+
     // 신규 회원 등록
     public void addMember(MembersDTO membersDTO) {
         int memberCharge = paymentInfoDAO.selectInfo().getMemberCharge();
