@@ -117,6 +117,7 @@
                                 <!-- STEP 2 (이메일 입력) -->
                                 <div id="step2" class="d-none">
                                     <form onsubmit="submitEmailStep(event); return false;">
+                                        <p class="small text-muted">등록된 이메일을 입력해주세요.</p>
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="email" type="email"
                                                    placeholder="name@example.com" <%--required--%>>
