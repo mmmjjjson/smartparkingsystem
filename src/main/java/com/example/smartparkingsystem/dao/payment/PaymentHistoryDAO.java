@@ -1,6 +1,5 @@
 package com.example.smartparkingsystem.dao.payment;
 
-import com.example.smartparkingsystem.dto.payment.PaymentHistoryDTO;
 import com.example.smartparkingsystem.util.ConnectionUtil;
 import com.example.smartparkingsystem.vo.payment.PaymentHistoryVO;
 import lombok.Cleanup;
@@ -85,8 +84,8 @@ public class PaymentHistoryDAO {
     /*
      * 통계용 결제 데이터 전체 조회 (초기 캐시 로드용)
      */
-    public Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> selectOrderByYearMonth() {
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> result = new TreeMap<>(Collections.reverseOrder());
+    public Map<Integer, Map<Integer, List<PaymentHistoryVO>>> selectOrderByYearMonth() {
+        Map<Integer, Map<Integer, List<PaymentHistoryVO>>> result = new TreeMap<>(Collections.reverseOrder());
 
         String sql = "SELECT YEAR(entry_time) as year, " +
                 "MONTH(entry_time) as month, " +
@@ -105,11 +104,20 @@ public class PaymentHistoryDAO {
                 int year = resultSet.getInt("year");
                 int month = resultSet.getInt("month");
 
-                PaymentHistoryDTO record = buildDTO(resultSet);
+                PaymentHistoryVO vo = PaymentHistoryVO.builder()
+                        .payNo(resultSet.getLong("pay_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .entryTime(resultSet.getTimestamp("entry_time").toLocalDateTime())
+                        .exitTime(resultSet.getTimestamp("exit_time").toLocalDateTime())
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .finalCharge(resultSet.getInt("final_charge"))
+                        .mno(resultSet.getObject("mno", Long.class))
+                        .build();
 
                 result.computeIfAbsent(year, k -> new TreeMap<>(Collections.reverseOrder()))
                         .computeIfAbsent(month, k -> new ArrayList<>())
-                        .add(record);
+                        .add(vo);
             }
             return result;
         } catch (SQLException e) {
@@ -118,10 +126,10 @@ public class PaymentHistoryDAO {
     }
 
     /*
-     * 통계용 특정 연월 결제 데이터 조회
+     * 통계용 특정 연월 결제 데이터 조회 (이벤트 기반 부분 캐시 갱신용)
      */
-    public List<PaymentHistoryDTO> selectByYearMonth(int year, int month) {
-        List<PaymentHistoryDTO> result = new ArrayList<>();
+    public List<PaymentHistoryVO> selectByYearMonth(int year, int month) {
+        List<PaymentHistoryVO> result = new ArrayList<>();
 
         String sql = "SELECT pay_no, parking_area, car_num, entry_time, exit_time, " +
                 "total_minutes, final_charge, mno " +
@@ -138,25 +146,20 @@ public class PaymentHistoryDAO {
             @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                result.add(buildDTO(resultSet));
+                result.add(PaymentHistoryVO.builder()
+                        .payNo(resultSet.getLong("pay_no"))
+                        .parkingArea(resultSet.getString("parking_area"))
+                        .carNum(resultSet.getString("car_num"))
+                        .entryTime(resultSet.getTimestamp("entry_time").toLocalDateTime())
+                        .exitTime(resultSet.getTimestamp("exit_time").toLocalDateTime())
+                        .totalMinutes(resultSet.getInt("total_minutes"))
+                        .finalCharge(resultSet.getInt("final_charge"))
+                        .mno(resultSet.getObject("mno", Long.class))
+                        .build());
             }
             return result;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private PaymentHistoryDTO buildDTO(ResultSet resultSet) throws SQLException {
-        PaymentHistoryDTO record = new PaymentHistoryDTO();
-        record.setPayNo(resultSet.getLong("pay_no"));
-        record.setParkingArea(resultSet.getString("parking_area"));
-        record.setCarNum(resultSet.getString("car_num"));
-        record.setEntryTime(resultSet.getTimestamp("entry_time").toLocalDateTime());
-        record.setExitTime(resultSet.getTimestamp("exit_time").toLocalDateTime());
-        record.setTotalMinutes(resultSet.getInt("total_minutes"));
-        record.setFinalCharge(resultSet.getInt("final_charge"));
-        Long mno = resultSet.getObject("mno", Long.class);
-        record.setMno(mno);
-        return record;
     }
 }
