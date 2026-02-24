@@ -118,6 +118,7 @@ function submitStep1(event) {
                 alert("아이디 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.")
                 return;
             }
+            document.getElementById('textem').innerText = '로 전송된 인증번호를 입력하세요.'
             goStep2();
         })
 }
