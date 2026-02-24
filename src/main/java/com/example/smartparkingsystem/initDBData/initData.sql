@@ -238,6 +238,13 @@ UNION ALL
      ) AS combined_data
 ORDER BY entry_time;
 
+-- 입차 중인 차량 (출차 테스트용)
+INSERT INTO parking_history (parking_area, car_num, car_type, is_member, entry_time)
+VALUES ('A-1', '452너3894', '일반', 0, '2026-02-24 14:45:00'),
+       ('A-2', '50구1391', '경차', 0, '2026-02-24 14:45:00'),
+       ('A-3', '30버2380', '장애인', 0, '2026-02-24 14:45:00'),
+       ('A-4', '567포3456', '일반', 1, '2026-02-24 14:45:00');
+
 
 -- 1. 활성화된 정책 정보 로드 (변수 할당)
 SELECT
