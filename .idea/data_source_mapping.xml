@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/f3d40027-4460-4944-b7ca-6b15dc552efa/console.sql" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/DB/initDB.sql" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/dao/main/ParkingHistoryDAO.java" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
+  </component>
+</project>
