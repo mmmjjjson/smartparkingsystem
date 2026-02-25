@@ -115,3 +115,4 @@ CREATE TABLE IF NOT EXISTS `validation`
         FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
     COMMENT 'OTP 로그';
+

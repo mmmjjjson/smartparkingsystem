@@ -4,9 +4,9 @@ import com.example.smartparkingsystem.dao.member.MembersDAO;
 import com.example.smartparkingsystem.dao.main.ParkingHistoryDAO;
 import com.example.smartparkingsystem.dao.payment.PaymentHistoryDAO;
 import com.example.smartparkingsystem.dao.setting.PaymentInfoDAO;
-import com.example.smartparkingsystem.dto.payment.PaymentHistoryDTO;
 import com.example.smartparkingsystem.vo.member.MembersVO;
 import com.example.smartparkingsystem.vo.main.ParkingHistoryVO;
+import com.example.smartparkingsystem.vo.payment.PaymentHistoryVO;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ public enum StatisticService {
 
     // ========== 캐시 ==========
     // 결제 테이블 기반 캐시: 월별 매출, 누적 매출, 피크 시간대
-    private Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> cachedPaymentData = null;
+    private Map<Integer, Map<Integer, List<PaymentHistoryVO>>> cachedPaymentData = null;
 
     // 입출차 테이블 기반 캐시: 차종별 통계
     private Map<Integer, Map<Integer, List<ParkingHistoryVO>>> cachedParkingData = null;
@@ -51,7 +51,7 @@ public enum StatisticService {
         if (cachedPaymentData == null) {
             cachedPaymentData = new TreeMap<>(Collections.reverseOrder());
         }
-        List<PaymentHistoryDTO> freshData = paymentHistoryDAO.selectByYearMonth(year, month);
+        List<PaymentHistoryVO> freshData = paymentHistoryDAO.selectByYearMonth(year, month);
         cachedPaymentData
                 .computeIfAbsent(year, k -> new TreeMap<>(Collections.reverseOrder()))
                 .put(month, freshData);
@@ -76,7 +76,7 @@ public enum StatisticService {
     // 캐시 초기화 (최초 조회 시 전체 로드)
     // ========================================================
 
-    private Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> getPaymentData() {
+    private Map<Integer, Map<Integer, List<PaymentHistoryVO>>> getPaymentData() {
         if (cachedPaymentData == null) {
             log.info("결제 캐시 초기화 - 전체 데이터 로드");
             cachedPaymentData = paymentHistoryDAO.selectOrderByYearMonth();
@@ -128,18 +128,18 @@ public enum StatisticService {
     }
 
     private int calculateDailySales(LocalDate date) {
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentData = getPaymentData();
+        Map<Integer, Map<Integer, List<PaymentHistoryVO>>> paymentData = getPaymentData();
         int year = date.getYear();
         int month = date.getMonthValue();
 
-        Map<Integer, List<PaymentHistoryDTO>> monthMap = paymentData.get(year);
+        Map<Integer, List<PaymentHistoryVO>> monthMap = paymentData.get(year);
         if (monthMap == null) return 0;
 
-        List<PaymentHistoryDTO> records = monthMap.get(month);
+        List<PaymentHistoryVO> records = monthMap.get(month);
         if (records == null) return 0;
 
         int dailySales = 0;
-        for (PaymentHistoryDTO record : records) {
+        for (PaymentHistoryVO record : records) {
             if (record.getEntryTime().toLocalDate().equals(date)) {
                 dailySales += record.getFinalCharge();
             }
@@ -148,7 +148,7 @@ public enum StatisticService {
     }
 
     /**
-     * 회원 통계 (AJAX용) - 실시간 조회
+     * 회원 통계 (AJAX용) - 항상 실시간 조회
      */
     public Map<String, Object> getMemberStats(int year, Integer month) {
         log.info("회원 통계 조회: year={}, month={}", year, month);
@@ -196,8 +196,8 @@ public enum StatisticService {
     public Map<String, Object> getMonthlySales(int year, Integer month, boolean includeMembership) {
         log.info("월별 매출 통계 조회: year={}, month={}, includeMembership={}", year, month, includeMembership);
 
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentData = getPaymentData();
-        Map<Integer, List<PaymentHistoryDTO>> yearMap = paymentData.get(year);
+        Map<Integer, Map<Integer, List<PaymentHistoryVO>>> paymentData = getPaymentData();
+        Map<Integer, List<PaymentHistoryVO>> yearMap = paymentData.get(year);
 
         if (yearMap == null) {
             log.warn("해당 년도 데이터 없음: {}", year);
@@ -213,7 +213,7 @@ public enum StatisticService {
         return response;
     }
 
-    private void calculateMonthlyAggregation(int year, Map<Integer, List<PaymentHistoryDTO>> yearMap,
+    private void calculateMonthlyAggregation(int year, Map<Integer, List<PaymentHistoryVO>> yearMap,
                                              boolean includeMembership, Map<String, Object> response) {
         List<String> categories = new ArrayList<>();
         List<Integer> normalSales = new ArrayList<>();
@@ -236,10 +236,10 @@ public enum StatisticService {
 
         for (int m : sortedMonths) {
             categories.add(m + "월");
-            List<PaymentHistoryDTO> records = yearMap.get(m);
+            List<PaymentHistoryVO> records = yearMap.get(m);
 
             int normalSum = 0;
-            for (PaymentHistoryDTO record : records) {
+            for (PaymentHistoryVO record : records) {
                 if (record.getMno() == null) {
                     normalSum += record.getFinalCharge();
                 }
@@ -254,9 +254,9 @@ public enum StatisticService {
         response.put("includeMembership", includeMembership);
     }
 
-    private void calculateDailyAggregation(int year, int month, Map<Integer, List<PaymentHistoryDTO>> yearMap,
+    private void calculateDailyAggregation(int year, int month, Map<Integer, List<PaymentHistoryVO>> yearMap,
                                            boolean includeMembership, Map<String, Object> response) {
-        List<PaymentHistoryDTO> records = yearMap.get(month);
+        List<PaymentHistoryVO> records = yearMap.get(month);
         if (records == null) {
             log.warn("해당 월 데이터 없음: {}월", month);
             return;
@@ -285,7 +285,7 @@ public enum StatisticService {
             }
         }
 
-        for (PaymentHistoryDTO record : records) {
+        for (PaymentHistoryVO record : records) {
             int day = record.getEntryTime().getDayOfMonth();
             if (day >= 1 && day <= daysInMonth && record.getMno() == null) {
                 dailyNormal[day - 1] += record.getFinalCharge();
@@ -304,8 +304,8 @@ public enum StatisticService {
     public Map<String, Object> getCumulativeSales(int year, Integer month, boolean includeMembership) {
         log.info("누적 매출 통계 조회: year={}, month={}, includeMembership={}", year, month, includeMembership);
 
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentData = getPaymentData();
-        Map<Integer, List<PaymentHistoryDTO>> yearMap = paymentData.get(year);
+        Map<Integer, Map<Integer, List<PaymentHistoryVO>>> paymentData = getPaymentData();
+        Map<Integer, List<PaymentHistoryVO>> yearMap = paymentData.get(year);
 
         if (yearMap == null) {
             log.warn("해당 년도 데이터 없음: {}", year);
@@ -323,7 +323,7 @@ public enum StatisticService {
         return response;
     }
 
-    private void calculateMonthlyCumulative(int year, Map<Integer, List<PaymentHistoryDTO>> yearMap,
+    private void calculateMonthlyCumulative(int year, Map<Integer, List<PaymentHistoryVO>> yearMap,
                                             boolean includeMembership, Map<String, Object> response) {
         List<String> categories = new ArrayList<>();
         List<Integer> cumNormal = new ArrayList<>();
@@ -348,10 +348,10 @@ public enum StatisticService {
 
         for (int m : sortedMonths) {
             categories.add(m + "월");
-            List<PaymentHistoryDTO> records = yearMap.get(m);
+            List<PaymentHistoryVO> records = yearMap.get(m);
 
             int normalSum = 0;
-            for (PaymentHistoryDTO record : records) {
+            for (PaymentHistoryVO record : records) {
                 if (record.getMno() == null) {
                     normalSum += record.getFinalCharge();
                 }
@@ -368,9 +368,9 @@ public enum StatisticService {
         response.put("includeMembership", includeMembership);
     }
 
-    private void calculateDailyCumulative(int year, int month, Map<Integer, List<PaymentHistoryDTO>> yearMap,
+    private void calculateDailyCumulative(int year, int month, Map<Integer, List<PaymentHistoryVO>> yearMap,
                                           boolean includeMembership, Map<String, Object> response) {
-        List<PaymentHistoryDTO> records = yearMap.get(month);
+        List<PaymentHistoryVO> records = yearMap.get(month);
         if (records == null) {
             log.warn("해당 월 데이터 없음: {}월", month);
             return;
@@ -399,7 +399,7 @@ public enum StatisticService {
             }
         }
 
-        for (PaymentHistoryDTO record : records) {
+        for (PaymentHistoryVO record : records) {
             int day = record.getEntryTime().getDayOfMonth();
             if (day >= 1 && day <= daysInMonth && record.getMno() == null) {
                 dailyNormal[day - 1] += record.getFinalCharge();
@@ -437,7 +437,6 @@ public enum StatisticService {
 
         if (yearMap != null) {
             if (month != null) {
-                // 특정 월
                 List<ParkingHistoryVO> records = yearMap.get(month);
                 if (records != null) {
                     for (ParkingHistoryVO record : records) {
@@ -446,7 +445,6 @@ public enum StatisticService {
                     }
                 }
             } else {
-                // 전체 월
                 for (List<ParkingHistoryVO> records : yearMap.values()) {
                     for (ParkingHistoryVO record : records) {
                         String carType = record.getCarType();
@@ -481,14 +479,14 @@ public enum StatisticService {
     public Map<String, Object> getPeakTimeStats(int year, Integer month) {
         log.info("피크 시간대 분석 조회: year={}, month={}", year, month);
 
-        Map<Integer, Map<Integer, List<PaymentHistoryDTO>>> paymentData = getPaymentData();
+        Map<Integer, Map<Integer, List<PaymentHistoryVO>>> paymentData = getPaymentData();
         int[] hourlyCount = new int[24];
 
-        Map<Integer, List<PaymentHistoryDTO>> yearMap = paymentData.get(year);
+        Map<Integer, List<PaymentHistoryVO>> yearMap = paymentData.get(year);
         if (yearMap != null) {
-            for (Map.Entry<Integer, List<PaymentHistoryDTO>> entry : yearMap.entrySet()) {
+            for (Map.Entry<Integer, List<PaymentHistoryVO>> entry : yearMap.entrySet()) {
                 if (month != null && !entry.getKey().equals(month)) continue;
-                for (PaymentHistoryDTO record : entry.getValue()) {
+                for (PaymentHistoryVO record : entry.getValue()) {
                     int hour = record.getEntryTime().getHour();
                     if (hour >= 0 && hour < 24) hourlyCount[hour]++;
                 }
