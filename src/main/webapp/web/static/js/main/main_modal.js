@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.currentCard.querySelector('.box-time').innerText = "00:00";
 
                 alert(`${carNum} 차량 입차 완료!`);
-                console.log('dataset isMember after set:', window.currentCard.dataset.isMember); // 여기
+                // console.log('dataset isMember after set:', window.currentCard.dataset.isMember);
 
                 document.getElementById('parkingModal').querySelector('.btn-close').blur();
                 document.body.focus(); //**
@@ -246,8 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. UI 초기화
             window.currentCard.classList.replace('occupied', 'available');
-            const isCenter = window.currentCard.closest('.center-row') !== null;
-            window.currentCard.querySelector('.box-car').innerText = isCenter ? "사용\n가능" : "사용 가능";
+            // console.log(window.currentCard.classList);
+            window.currentCard.querySelector('.box-car').innerText = "사용 가능";
             window.currentCard.querySelector('.box-time').innerText = "";
 
             // 3. 모달 닫기

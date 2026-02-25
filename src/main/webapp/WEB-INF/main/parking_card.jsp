@@ -9,7 +9,7 @@
     Object isMember = request.getAttribute("isMember");
 
     boolean isOccupied = "occupied".equals(status);
-    String carNum = isOccupied ? car : "사용\n가능";
+    String carNum = isOccupied ? car : "사용 가능";
 
     String timer = "";
     if (isOccupied && timeObj != null) {

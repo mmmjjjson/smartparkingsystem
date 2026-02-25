@@ -44,12 +44,13 @@ public class PaymentHistoryService {
     }
 
     // 출차 시간(현재)
-    private final LocalDateTime exitTime = LocalDateTime.now();
+    // *** 상수로 선언해서 출차 시간이 고정돼 음수 나오는 현상 -> 출차 실패 오류 뜨는 원인
+    // private final LocalDateTime exitTime = LocalDateTime.now();
 
     // 총 주차시간 계산 메서드
     public long getTotalMinutes(String carNum) {
         LocalDateTime entryTime = parkingHistoryDAO.selectRecentParking(carNum).getEntryTime(); // 입차 시간
-
+        LocalDateTime exitTime = LocalDateTime.now(); //***
         return Duration.between(entryTime, exitTime).toMinutes(); // 입차 시간 - 출차 시간
     }
 
@@ -152,7 +153,7 @@ public class PaymentHistoryService {
                 .parkingArea(parkingHistoryVO.getParkingArea())
                 .carNum(carNum)
                 .entryTime(parkingHistoryVO.getEntryTime())
-                .exitTime(exitTime)
+                .exitTime(LocalDateTime.now()) // ***
                 .totalMinutes(totalMinutes)
                 .totalCharge(totalCharge)
                 .mno(mno)
