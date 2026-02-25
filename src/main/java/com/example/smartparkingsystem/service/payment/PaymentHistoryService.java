@@ -5,6 +5,7 @@ import com.example.smartparkingsystem.dao.main.ParkingHistoryDAO;
 import com.example.smartparkingsystem.dao.payment.PaymentHistoryDAO;
 import com.example.smartparkingsystem.dao.setting.PaymentInfoDAO;
 import com.example.smartparkingsystem.dto.payment.PaymentHistoryDTO;
+import com.example.smartparkingsystem.service.statistic.StatisticService;
 import com.example.smartparkingsystem.util.MapperUtil;
 import com.example.smartparkingsystem.vo.member.MembersVO;
 import com.example.smartparkingsystem.vo.main.ParkingHistoryVO;
@@ -165,6 +166,11 @@ public class PaymentHistoryService {
                 .build();
          paymentHistoryDAO.insertPaymentHistory(paymentHistoryVO);
         log.info("insert 완료, 조회 시작");
+
+        // 통계용 실시간 캐시
+        int entryYear = parkingHistoryVO.getEntryTime().getYear();
+        int entryMonth = parkingHistoryVO.getEntryTime().getMonthValue();
+        StatisticService.INSTANCE.onPaymentDataChanged(entryYear, entryMonth);
 
         PaymentHistoryVO check = paymentHistoryDAO.selectRecentPayment(carNum);
         log.info("selectRecentPayment 결과: " + check);
