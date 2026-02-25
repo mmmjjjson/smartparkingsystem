@@ -111,6 +111,8 @@ public class ParkingController extends HttpServlet {
             MembersDTO member = memberService.getMember(carNum);
             boolean isMember = member != null && !member.getEndDate().isBefore(LocalDate.now())
                     && !member.getStartDate().isAfter(LocalDate.now());
+            log.info("member" + member);
+            log.info("isMember" + isMember);
 
             // 날짜 변환 및 JSON 전송
             String entryTimeStr = String.valueOf(saved.getEntryTime()).replace(" ", "T");

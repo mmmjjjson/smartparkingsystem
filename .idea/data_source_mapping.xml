@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/DB/initDB.sql" value="ea55ac0f-ca54-4f75-9da6-8fb6448be779" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/initDBData/deletePrevious.sql" value="ea55ac0f-ca54-4f75-9da6-8fb6448be779" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/initDBData/initData.sql" value="ea55ac0f-ca54-4f75-9da6-8fb6448be779" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/f492a5e4-c372-4c64-b320-cf9ca1708dae/console.sql" value="f492a5e4-c372-4c64-b320-cf9ca1708dae" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/f492a5e4-c372-4c64-b320-cf9ca1708dae/console_1.sql" value="f492a5e4-c372-4c64-b320-cf9ca1708dae" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/dao/member/MembersDAO.java" value="f492a5e4-c372-4c64-b320-cf9ca1708dae" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/initDBData/initData.sql" value="f492a5e4-c372-4c64-b320-cf9ca1708dae" />
   </component>
 </project>

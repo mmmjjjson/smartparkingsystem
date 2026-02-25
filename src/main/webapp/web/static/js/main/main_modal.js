@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(res => res.json()) // 서버의 응답을 JSON으로 변환
             .then(data => { // 서버가 보낸 응답 객체
+
                 if (!data.success) {
                     alert('입차 등록 실패! ' + data.message);
                     return;
@@ -136,6 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.currentCard.dataset.carType = carType;
                 window.currentCard.dataset.inFullTime = data.entryTime;
                 window.currentCard.dataset.isMember = data.isMember;
+
+                console.log('set 후 dataset.isMember:', window.currentCard.dataset.isMember);
 
                 // UI 업데이트
                 const isCenter = window.currentCard.closest('.center-row') !== null;
