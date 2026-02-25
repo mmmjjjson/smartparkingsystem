@@ -33,26 +33,27 @@ public class ParkingHistoryDAO {
 
     /* isMember 상태 변경
      * 출차하지 않은 isMember=0 차량이 members 테이블에 등록되었을 때 */
-    public void updateIsMember(ParkingHistoryVO parkingHistoryVO) {
-        ParkingHistoryVO dbVO = selectParkingHistory(parkingHistoryVO.getParkNo());
-        if (dbVO == null || dbVO.getEntryTime() == null) {
-            throw new IllegalStateException("입차 기록 없음");
-        }
-
-        if (parkingHistoryVO.getCarNum() == null || parkingHistoryVO.getCarNum().isBlank()) {
-            throw new IllegalArgumentException("차량 번호 없음");
-        }
+    public void updateIsMember(String carNum) {
+//        ParkingHistoryVO dbVO = selectParkingHistory(parkingHistoryVO.getParkNo());
+//        if (dbVO == null || dbVO.getEntryTime() == null) {
+//            throw new IllegalStateException("입차 기록 없음");
+//        }
+//
+//        if (parkingHistoryVO.getCarNum() == null || parkingHistoryVO.getCarNum().isBlank()) {
+//            throw new IllegalArgumentException("차량 번호 없음");
+//        }
 
         String sql = "UPDATE parking_history SET is_member = 1 " +
-                "WHERE EXISTS(SELECT 1 FROM members WHERE car_num = ?) AND park_no = ? " +
+                "WHERE EXISTS(SELECT 1 FROM members WHERE car_num = ?) AND car_num = ? " +
                 "AND is_member = 0 AND exit_time IS NULL";
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, parkingHistoryVO.getCarNum());
-            preparedStatement.setLong(2, parkingHistoryVO.getParkNo());
+            preparedStatement.setString(1, carNum);
+            preparedStatement.setString(2, carNum);
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

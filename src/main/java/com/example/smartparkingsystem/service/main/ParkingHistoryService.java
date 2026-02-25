@@ -61,8 +61,8 @@ public enum ParkingHistoryService {
     }
 
     /* 회원권 상태 변경 */
-    public void changeIsMemberState(ParkingHistoryDTO parkingHistoryDTO) {
-        parkingHistoryDAO.updateIsMember(modelMapper.map(parkingHistoryDTO, ParkingHistoryVO.class));
+    public void changeIsMemberState(String carNum) {
+        parkingHistoryDAO.updateIsMember(carNum);
     }
 
     /* 출차 처리 */

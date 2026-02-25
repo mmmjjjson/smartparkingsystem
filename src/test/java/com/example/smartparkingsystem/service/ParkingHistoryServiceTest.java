@@ -46,7 +46,7 @@ class ParkingHistoryServiceTest {
     void changeIsMemberState() {
         long parkNo = 20;
         ParkingHistoryDTO parkingHistoryDTO = parkingHistoryService.getParkingHistory(parkNo);
-        parkingHistoryService.changeIsMemberState(parkingHistoryDTO);
+        parkingHistoryService.changeIsMemberState(parkingHistoryDTO.getCarNum());
     }
 
     @Test
