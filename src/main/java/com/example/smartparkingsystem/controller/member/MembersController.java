@@ -4,6 +4,7 @@ import com.example.smartparkingsystem.dao.setting.PaymentInfoDAO;
 import com.example.smartparkingsystem.dto.member.MembersDTO;
 import com.example.smartparkingsystem.dto.member.PageRequestDTO;
 import com.example.smartparkingsystem.dto.member.PageResponseDTO;
+import com.example.smartparkingsystem.service.main.ParkingHistoryService;
 import com.example.smartparkingsystem.service.member.MembersService;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -34,6 +35,7 @@ public class MembersController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         MembersService membersService = MembersService.INSTANCE;
         PaymentInfoDAO paymentInfoDAO = new PaymentInfoDAO();
+        ParkingHistoryService parkingService = ParkingHistoryService.INSTANCE;
         String requestURI = req.getRequestURI(); // 요청 URI
         String contextPath = req.getContextPath(); // 컨텍스트 경로
         String command = requestURI.substring(contextPath.length()); // 요청 URI에서 컨텍스트 경로를 제거한 명령어
@@ -175,6 +177,7 @@ public class MembersController extends HttpServlet {
                 log.info("회원 등록 요청 - carNum: {}, name: {}, start: {}, end: {}", carNum, memberName, startDate, endDate);
 
                 membersService.addMember(membersDTO);
+                parkingService.changeIsMemberState(carNum);
 
                 session = req.getSession();
                 session.removeAttribute("searchCarNum");

@@ -29,11 +29,11 @@ class ParkingHistoryDAOTest {
     void updateIsMember() {
         long park_no = 3;
         ParkingHistoryVO updateVO = parkingHistoryDAO.selectParkingHistory(park_no);
-        parkingHistoryDAO.updateIsMember(updateVO);
+        parkingHistoryDAO.updateIsMember(updateVO.getCarNum());
 
         park_no = 5;
         ParkingHistoryVO nonUpdateVO = parkingHistoryDAO.selectParkingHistory(park_no);
-        parkingHistoryDAO.updateIsMember(nonUpdateVO);
+        parkingHistoryDAO.updateIsMember(nonUpdateVO.getCarNum());
     }
 
     @Test
