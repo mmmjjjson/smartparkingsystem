@@ -283,7 +283,7 @@ public class StatisticController extends HttpServlet {
         }
     }
 
-    /**
+    /*
      * request에서 boolean 파라미터 추출
      */
     private boolean getBooleanParameter(HttpServletRequest request, String name, boolean defaultValue) {

@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/f3d40027-4460-4944-b7ca-6b15dc552efa/console.sql" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/f3d40027-4460-4944-b7ca-6b15dc552efa/console_1.sql" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/f3d40027-4460-4944-b7ca-6b15dc552efa/console_2.sql" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/f3d40027-4460-4944-b7ca-6b15dc552efa/console_3.sql" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/DB/initDB.sql" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/dao/main/ParkingHistoryDAO.java" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/dao/member/MembersDAO.java" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/dao/payment/PaymentHistoryDAO.java" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/dao/setting/PaymentInfoDAO.java" value="f3d40027-4460-4944-b7ca-6b15dc552efa" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/DB/initDB.sql" value="ea55ac0f-ca54-4f75-9da6-8fb6448be779" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/initDBData/deletePrevious.sql" value="ea55ac0f-ca54-4f75-9da6-8fb6448be779" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/initDBData/initData.sql" value="ea55ac0f-ca54-4f75-9da6-8fb6448be779" />
   </component>
 </project>
