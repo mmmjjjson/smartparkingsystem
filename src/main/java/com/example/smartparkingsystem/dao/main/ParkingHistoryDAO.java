@@ -89,10 +89,7 @@ public class ParkingHistoryDAO {
     /* 현재 주차 중인 구역 조회 */
     public List<ParkingHistoryVO> selectOccupied() {
         List<ParkingHistoryVO> occupiedList = new ArrayList<>();
-        String sql = "SELECT ph.*, " +
-                "CASE WHEN m.car_num IS NOT NULL AND m.end_date >= curdate() THEN 1 ELSE 0 END AS is_member_update " +
-                "FROM parking_history ph LEFT JOIN members m ON ph.car_num = m.car_num " +
-                "WHERE ph.exit_time IS NULL;";
+        String sql = "SELECT * FROM parking_history WHERE exit_time IS NULL";
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
@@ -105,7 +102,7 @@ public class ParkingHistoryDAO {
                         .parkingArea(resultSet.getString("parking_area"))
                         .carNum(resultSet.getString("car_num"))
                         .carType(resultSet.getString("car_type"))
-                        .isMember(resultSet.getBoolean("is_member_update"))
+                        .isMember(resultSet.getBoolean("is_member"))
                         .entryTime(resultSet.getObject("entry_time", LocalDateTime.class))
                         .exitTime(resultSet.getObject("exit_time", LocalDateTime.class))
                         .totalMinutes(resultSet.getInt("total_minutes"))
@@ -121,7 +118,7 @@ public class ParkingHistoryDAO {
     /* 최근 입차 조회 */
     public ParkingHistoryVO selectRecentParking(String carNum) {
         ParkingHistoryVO parkingHistoryVO = null;
-        String sql = "SELECT * FROM parking_history WHERE car_num = ? AND exit_time IS NULL " +
+        String sql = "SELECT * FROM parking_history WHERE car_num = ? " +
                 "ORDER BY entry_time DESC LIMIT 1";
 
         try {
@@ -245,7 +242,7 @@ public class ParkingHistoryDAO {
     }
 
     /*
-     * 비회원 조회 메서드 (26-02-20추가)
+     * 비회원 조회 메서드
      */
     public int getNonMemberCountByPeriod(LocalDate startDate, LocalDate endDate) {
         String sql = "SELECT COUNT(DISTINCT car_num) FROM parking_history " +
@@ -265,7 +262,7 @@ public class ParkingHistoryDAO {
     }
 
     /*
-     * 통계용 전체 입출차 데이터 연월별 조회 (초기 캐시 로드용) - 신규 추가
+     * 통계용 전체 입출차 데이터 연월별 조회 (초기 캐시 로드용)
      */
     public Map<Integer, Map<Integer, List<ParkingHistoryVO>>> selectAllByYearMonth() {
         Map<Integer, Map<Integer, List<ParkingHistoryVO>>> result = new TreeMap<>(Collections.reverseOrder());
@@ -302,7 +299,7 @@ public class ParkingHistoryDAO {
     }
 
     /*
-     * 통계용 특정 연월 입출차 데이터 조회 (이벤트 기반 부분 캐시 갱신용) - 신규 추가
+     * 통계용 특정 연월 입출차 데이터 조회 (이벤트 기반 부분 캐시 갱신용)
      */
     public List<ParkingHistoryVO> selectByYearMonth(int year, int month) {
         List<ParkingHistoryVO> result = new ArrayList<>();

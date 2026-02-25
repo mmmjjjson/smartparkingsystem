@@ -120,7 +120,7 @@
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="email" type="email"
                                                    placeholder="name@example.com" <%--required--%>>
-                                            <label for="email">이메일</label>
+                                            <label for="email">등록된 이메일을 입력해주세요.</label>
                                         </div>
                                         <div class="d-flex gap-2">
                                             <button type="button"

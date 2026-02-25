@@ -45,6 +45,8 @@ function goBackToStep2() {
     // document.getElementById("otpCode").value = '';
     document.getElementById("otpCode").disabled = false;
     document.getElementById("loginOtp").disabled = false;
+    document.getElementById('timer').classList.remove('bg-danger');
+    document.getElementById('timer').classList.add('bg-info');
 }
 
 // 타이머
