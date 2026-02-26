@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/DB/initDB.sql" value="ea55ac0f-ca54-4f75-9da6-8fb6448be779" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/initDBData/deletePrevious.sql" value="ea55ac0f-ca54-4f75-9da6-8fb6448be779" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/smartparkingsystem/initDBData/initData.sql" value="ea55ac0f-ca54-4f75-9da6-8fb6448be779" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/f3b0ce1c-fc07-4e16-bb5c-b1f09c3bfe64/console.sql" value="f3b0ce1c-fc07-4e16-bb5c-b1f09c3bfe64" />
   </component>
 </project>
