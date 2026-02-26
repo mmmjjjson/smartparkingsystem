@@ -136,13 +136,15 @@ public class PaymentHistoryService {
         int finalCharge; // 최종 결제 요금
 
         // 멤버인지 아닌지 확인 후 멤버면 총 요금 0원
-        if (membersDAO.selectOneMember(carNum) != null) {
+        if (membersDAO.selectValidMember(carNum) != null) {
             totalCharge = 0;
             discountAmount = 0;
             finalCharge = 0;
+            log.info("validMember {}", finalCharge);
         } else {
             // 최종 결제 금액
             finalCharge = totalCharge - discountAmount;
+            log.info("notValidMember {}", finalCharge);
         }
 
         ParkingHistoryVO parkingHistoryVO = parkingHistoryDAO.selectRecentParking(carNum);
