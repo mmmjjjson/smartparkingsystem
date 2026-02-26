@@ -10,6 +10,7 @@ import com.example.smartparkingsystem.vo.member.MembersVO;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Log4j2
@@ -73,15 +74,18 @@ public enum MembersService {
 
     // 차량 번호로 특정 회원 정보 조회
     public MembersDTO getMember(String carNum) {
-        MembersVO membersVO = membersDAO.selectOneMember(carNum);
+        MembersVO membersVO = membersDAO.selectValidMember(carNum);
 
         if (membersVO == null) {
             return null;
         }
 
-        MembersDTO membersDTO = modelMapper.map(membersVO, MembersDTO.class);
+        LocalDate now = LocalDate.now();
+        if (membersVO.getEndDate().isBefore(now) || membersVO.getStartDate().isAfter(now)) {
+            return null;
+        }
 
-        return membersDTO;
+        return modelMapper.map(membersVO, MembersDTO.class);
     }
 
     // 신규 회원 등록
