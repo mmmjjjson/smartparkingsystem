@@ -99,6 +99,33 @@ public class MembersDAO {
         return null;
     }
 
+    // 특정 회원 목록 전체 조회
+    public MembersVO selectValidMember(String carNum) {
+        String sql = "SELECT * FROM members WHERE car_num = ? AND start_date <= CURDATE() AND end_date >= CURDATE()";
+        try {
+            @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, carNum);
+            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                MembersVO membersVO = MembersVO.builder()
+                        .mno(resultSet.getLong("mno"))
+                        .carNum(resultSet.getString("car_num"))
+                        .memberName(resultSet.getString("member_name"))
+                        .memberPhone(resultSet.getString("member_phone"))
+                        .startDate(resultSet.getDate("start_date").toLocalDate())
+                        .endDate(resultSet.getDate("end_date").toLocalDate())
+                        .memberCharge(resultSet.getInt("member_charge"))
+                        .build();
+
+                return membersVO;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     // 특정 회원 목록 중 가장 최근 등록된 1건 조회
     public MembersVO selectMemberByCarNum(String carNum) {
         String sql = "SELECT * FROM members WHERE car_num = ? ORDER BY end_date DESC LIMIT 1";
