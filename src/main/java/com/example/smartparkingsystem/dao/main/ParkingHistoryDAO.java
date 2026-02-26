@@ -16,7 +16,7 @@ public class ParkingHistoryDAO {
     /* 입차 등록 */
     public void insertEntry(ParkingHistoryVO parkingHistoryVO) {
         String sql = "INSERT INTO parking_history (parking_area, car_num, car_type, is_member, entry_time) " +
-                "VALUES (?, ?, ?, EXISTS(SELECT 1 FROM members WHERE car_num = ?) , now())";
+                "VALUES (?, ?, ?, EXISTS(SELECT 1 FROM members WHERE car_num = ? AND curdate() between start_date AND end_date) , now())";
 
         try {
             @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
