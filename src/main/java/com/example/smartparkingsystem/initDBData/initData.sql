@@ -290,11 +290,3 @@ SELECT
 FROM parking_history ph
     LEFT JOIN members m ON ph.car_num = m.car_num
     AND ph.entry_time BETWEEN m.start_date AND m.end_date;
-
-
--- 입차 중인 차량 (출차 테스트용)
-INSERT INTO parking_history (parking_area, car_num, car_type, is_member, entry_time)
-VALUES ('A-1', '452너3894', '일반', 0, '2026-02-24 14:45:00'),
-       ('A-2', '50구1391', '경차', 0, '2026-02-24 14:45:00'),
-       ('A-3', '30버2380', '장애인', 0, '2026-02-24 14:45:00'),
-       ('A-4', '567포3456', '일반', 1, '2026-02-24 14:45:00');
