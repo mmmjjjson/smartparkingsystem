@@ -161,7 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 결제 진행 함수
     async function handlePayment() {
-        // 출차 -> 영수증
+
+     // 출차 -> 영수증
         const inFullTime = window.currentCard.dataset.inFullTime;
         const outFullTime = new Date().toISOString();
         const carType = window.currentCard.dataset.carType;

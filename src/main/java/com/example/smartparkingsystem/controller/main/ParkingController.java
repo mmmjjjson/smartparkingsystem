@@ -53,7 +53,8 @@ public class ParkingController extends HttpServlet {
                                 ", \"extraCharge\": " + dto.getExtraCharge() +
                                 ", \"maxCharge\": " + dto.getMaxCharge() +
                                 ", \"smallCarDiscount\": " + dto.getSmallCarDiscount() +
-                                ", \"disabledDiscount\": " + dto.getDisabledDiscount() + "}"
+                                ", \"disabledDiscount\": " + dto.getDisabledDiscount() +
+                                ", \"isMember\": " + parkingHistoryDTO.isMember() +"}"
                 );
             } catch (Exception e) {
                 log.error("getPaymentInfo 에러: ", e);  // 여기
@@ -92,10 +93,19 @@ public class ParkingController extends HttpServlet {
                 return;
             }
 
+            // 회원 여부 정보 가져오기
+            MembersDTO member = memberService.getMember(carNum);
+            boolean isMember = member != null && !member.getEndDate().isBefore(LocalDate.now())
+                    && !member.getStartDate().isAfter(LocalDate.now());
+
             // DB 저장
             ParkingHistoryDTO parkingHistoryDTO = ParkingHistoryDTO.builder()
-                    .parkingArea(parkingArea).carNum(carNum).carType(carType).build();
+                    .parkingArea(parkingArea).carNum(carNum).carType(carType).isMember(isMember).build();
             parkingService.registerEntry(parkingHistoryDTO);
+
+            log.info("carNum: {}", carNum);
+            log.info("member: {}", member);
+            log.info("isMember: {}", isMember);
 
             // 저장 정보 다시 가져오기
             ParkingHistoryDTO saved = parkingService.getRecentParking(carNum);
@@ -107,12 +117,6 @@ public class ParkingController extends HttpServlet {
                 return;
             }
 
-            // 회원 여부 정보 가져오기
-            MembersDTO member = memberService.getMember(carNum);
-            boolean isMember = member != null && !member.getEndDate().isBefore(LocalDate.now())
-                    && !member.getStartDate().isAfter(LocalDate.now());
-            log.info("member" + member);
-            log.info("isMember" + isMember);
 
             // 날짜 변환 및 JSON 전송
             String entryTimeStr = String.valueOf(saved.getEntryTime()).replace(" ", "T");
