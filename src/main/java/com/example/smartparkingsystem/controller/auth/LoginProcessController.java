@@ -45,7 +45,7 @@ public class LoginProcessController extends HttpServlet {
     // Step1 세션
     private void step1(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Step1");
-        String adminId = req.getParameter("adminId");
+        String adminId = req.getParameter("adminId").trim();
         String password = req.getParameter("password");
         log.info("adminId: {}", adminId);
         log.info("password: {}", password);
@@ -75,7 +75,7 @@ public class LoginProcessController extends HttpServlet {
     // Step2 등록된 이메일 확인
     private void step2(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Step2");
-        String email = req.getParameter("email");
+        String email = req.getParameter("email").trim();
         HttpSession session = req.getSession();
         String tempAdminId = (String) session.getAttribute("tempAdminId");
 

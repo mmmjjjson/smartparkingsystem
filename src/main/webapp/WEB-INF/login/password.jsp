@@ -19,7 +19,7 @@
 
 <div id="layoutAuthentication">
     <div id="layoutAuthentication_content">
-        <main>
+        <main class="d-flex justify-content-center align-items-center vh-100">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-xl-4 col-lg-5 col-md-7">
@@ -119,7 +119,7 @@
                                             <button type="button"
                                                     class="btn btn-secondary flex-fill"
                                                     onclick="goBackToStep2()">
-                                                이메일 변경
+                                                이전
                                             </button>
                                             <button type="submit" class="btn btn-primary flex-fill" id="goStep">
                                                 다음

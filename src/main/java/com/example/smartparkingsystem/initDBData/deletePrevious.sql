@@ -7,5 +7,5 @@ DELETE FROM payment_info;
 ALTER TABLE payment_info AUTO_INCREMENT = 1;
 DELETE FROM members;
 ALTER TABLE members AUTO_INCREMENT = 1;
-DELETE FROM admin;
 DELETE FROM validation;
+DELETE FROM admin;

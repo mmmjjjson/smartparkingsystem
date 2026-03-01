@@ -40,6 +40,7 @@ public enum ValidationService {
     // OTP 발송
     public void otpShipment(String adminId) {
         // 발송할 이메일
+        adminId = adminId.trim(); // 공백 제거
         String adminEmail = adminService.getAdminById(adminId).getAdminEmail();
         String otpCode = randomOTP();
         log.info("OTP : {}", otpCode);

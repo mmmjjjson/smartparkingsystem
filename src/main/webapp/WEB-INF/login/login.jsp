@@ -50,6 +50,9 @@
             height: 2px;
             background-color: #dee2e6;
         }
+        #layoutAuthentication {
+            display: flex;
+        }
     </style>
 </head>
 <%-- 아이콘 --%>
@@ -59,7 +62,7 @@
 
 <div id="layoutAuthentication">
     <div id="layoutAuthentication_content">
-        <main>
+        <main class="d-flex justify-content-center align-items-center vh-100">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-xl-4 col-lg-5 col-md-7">
@@ -168,6 +171,20 @@
                                                 인증 완료
                                             </button>
                                         </div>
+
+                                        <!-- 부트스트랩 커스텀 모달 사용 (타이머 멈춤 현상 제거 위함) -->
+                                        <div class="modal fade" id="alertModal" tabindex="-1">
+                                            <div class="modal-dialog modal-sm">
+                                                <div class="modal-content">
+                                                    <div class="modal-body text-center" id="alertModalMessage">
+                                                    </div>
+                                                    <div class="modal-footer justify-content-center">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </form>
                                 </div>
 

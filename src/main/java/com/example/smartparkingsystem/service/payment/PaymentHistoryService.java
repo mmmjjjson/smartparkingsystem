@@ -49,10 +49,10 @@ public class PaymentHistoryService {
     // private final LocalDateTime exitTime = LocalDateTime.now();
 
     // 총 주차시간 계산 메서드
-    public long getTotalMinutes(String carNum) {
+    public long getTotalTime(String carNum) {
         LocalDateTime entryTime = parkingHistoryDAO.selectRecentParking(carNum).getEntryTime(); // 입차 시간
         LocalDateTime exitTime = LocalDateTime.now(); //***
-        return Duration.between(entryTime, exitTime).toMinutes(); // 입차 시간 - 출차 시간
+        return Duration.between(entryTime, exitTime).toSeconds(); // 입차 시간 - 출차 시간;
     }
 
     // 총 요금 계산 메서드 (total_charge)
@@ -65,19 +65,19 @@ public class PaymentHistoryService {
         int extraTime = paymentInfoVO.getExtraTime(); // 초과 시간(분)
         int extraCharge = paymentInfoVO.getExtraCharge(); // 초과 시간 당 추가 요금
         int maxCharge = paymentInfoVO.getMaxCharge(); // 일일 최대 요금
-        long totalMinutes = getTotalMinutes(carNum); // 총 주차시간(분)
+        long totalSeconds = getTotalTime(carNum); // 총 주차시간(초)
         int totalCharge; // 총 주차 요금
 
-        // 주차일수
-        int dayCount = (int) totalMinutes / 1440;
+        // 주차일수 ((24 * 60) * 60) = 24시간
+        int dayCount = (int) totalSeconds / ((24 * 60) * 60);
 
-        if (totalMinutes <= freeTime) {
+        if (totalSeconds <= freeTime) {
             totalCharge = 0; // 무료 회차시간 적용 요금
-        } else if (totalMinutes <= basicTime) {
+        } else if (totalSeconds <= basicTime) {
             totalCharge = basicCharge;
         } else {
             // 24시간 이하 요금 & 24시간 초과시 (24시간 제외 후) 남은 시간에 대한 요금
-            int restTimeCharge = ((int)(((totalMinutes % 1440) - basicTime) / extraTime) * extraCharge) + basicCharge;
+            int restTimeCharge = ((int)(((totalSeconds % ((24 * 60) * 60)) - basicTime) / extraTime) * extraCharge) + basicCharge;
             // 일일 최대 요금 초과시 일일 최대 요금으로 변경
             restTimeCharge = Math.min(restTimeCharge, maxCharge);
 
@@ -120,10 +120,10 @@ public class PaymentHistoryService {
         if (parkingHistoryDAO.selectRecentParking(carNum).getCarNum() == null) {
             return;
         }
-        log.info("calculateFinalCharge 시작 - carNum: " + carNum);
+        log.info("calculateFinalCharge 시작 - carNum: {}", carNum);
 
         ParkingHistoryVO recent = parkingHistoryDAO.selectRecentParking(carNum);
-        log.info("selectRecentParking 결과: " + recent);
+        log.info("selectRecentParking 결과: {}", recent);
 
         if (recent == null || recent.getCarNum() == null) {
             log.info("차량 없음으로 return");
@@ -132,7 +132,7 @@ public class PaymentHistoryService {
 
         int totalCharge = calculateTotalCharge(carNum);
         int discountAmount = calculateDiscountAmount(carNum);
-        long totalMinutes = getTotalMinutes(carNum);
+        long totalSeconde = getTotalTime(carNum);
         int finalCharge; // 최종 결제 요금
 
         // 멤버인지 아닌지 확인 후 멤버면 총 요금 0원
@@ -155,7 +155,7 @@ public class PaymentHistoryService {
                 .carNum(carNum)
                 .entryTime(parkingHistoryVO.getEntryTime())
                 .exitTime(LocalDateTime.now()) // ***
-                .totalMinutes(totalMinutes)
+                .totalMinutes(totalSeconde / ((24 * 60) * 60))
                 .totalCharge(totalCharge)
                 .mno(mno)
                 .pno(paymentInfoVO.getPno())
@@ -173,7 +173,8 @@ public class PaymentHistoryService {
         StatisticService.INSTANCE.onPaymentDataChanged(entryYear, entryMonth);
 
         PaymentHistoryVO check = paymentHistoryDAO.selectRecentPayment(carNum);
-        log.info("selectRecentPayment 결과: " + check);
+        log.info("selectRecentPayment 결과: {}", check);
+
     }
 
     // VO를 DTO로 변경 메서드

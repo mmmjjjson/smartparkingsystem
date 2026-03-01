@@ -44,8 +44,8 @@ function goBackToStep2() {
 }
 
 // 타이머
-let timeLeft = 240; // 4분
 let timerInterval = null;
+let endTime = null; // 만료된 시각 저장
 
 function startTimer() {
 
@@ -53,36 +53,37 @@ function startTimer() {
     if (timerInterval) {
         clearInterval(timerInterval);
     }
-    timeLeft = 240;
+    endTime = Date.now() + 240 * 1000; // 현재 시각 + 4분으로 계산
 
     const timerEl = document.getElementById("timer");
 
     timerInterval = setInterval(() => {
+        const remaining = Math.ceil((endTime - Date.now()) / 1000);
 
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
+        if (remaining <= 0) {
+            clearInterval(timerInterval);
+            timerEl.innerText = "남은 시간: 0:00"
+            showAlert("인증 시간이 만료되었습니다.");
+            document.getElementById('otpCode').disabled = true;
+            document.getElementById('loginOtp').disabled = true;
+            return;
+        }
+
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
 
         timerEl.innerText =
             "남은 시간: " + minutes + ":" +
             (seconds < 10 ? "0" : "") + seconds;
 
         // 1분 이하 빨간색으로 변경
-        if (timeLeft <= 60) {
+        if (remaining <= 60) {
             document.getElementById('timer').classList.remove('bg-info');
             document.getElementById('timer').classList.add('bg-danger');
         }
 
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            alert("인증 시간이 만료되었습니다.");
-            document.getElementById('inputVerificationCode').disabled = true;
-            document.getElementById('goStep').disabled = true;
-            return;
-        }
-        timeLeft--;
-
-    }, 1000);
-    window.onload = startTimer;
+    }, 500); // 0.5초 마다 체크 정확도 올리기 위함
+    // window.onload = startTimer;
 }
 
 // Step 1 제출 (아이디 확인)

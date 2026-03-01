@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DeveloperToolsToolWindowSettingsV1" lastSelectedContentNodeId="text-diff" pluginVersion="7.1.0">
+    <developerToolsConfigurations>
+      <developerToolConfiguration developerToolId="text-diff" id="98be5214-e813-4127-9763-726f136c3a34" name="Workbench">
+        <properties>
+          <property key="firstText" type="INPUT" value="kotlin.String|package com.example.smartparkingsystem.vo.payment;&#10;&#10;import lombok.*;&#10;&#10;import java.time.LocalDateTime;&#10;&#10;@NoArgsConstructor&#10;@AllArgsConstructor&#10;@Builder&#10;@Data&#10;@AllArgsConstructor&#10;@NoArgsConstructor&#10;public class PaymentHistoryDTO {&#10;    private long payNo; // 요금 기록 인덱스&#10;    private String parkingArea; // 주차 구역 (A1 ~ A20)&#10;    private String carNum; // 차량번호&#10;    private LocalDateTime entryTime; // 입차 시간&#10;    private LocalDateTime exitTime; // 출차 시간&#10;    private long totalMinutes; // 총 주차 시간&#10;    private int totalCharge; // 총 요금&#10;    private Long mno; // 회원 번호&#10;    private long pno; // 요금 정책 번호&#10;    private long parkNo; // 주차 기록 번호&#10;    private int discountAmount; // 할인 금액&#10;    private int finalCharge; // 결제 요금&#10;    private boolean isPaid; // 결제 여부&#10;    private LocalDateTime paymentTime; // 결제 시간&#10;}&#10;" />
+          <property key="secondText" type="INPUT" value="kotlin.String|package com.example.smartparkingsystem.vo.payment;&#10;&#10;import lombok.*;&#10;&#10;import java.time.LocalDateTime;&#10;&#10;@NoArgsConstructor&#10;@AllArgsConstructor&#10;@Builder&#10;@Data&#10;@AllArgsConstructor&#10;@NoArgsConstructor&#10;public class PaymentHistoryDTO {&#10;    private long payNo; // 요금 기록 인덱스&#10;    private String parkingArea; // 주차 구역 (A1 ~ A20)&#10;    private String carNum; // 차량번호&#10;    private LocalDateTime entryTime; // 입차 시간&#10;    private LocalDateTime exitTime; // 출차 시간&#10;    private long totalMinutes; // 총 주차 시간&#10;    private int totalCharge; // 총 요금&#10;    private Long mno; // 회원 번호&#10;    private long pno; // 요금 정책 번호&#10;    private long parkNo; // 주차 기록 번호&#10;    private int discountAmount; // 할인 금액&#10;    private int finalCharge; // 결제 요금&#10;    private boolean isPaid; // 결제 여부&#10;    private LocalDateTime paymentTime; // 결제 시간&#10;}&#10;" />
+        </properties>
+      </developerToolConfiguration>
+    </developerToolsConfigurations>
+  </component>
+</project>
