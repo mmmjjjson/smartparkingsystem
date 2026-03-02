@@ -107,6 +107,10 @@
                                             <%--required--%>>
                                             <label>비밀번호</label>
                                         </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                                            <label class="form-check-label small" for="rememberMe">로그인 상태유지</label>
+                                        </div>
 
                                         <div class="d-flex justify-content-between align-items-center">
                                             <a class="small" href="/password">비밀번호 재설정</a>

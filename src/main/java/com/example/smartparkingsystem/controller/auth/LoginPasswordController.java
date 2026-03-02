@@ -80,7 +80,6 @@ public class LoginPasswordController extends HttpServlet {
     public void step3(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession();
         String adminId = (String) session.getAttribute("logAdminId");
-//        String email = (String) session.getAttribute("logEmail");
         String otpCode = req.getParameter("otpCode");
         log.info("otpCode: {}", otpCode);
 

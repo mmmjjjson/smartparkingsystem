@@ -6,6 +6,8 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 @Log4j2
 class AdminDAOTest {
     private AdminDAO adminDAO;
@@ -22,13 +24,13 @@ class AdminDAOTest {
 
     @Test
     public void AdminUpdate() {
+        String uuid = UUID.randomUUID().toString();
         AdminVO adminVO = AdminVO.builder()
                 .adminId("test1")
                 .password("test1")
-                .adminName("수정")
                 .adminEmail("test1@gmail.com")
-                .isActive(true)
                 .isPasswordReset(false)
+                .uuid(uuid)
                 .build();
         log.info(adminVO);
         adminDAO.updateAdmin(adminVO);

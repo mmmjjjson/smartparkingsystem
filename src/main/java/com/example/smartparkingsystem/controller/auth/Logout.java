@@ -2,10 +2,7 @@ package com.example.smartparkingsystem.controller.auth;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
@@ -21,7 +18,13 @@ public class Logout extends HttpServlet {
         if (session != null) {
             String adminId = (String) session.getAttribute("adminId");
             log.info("{} 로그아웃", adminId);
+            session.removeAttribute("adminId");
             session.invalidate();
+        }
+        Cookie[] cookie = req.getCookies();
+        for (Cookie c : cookie) {
+            c.setMaxAge(0);
+            resp.addCookie(c);
         }
         resp.sendRedirect("/login");
     }

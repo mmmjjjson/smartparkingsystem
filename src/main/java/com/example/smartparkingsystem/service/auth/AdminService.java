@@ -27,6 +27,15 @@ public enum AdminService {
         return modelMapper.map(adminVO, AdminDTO.class);
     }
 
+    // 생성된 쿠키의 uuid와 동일한 uuid 있는지 체크
+    public AdminDTO getAdminByUuid(String uuid) {
+        AdminVO adminVO = adminDAO.selectUuid(uuid);
+        if (adminVO == null) {
+            return null;
+        }
+        return modelMapper.map(adminVO, AdminDTO.class);
+    }
+
     // 로그인 인증 (활동여부 사용중 True, 사용중지 False)
     public boolean AuthenticateAdmin(String adminId, String password) {
         AdminDTO admin = getAdminById(adminId);
@@ -42,5 +51,11 @@ public enum AdminService {
     public void modifyAdmin(AdminDTO adminDTO) {
         AdminVO adminVO = modelMapper.map(adminDTO, AdminVO.class);
         adminDAO.updateAdmin(adminVO);
+    }
+
+    // uuid 업데이트
+    public void modifyUUID (AdminDTO adminDTO) {
+        AdminVO adminVO = modelMapper.map(adminDTO, AdminVO.class);
+        adminDAO.updateUUID(adminVO);
     }
 }

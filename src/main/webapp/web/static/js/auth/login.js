@@ -111,6 +111,7 @@ function submitStep1(event) {
 
     const adminId = document.getElementById('adminId').value;
     const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
 
     if (!adminId || !password) {
         alert("아이디와 비밀번호를 입력해주세요.");
@@ -118,13 +119,14 @@ function submitStep1(event) {
     }
 
     // Servlet 연동
+    // TODO 로그인 상태유지 여부 추가 (유지기간 일단 30분으로 지정 상의 필요)
     fetch("/login", {
         method: "POST",
-        credentials: "same-origin",
+        credentials: "same-origin", // 같은 도메일일때 세션을 자동으로 같이 넘겨주기 위해 설정
         headers: { // form값이 전송하는 파라미터를 받기위해 설정
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: "step=1&adminId=" + adminId + "&password=" + password
+        body: "step=1&adminId=" + adminId + "&password=" + password + "&rememberMe=" + rememberMe
     })
         .then(res => {
             if (res.status === 403) {

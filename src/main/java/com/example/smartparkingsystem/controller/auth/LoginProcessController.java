@@ -8,9 +8,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import lombok.extern.log4j.Log4j2;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Log4j2
 @WebServlet("/login")
@@ -20,6 +22,21 @@ public class LoginProcessController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("rememberMe")) {
+                    String uuid = cookie.getValue();
+                    AdminDTO adminDTO = adminService.getAdminByUuid(uuid);
+                    if (adminDTO != null) {
+                        HttpSession session = req.getSession();
+                        session.setAttribute("adminId", adminDTO.getAdminId());
+                        resp.sendRedirect("/main");
+                        return;
+                    }
+                }
+            }
+        }
         req.getRequestDispatcher("/WEB-INF/login/login.jsp").forward(req,resp);
     }
 
@@ -47,8 +64,12 @@ public class LoginProcessController extends HttpServlet {
         log.info("Step1");
         String adminId = req.getParameter("adminId").trim();
         String password = req.getParameter("password");
+        String remember = req.getParameter("rememberMe");
+        boolean rememberMe = remember != null && remember.equals("true");
+
         log.info("adminId: {}", adminId);
         log.info("password: {}", password);
+        log.info("rememberMe: {}", rememberMe);
 
         // 로그인 실패
         if (!adminDB(adminId, password)) {
@@ -62,6 +83,23 @@ public class LoginProcessController extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 (접근 제한)
             log.warn("Step1 403");
             return;
+        }
+
+        // TODO 로그인 상태유지 추가 (유지시간 30분 상의 필요)
+        if (rememberMe) {
+            String uuid = UUID.randomUUID().toString();
+
+            AdminDTO adminDTO = AdminDTO.builder()
+                    .adminId(adminId)
+                    .uuid(uuid)
+                    .build();
+
+            adminService.modifyUUID(adminDTO);
+
+            Cookie cookie = new Cookie("rememberMe", uuid);
+            cookie.setMaxAge(60 * 30);
+            cookie.setPath("/");
+            resp.addCookie(cookie);
         }
 
         // 로그인 성공시 임시 세션생성
@@ -130,6 +168,7 @@ public class LoginProcessController extends HttpServlet {
 
                 if (adminService.getAdminById(adminId).isPasswordReset()) {
                     resp.sendRedirect("/main/mypage");
+                    return;
                 }
                 resp.setStatus(HttpServletResponse.SC_OK);
             }

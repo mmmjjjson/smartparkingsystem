@@ -55,8 +55,8 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // BUG 발생 로그아웃 안됨
         String adminId = (String) session.getAttribute("adminId");
+        log.info(adminId);
         if (adminService.getAdminById(adminId).isPasswordReset()) {
             if (!uri.startsWith(mypagePath)) {
                 log.info("비밀번호 재설정후 최초 로그인 이동제한");

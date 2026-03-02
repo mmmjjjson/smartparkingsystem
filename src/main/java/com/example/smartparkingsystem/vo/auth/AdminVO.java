@@ -18,5 +18,6 @@ public class AdminVO {
     private LocalDateTime lastLogin; // 마지막 로그인 날짜
     private String lastLoginIp; // 마지막 로그인 아이피
     private boolean isPasswordReset; // 최조 로그인 여부 True여부, False일반
+    private String uuid; // 로그인 상태유지 토큰
     private LocalDateTime createdAt; // 계정 생성일
 }
