@@ -15,7 +15,19 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+
+/*
+TODO 지금 여기 구현된 계산방식은 입차시점 24시간 기준으로 계산돼있음 그래서 24시간1분 or 1초 -> 17000원
+ 하지만 JS에서의 계산 방식은 날짜별로 나눠서 계산하는 방식을 사용함,
+ 즉 분당 하루 요금이 15000원이 넘으면 15000원으로 계산 전날 이나 다음날 시간부터 다시 플러스 계산을 함
+ 예를 들어 첫날 4시간 55분 -> 시간당 요금 계산 -> 10000원 (15000원 안넘음)
+ 다음날 19시간 6분 -> 시간당 요금 계산 -> 39000원 나오는데 15000원 초과니까 15000원
+ 합계 = 10000 + 15000 = 25000원
+ 계산방식을 맞춰야할듯
+ */
 
 @Log4j2
 public class PaymentHistoryService {
@@ -24,7 +36,8 @@ public class PaymentHistoryService {
     private final ParkingHistoryDAO parkingHistoryDAO;
     private final MembersDAO membersDAO;
     private final PaymentInfoDAO paymentInfoDAO;
-    private final PaymentInfoVO paymentInfoVO;
+    // 싱글턴 작업으로 한번만 불러와서 사용하다보니 한번 정책 변경후에는 서버재실행 전까진 적용안됨 수정완료
+    //    private final PaymentInfoVO paymentInfoVO;
     private final ModelMapper modelMapper;
     private static PaymentHistoryService instance;
 
@@ -34,7 +47,7 @@ public class PaymentHistoryService {
         membersDAO = new  MembersDAO();
         paymentInfoDAO = new PaymentInfoDAO();
         modelMapper = MapperUtil.INSTANCE.getInstance();
-        paymentInfoVO = paymentInfoDAO.selectInfo();
+//        paymentInfoVO = paymentInfoDAO.selectInfo(); // 위와 동일이유
     }
 
     public static PaymentHistoryService getInstance() {
@@ -57,19 +70,21 @@ public class PaymentHistoryService {
 
     // 총 요금 계산 메서드 (total_charge)
     private int calculateTotalCharge(String carNum) {
+        // 메서드 실행마다 불러와서 실시간 적용
+        PaymentInfoVO paymentInfoVO = paymentInfoDAO.selectInfo();
         log.info("calculateTotalCharge");
         // 정책
-        int freeTime = paymentInfoVO.getFreeTime(); // 무료 회차 시간
+        int freeTime = paymentInfoVO.getFreeTime() * 60; // 무료 회차 시간 (분을 초로 변환)
         int basicCharge = paymentInfoVO.getBasicCharge(); // 기본 요금
-        int basicTime = paymentInfoVO.getBasicTime(); // 기본 요금 시간(분)
-        int extraTime = paymentInfoVO.getExtraTime(); // 초과 시간(분)
+        int basicTime = paymentInfoVO.getBasicTime() * 60; // 기본 요금 시간 (분을 초로 변환)
+        int extraTime = paymentInfoVO.getExtraTime() * 60; // 초과 시간 (분을 초로 변환)
         int extraCharge = paymentInfoVO.getExtraCharge(); // 초과 시간 당 추가 요금
         int maxCharge = paymentInfoVO.getMaxCharge(); // 일일 최대 요금
         long totalSeconds = getTotalTime(carNum); // 총 주차시간(초)
         int totalCharge; // 총 주차 요금
 
         // 주차일수 ((24 * 60) * 60) = 24시간
-        int dayCount = (int) totalSeconds / ((24 * 60) * 60);
+        int dayCount = (int) totalSeconds / ((24 * 60) * 60); // (분을 초로 변환)
 
         if (totalSeconds <= freeTime) {
             totalCharge = 0; // 무료 회차시간 적용 요금
@@ -77,7 +92,9 @@ public class PaymentHistoryService {
             totalCharge = basicCharge;
         } else {
             // 24시간 이하 요금 & 24시간 초과시 (24시간 제외 후) 남은 시간에 대한 요금
-            int restTimeCharge = ((int)(((totalSeconds % ((24 * 60) * 60)) - basicTime) / extraTime) * extraCharge) + basicCharge;
+            long remainSeconds = totalSeconds % ((24 * 60) * 60); // (분을 초로 변환)
+            int restTimeCharge = remainSeconds <= basicTime // 음수 방지 추가
+                    ? basicCharge : ((int)((remainSeconds - basicTime) / extraTime) * extraCharge) + basicCharge;
             // 일일 최대 요금 초과시 일일 최대 요금으로 변경
             restTimeCharge = Math.min(restTimeCharge, maxCharge);
 
@@ -90,6 +107,8 @@ public class PaymentHistoryService {
 
     // 할인 금액 계산 메서드(discount_amount)
     private int calculateDiscountAmount(String carNum) {
+        // 메서드 실행마다 불러와서 실시간 적용
+        PaymentInfoVO paymentInfoVO = paymentInfoDAO.selectInfo();
         log.info("calculateDiscountAmount");
 
         int totalCharge = calculateTotalCharge(carNum);
@@ -116,6 +135,8 @@ public class PaymentHistoryService {
     // 최종 결제 금액, VO에 입력 메서드
     // 잘못된 차량번호 조회시 return, 멤버이면 총요금, 할인금액, 최종금액 0원 처리 후 return
     public void calculateFinalCharge(String carNum) { // PaymentHistoryVO에 넣는 메서드
+        // 메서드 실행마다 불러와서 실시간 적용
+        PaymentInfoVO paymentInfoVO = paymentInfoDAO.selectInfo();
         // 잘못된 차량번호 조회
         if (parkingHistoryDAO.selectRecentParking(carNum).getCarNum() == null) {
             return;
@@ -136,7 +157,12 @@ public class PaymentHistoryService {
         int finalCharge; // 최종 결제 요금
 
         // 멤버인지 아닌지 확인 후 멤버면 총 요금 0원
-        if (membersDAO.selectOneMember(carNum) != null) {
+        // TODO 만료된 회원도 무료처리가 되던거 정확하게 수정
+        MembersVO member = membersDAO.selectOneMember(carNum);
+        boolean isMember = member != null
+                && !member.getEndDate().isBefore(LocalDate.now())
+                && !member.getStartDate().isAfter(LocalDate.now());
+        if (isMember) {
             totalCharge = 0;
             discountAmount = 0;
             finalCharge = 0;
@@ -155,7 +181,7 @@ public class PaymentHistoryService {
                 .carNum(carNum)
                 .entryTime(parkingHistoryVO.getEntryTime())
                 .exitTime(LocalDateTime.now()) // ***
-                .totalMinutes(totalSeconde / ((24 * 60) * 60))
+                .totalMinutes(totalSeconde / 60)
                 .totalCharge(totalCharge)
                 .mno(mno)
                 .pno(paymentInfoVO.getPno())

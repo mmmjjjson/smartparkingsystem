@@ -22,10 +22,12 @@ public class Logout extends HttpServlet {
             session.invalidate();
         }
         Cookie[] cookie = req.getCookies();
-        for (Cookie c : cookie) {
-            c.setMaxAge(0);
-            resp.addCookie(c);
+        if (cookie != null) {
+            for (Cookie c : cookie) {
+                c.setMaxAge(0);
+                resp.addCookie(c);
+            }
+            resp.sendRedirect("/login");
         }
-        resp.sendRedirect("/login");
     }
 }

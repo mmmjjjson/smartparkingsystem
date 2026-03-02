@@ -168,7 +168,7 @@ public class LoginProcessController extends HttpServlet {
 
                 if (adminService.getAdminById(adminId).isPasswordReset()) {
                     resp.sendRedirect("/main/mypage");
-                    return;
+                    return; // 추가 안넣으니 200과 리다이렉트가 같이 작동함
                 }
                 resp.setStatus(HttpServletResponse.SC_OK);
             }
