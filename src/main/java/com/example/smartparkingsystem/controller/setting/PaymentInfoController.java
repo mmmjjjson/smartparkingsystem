@@ -62,6 +62,12 @@ public class PaymentInfoController extends HttpServlet {
                 .adminId((String) session.getAttribute("adminId"))
                 .build();
         log.info("DTO add {}", paymentInfoDTO);
+
+        // 정책이 DB에 하나도 없을때 널포인트 방지 (비지니스 로직 접근 제어)
+        if (paymentInfoService.getInfo() == null) {
+            log.info("정책 없음 강제 플로우 구현 예정");
+//            return;
+        }
         paymentInfoService.addInfo(paymentInfoDTO);
         resp.setStatus(HttpServletResponse.SC_OK);
 

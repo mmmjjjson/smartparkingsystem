@@ -28,16 +28,16 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>기본 주차 요금(원)</label>
-                    <input type="text" id="in-base-fee" value="<%=paymentInfoDTO.getBasicCharge()%>"
+                    <input type="text" id="in-base-fee" value="<%=paymentInfoDTO == null ? 0 : paymentInfoDTO.getBasicCharge()%>"
                            name="basicCharge">
                 </div>
                 <div class="input-item">
                     <label>기본 주차 시간(분)</label>
-                    <input type="text" id="in-base-time" value="<%=paymentInfoDTO.getBasicTime()%>" name="basicTime">
+                    <input type="text" id="in-base-time" value="<%=paymentInfoDTO == null ? 0 : paymentInfoDTO.getBasicTime()%>" name="basicTime">
                 </div>
                 <div class="input-item">
                     <label>일일 최대 요금(원)</label>
-                    <input type="text" id="in-day-max-fee" value="<%=paymentInfoDTO.getMaxCharge()%>"
+                    <input type="text" id="in-day-max-fee" value="<%=paymentInfoDTO == null ? 0 : paymentInfoDTO.getMaxCharge()%>"
                            name="maxCharge">
                 </div>
             </div>
@@ -48,16 +48,16 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>무료 회차 시간(분)</label>
-                    <input type="text" id="in-free-time" value="<%=paymentInfoDTO.getFreeTime()%>" name="freeTime">
+                    <input type="text" id="in-free-time" value="<%=paymentInfoDTO == null ? 0 : paymentInfoDTO.getFreeTime()%>" name="freeTime">
                 </div>
                 <div class="input-item">
                     <label>추가 요금(원)</label>
-                    <input type="text" id="in-add-fee" value="<%=paymentInfoDTO.getExtraCharge()%>"
+                    <input type="text" id="in-add-fee" value="<%=paymentInfoDTO == null ? 0 : paymentInfoDTO.getExtraCharge()%>"
                            name="extraCharge">
                 </div>
                 <div class="input-item">
                     <label>추가 요금 기준 시간(분)</label>
-                    <input type="text" id="in-add-time" value="<%=paymentInfoDTO.getExtraTime()%>" name="extraTime">
+                    <input type="text" id="in-add-time" value="<%=paymentInfoDTO == null ? 0 : paymentInfoDTO.getExtraTime()%>" name="extraTime">
                 </div>
             </div>
         </div>
@@ -67,17 +67,17 @@
             <div class="input-row">
                 <div class="input-item">
                     <label>경차 할인율</label>
-                    <input type="text" id="in-light-dis" value="<%=paymentInfoDTO.getSmallCarDiscount()%>"
+                    <input type="text" id="in-light-dis" value="<%=paymentInfoDTO == null ? 0 : paymentInfoDTO.getSmallCarDiscount()%>"
                            name="smallCarDiscount">
                 </div>
                 <div class="input-item">
                     <label>장애인 할인율</label>
-                    <input type="text" id="in-disabled-dis" value="<%=paymentInfoDTO.getDisabledDiscount()%>"
+                    <input type="text" id="in-disabled-dis" value="<%=paymentInfoDTO == null ? 0 : paymentInfoDTO.getDisabledDiscount()%>"
                            name="disabledDiscount">
                 </div>
                 <div class="input-item">
                     <label>월 정액권(원)</label>
-                    <input type="text" id="in-monthly-fee" value="<%=paymentInfoDTO.getMemberCharge()%>"
+                    <input type="text" id="in-monthly-fee" value="<%=paymentInfoDTO == null ? 0 : paymentInfoDTO.getMemberCharge()%>"
                            name="memberCharge">
                 </div>
             </div>

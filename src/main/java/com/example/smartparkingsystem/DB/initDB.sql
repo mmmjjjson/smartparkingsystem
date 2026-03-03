@@ -123,3 +123,4 @@ CREATE TABLE IF NOT EXISTS `validation`
   COLLATE utf8mb4_general_ci
     COMMENT 'OTP 로그';
 
+

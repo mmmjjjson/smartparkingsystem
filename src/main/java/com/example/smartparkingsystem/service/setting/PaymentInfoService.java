@@ -35,6 +35,10 @@ public class PaymentInfoService {
 
     // setting 조회
     public PaymentInfoDTO getInfo() {
+        if (null == paymentInfoDAO.selectInfo()) {
+            log.error("Null Pointer Exception");
+            return null;
+        }
         return modelMapper.map(paymentInfoDAO.selectInfo(), PaymentInfoDTO.class);
     }
 
