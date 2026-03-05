@@ -49,18 +49,18 @@ function goBackToStep2() {
     document.getElementById('timer').classList.add('bg-info');
 }
 
-// alert() 대신 이 함수 호출
-function showAlert(message, callback=null) {
-    document.getElementById('alertModalMessage').innerText = message;
-    const model = new bootstrap.Modal(document.getElementById('alertModal'));
-    model.show();
-
-    // 확인 버튼 클릭시 콜백 실행
-    const confirmBtn = document.getElementById('alertModal').querySelector('[data-bs-dismiss="modal"]');
-    confirmBtn.onclick = () => {
-        if (callback) callback();
-    };
-}
+// // alert() 대신 이 함수 호출
+// function showAlert(message, callback=null) {
+//     document.getElementById('alertModalMessage').innerText = message;
+//     const model = new bootstrap.Modal(document.getElementById('alertModal'));
+//     model.show();
+//
+//     // 확인 버튼 클릭시 콜백 실행
+//     const confirmBtn = document.getElementById('alertModal').querySelector('[data-bs-dismiss="modal"]');
+//     confirmBtn.onclick = () => {
+//         if (callback) callback();
+//     };
+// }
 
 // 타이머
 let timerInterval = null;

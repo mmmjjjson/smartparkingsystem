@@ -176,18 +176,18 @@
                                             </button>
                                         </div>
 
-                                        <!-- 부트스트랩 커스텀 모달 사용 (타이머 멈춤 현상 제거 위함) -->
-                                        <div class="modal fade" id="alertModal" tabindex="-1">
-                                            <div class="modal-dialog modal-sm">
-                                                <div class="modal-content">
-                                                    <div class="modal-body text-center" id="alertModalMessage">
-                                                    </div>
-                                                    <div class="modal-footer justify-content-center">
-                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+<%--                                        <!-- 부트스트랩 커스텀 모달 사용 (타이머 멈춤 현상 제거 위함) -->--%>
+<%--                                        <div class="modal fade" id="alertModal" tabindex="-1">--%>
+<%--                                            <div class="modal-dialog modal-sm">--%>
+<%--                                                <div class="modal-content">--%>
+<%--                                                    <div class="modal-body text-center" id="alertModalMessage">--%>
+<%--                                                    </div>--%>
+<%--                                                    <div class="modal-footer justify-content-center">--%>
+<%--                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>--%>
+<%--                                                    </div>--%>
+<%--                                                </div>--%>
+<%--                                            </div>--%>
+<%--                                        </div>--%>
 
                                     </form>
                                 </div>

@@ -81,7 +81,7 @@ public class PaymentHistoryDAO {
         return paymentHistoryVO;
     }
 
-    /*
+    /* 제거
      * 통계용 결제 데이터 전체 조회 (초기 캐시 로드용)
      */
     public Map<Integer, Map<Integer, List<PaymentHistoryVO>>> selectOrderByYearMonth() {
