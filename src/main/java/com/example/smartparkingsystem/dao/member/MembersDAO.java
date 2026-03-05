@@ -165,9 +165,9 @@ public class MembersDAO {
         // status 필터 (항상 적용)
         if (status != null && !status.isEmpty()) {
             if ("expired".equals(status)) {
-                sql.append(" AND end_date < CURDATE()");
+                sql.append(" AND end_date < CURDATE()"); // 만료
             } else if ("active".equals(status)) {
-                sql.append(" AND end_date >= CURDATE()");
+                sql.append(" AND end_date >= CURDATE()"); // 유효
             }
         }
 

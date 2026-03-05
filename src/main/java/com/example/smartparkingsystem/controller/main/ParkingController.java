@@ -97,12 +97,9 @@ public class ParkingController extends HttpServlet {
             boolean isMember = member != null && !member.getEndDate().isBefore(LocalDate.now())
                     && !member.getStartDate().isAfter(LocalDate.now());
 
-            // 캐시 불러오는 시점 확인할 것
-            log.info("carNum: {}, member: {}, isMember: {}", carNum, member, isMember);
-
             // DB 저장
             ParkingHistoryDTO parkingHistoryDTO = ParkingHistoryDTO.builder()
-                    .parkingArea(parkingArea).carNum(carNum).isMember(isMember).carType(carType).build();
+                    .parkingArea(parkingArea).carNum(carNum).carType(carType).isMember(isMember).build();
             parkingService.registerEntry(parkingHistoryDTO);
 
             // 저장 정보 다시 가져오기
@@ -114,6 +111,7 @@ public class ParkingController extends HttpServlet {
                 resp.getWriter().write("{\"success\": false, \"message\": \"DB 조회 실패\"}");
                 return;
             }
+
 
             // 날짜 변환 및 JSON 전송
             String entryTimeStr = String.valueOf(saved.getEntryTime()).replace(" ", "T");
