@@ -82,7 +82,7 @@ function startTimer() {
         if (remaining <= 0) {
             clearInterval(timerInterval);
             timerEl.innerText = "남은 시간: 0:00"
-            showAlert("인증 시간이 만료되었습니다.");
+            alert("인증 시간이 만료되었습니다.");
             document.getElementById('otpCode').disabled = true;
             document.getElementById('loginOtp').disabled = true;
             return;
@@ -187,7 +187,7 @@ function submitStep3(event) {
     console.log("OTP 입력:", otpCode);
 
     if (otpCode.length !== 6) {
-        showAlert("6자리 인증번호를 입력해주세요.");
+        alert("6자리 인증번호를 입력해주세요.");
         return;
     }
 
@@ -202,26 +202,24 @@ function submitStep3(event) {
         .then(res => {
             if (res.status === 200) {
                 clearInterval(timerInterval);
-                showAlert("[OTP Success] 인증 완료", () => {
-                    window.location.href = "/main";
-                })
+                alert("[OTP Success] 인증 완료")
+                window.location.href = "/main";
             } else if (res.status === 401) {
-                showAlert("[OTP Fail] \n 인증번호가 일치 하지 않습니다.")
+                alert("[OTP Fail] \n 인증번호가 일치 하지 않습니다.")
             } else if (res.status === 403) {
                 clearInterval(timerInterval);
-                showAlert("[OTP Expired] 이전페이지로 돌아가 재발송해주세요.")
+                alert("[OTP Expired] 이전페이지로 돌아가 재발송해주세요.")
             } else {
-                showAlert("[ERROR] 알 수 없는 오류")
+                alert("[ERROR] 알 수 없는 오류")
             }
         })
-
 }
 
 // 숫자만 입력 (필터링)
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const otpInput = document.getElementById('otpCode');
     if (otpInput) {
-        otpInput.addEventListener('input', function(e) {  // 화살표 함수 대신 일반 function 사용
+        otpInput.addEventListener('input', function (e) {  // 화살표 함수 대신 일반 function 사용
             this.value = this.value.replace(/[^0-9]/g, '');
         });
     }
